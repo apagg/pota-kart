@@ -356,6 +356,7 @@ function applyNameOverride(link){
   const o=NAME_OVERRIDES[norm(link.officialName)];
   return o?Object.assign({},link,o):link;
 }
+const NO_FRILUFT_KARTLAGT='https://kart.miljodirektoratet.no/arcgis/rest/services/friluftsliv_kartlagt/MapServer/0/query';
 const NO_FRILUFT='https://kart.miljodirektoratet.no/arcgis/rest/services/friluftsliv_statlig_sikra/MapServer/0/query';
 const NO_VERN='https://kart.miljodirektoratet.no/arcgis/rest/services/vern/FeatureServer/0/query';
 const NO_KYSTSTI='https://kart.analyseabo.no/arcgis/rest/services/Turkart/RegFriluft_innsyn/MapServer/15/query';
@@ -374,7 +375,7 @@ function countryOf(p){return (p.reference||'').split('-')[0].toUpperCase()}
 function inferNorwayLink(p){
   const name=(p.name||'').trim();
   const id=naturbaseFriluftId(p)|| (p.reference==='NO-3198'?'FS00000814':'');
-  if(id.startsWith('FS'))return {reference:p.reference,potaName:name,officialName:name.replace(/\s+national recreation area$/i,'').trim(),officialId:id,layer:'nofriluft',type:'Statlig sikret friluftslivsområde',recognized:true,confidence:'Naturbase-ID fra POTA-kildelenke'};
+  if(id)return {reference:p.reference,potaName:name,officialName:name.replace(/\s+national recreation area$/i,'').trim(),officialId:id,layer:'nofriluft',type:id.startsWith('FK')?'Kartlagt friluftslivsområde':'Statlig sikret friluftslivsområde',recognized:true,confidence:'Naturbase-ID fra POTA-kildelenke'};
   for(const r of NO_SUFFIX_RULES)if(r.rx.test(name))return {reference:p.reference,potaName:name,officialName:name.replace(r.rx,'').trim(),layer:r.layer||'novern',type:r.type,recognized:true,confidence:'norsk POTA-type'};
   return {reference:p.reference,potaName:name,officialName:name,layer:'novern',type:'Norsk POTA-område',recognized:true,confidence:'verifiseres mot Naturbase'};
 }
@@ -389,19 +390,23 @@ function naturbaseFriluftId(p){
 }
 async function resolveNorwayFriluft(link,p){
   const id=link.officialId||naturbaseFriluftId(p);
-  if(id&& !id.startsWith('FS'))throw Error('POTA-kildelenken viser et kartlagt friluftslivsområde ('+id+'), som tilhører et annet Naturbase-datasett enn statlig sikrede områder');
+  const kartlagt=id.startsWith('FK');
+  const idField=kartlagt?'kartlagt_foid':'friluftId';
+  const nameField=kartlagt?'omraadenavn':'omraadeNavn';
+  const areaType=kartlagt?'Kartlagt friluftslivsområde':'Statlig sikret friluftslivsområde';
+  const areaDataset=kartlagt?'kartlagte friluftslivsområder':'statlig sikrede friluftslivsområder';
   const quote=x=>String(x).replace(/'/g,"''");
-  const where=id?`friluftId='${quote(id)}'`:`UPPER(omraadeNavn)=UPPER('${quote(link.officialName)}')`;
-  const params=new URLSearchParams({f:'geojson',where,outFields:'friluftId,omraadeNavn,faktaark',returnGeometry:'true',outSR:'4326'});
-  const d=await getJSON(NO_FRILUFT+'?'+params);
+  const where=id?`${idField}='${quote(id)}'`:`UPPER(${nameField})=UPPER('${quote(link.officialName)}')`;
+  const params=new URLSearchParams({f:'geojson',where,outFields:`${idField},${nameField},faktaark`,returnGeometry:'true',outSR:'4326'});
+  const d=await getJSON((kartlagt?NO_FRILUFT_KARTLAGT:NO_FRILUFT)+'?'+params);
   if(d.error)throw Error(d.error.message||'Naturbase returnerte en feil');
   const fs=(d.features||[]).filter(f=>{
     const pr=f.properties||{};
-    return id?pr.friluftId===id:norm(pr.omraadeNavn)===norm(link.officialName);
+    return id?pr[idField]===id:norm(pr[nameField])===norm(link.officialName);
   });
-  const ids=new Set(fs.map(f=>(f.properties||{}).friluftId).filter(Boolean));
-  if(!fs.length)throw Error('Fant ikke en verifisert kobling til et statlig sikret friluftslivsområde i Naturbase');
-  if(ids.size!==1)throw Error('Flere statlig sikrede friluftslivsområder har samme navn; en bekreftet Naturbase-ID er nødvendig');
+  const ids=new Set(fs.map(f=>(f.properties||{})[idField]).filter(Boolean));
+  if(!fs.length)throw Error('Fant ikke en verifisert kobling til '+areaDataset+' i Naturbase');
+  if(ids.size!==1)throw Error('Flere områder har samme navn; en bekreftet Naturbase-ID er nødvendig');
   const polygons=[];
   for(const f of fs){
     const g=f.geometry;
@@ -411,7 +416,7 @@ async function resolveNorwayFriluft(link,p){
   }
   if(!polygons.length)throw Error('Naturbase-området mangler områdegrense');
   const pr=fs[0].properties;
-  return {source:'norway',sourceLabel:'Miljødirektoratets Naturbase – statlig sikrede friluftslivsområder',geometry:{type:'MultiPolygon',coordinates:polygons},name:pr.omraadeNavn,id:pr.friluftId,officialType:'Statlig sikret friluftslivsområde'};
+  return {source:'norway',sourceLabel:'Miljødirektoratets Naturbase – '+areaDataset,geometry:{type:'MultiPolygon',coordinates:polygons},name:String(pr[nameField]||link.officialName).trim(),id:pr[idField],officialType:areaType};
 }
 
 function noNameValues(pr){return [pr.navn,pr.offisieltNavn,pr.offisielt_navn].filter(Boolean).map(norm)}
@@ -1039,8 +1044,8 @@ async function loadPota(){
  applyCountryFilter();return {shown,linked,unknown,unsupported,byCountry};
 }
 async function init(){st.textContent='Laster POTA-referanser for Norge og Sverige…';let x={shown:0,linked:0,unknown:[],unsupported:[],byCountry:{}};try{x=await loadPota()}catch(e){st.innerHTML='POTA-listen kunne ikke lastes: '+esc(e.message);return}
- st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder og statlig sikrede friluftslivsområder verifiseres mot sine egne datasett i Miljødirektoratets Naturbase. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
- document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte: verneområder og statlig sikrede friluftslivsområder i Naturbase. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
+ st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder, statlig sikrede og kartlagte friluftslivsområder verifiseres mot sine egne datasett i Miljødirektoratets Naturbase. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
+ document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte: verneområder, statlig sikrede og kartlagte friluftslivsområder i Naturbase. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
 }
 function toggle(k){document.getElementById(k).addEventListener('change',e=>e.target.checked?layers[k].addTo(map):map.removeLayer(layers[k]));}
 ['np','nr','nvo','kr','hab','bird','pts'].forEach(toggle);
