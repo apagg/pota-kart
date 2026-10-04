@@ -9,7 +9,7 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('app-core.js?v=1a69f5d');
+    await load('app-core.js?v=friluft-fk-1');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
