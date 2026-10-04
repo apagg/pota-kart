@@ -9,7 +9,7 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('app-core.js');
+    await load('app-core.js?v=0022d8a');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
