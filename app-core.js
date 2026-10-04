@@ -998,3 +998,13 @@ async function loadPota(){
  }
  applyCountryFilter();return {shown,linked,unknown,unsupported,byCountry};
 }
+async function init(){st.textContent='Laster POTA-referanser for Norge og Sverige…';let x={shown:0,linked:0,unknown:[],unsupported:[],byCountry:{}};try{x=await loadPota()}catch(e){st.innerHTML='POTA-listen kunne ikke lastes: '+esc(e.message);return}
+ st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder verifiseres mot Miljødirektoratets Naturbase. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
+ document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte v8.18: offisielle naturvernområder i Naturbase. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
+}
+function toggle(k){document.getElementById(k).addEventListener('change',e=>e.target.checked?layers[k].addTo(map):map.removeLayer(layers[k]));}
+['np','nr','nvo','kr','hab','bird','pts'].forEach(toggle);
+countryFilter.addEventListener('change',applyCountryFilter);
+function search(){const q=norm(document.getElementById('q').value);if(!q)return;const c=countryFilter.value, pool=c==='ALL'?pota:pota.filter(x=>countryOf(x)===c);let t=pool.find(x=>norm(x.reference)===q)||pool.find(x=>norm(x.name).includes(q));if(t){showLink(t,true,true)}else st.innerHTML='Fant ikke «'+esc(document.getElementById('q').value)+'» i POTA-listen.'}
+document.getElementById('search').onclick=search;document.getElementById('q').onkeydown=e=>{if(e.key==='Enter')search()};
+init();
