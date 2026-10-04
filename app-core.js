@@ -356,11 +356,13 @@ function applyNameOverride(link){
   const o=NAME_OVERRIDES[norm(link.officialName)];
   return o?Object.assign({},link,o):link;
 }
+const NO_FRILUFT='https://kart.miljodirektoratet.no/arcgis/rest/services/friluftsliv_statlig_sikra/MapServer/0/query';
 const NO_VERN='https://kart.miljodirektoratet.no/arcgis/rest/services/vern/FeatureServer/0/query';
 const NO_KYSTSTI='https://kart.analyseabo.no/arcgis/rest/services/Turkart/RegFriluft_innsyn/MapServer/15/query';
 const NO_TURWFS='https://wfs.geonorge.no/skwms1/wfs.turogfriluftsruter';
 const potaParkDetailCache={};
 const NO_SUFFIX_RULES=[
+  {rx:/\s+(national recreation area)$/i,type:'Friluftslivsområde',layer:'nofriluft'},
   {rx:/\s+(national recreation trail)$/i,type:'National Recreation Trail',layer:'notrail'},
   {rx:/\s+(national park)$/i,type:'Nasjonalpark'},
   {rx:/\s+(nature reserve|natural reserve)$/i,type:'Naturreservat'},
@@ -371,9 +373,47 @@ const NO_SUFFIX_RULES=[
 function countryOf(p){return (p.reference||'').split('-')[0].toUpperCase()}
 function inferNorwayLink(p){
   const name=(p.name||'').trim();
+  const id=naturbaseFriluftId(p)|| (p.reference==='NO-3198'?'FS00000814':'');
+  if(id.startsWith('FS'))return {reference:p.reference,potaName:name,officialName:name.replace(/\s+national recreation area$/i,'').trim(),officialId:id,layer:'nofriluft',type:'Statlig sikret friluftslivsområde',recognized:true,confidence:'Naturbase-ID fra POTA-kildelenke'};
   for(const r of NO_SUFFIX_RULES)if(r.rx.test(name))return {reference:p.reference,potaName:name,officialName:name.replace(r.rx,'').trim(),layer:r.layer||'novern',type:r.type,recognized:true,confidence:'norsk POTA-type'};
   return {reference:p.reference,potaName:name,officialName:name,layer:'novern',type:'Norsk POTA-område',recognized:true,confidence:'verifiseres mot Naturbase'};
 }
+
+function naturbaseFriluftId(p){
+  try{
+    const u=new URL(p.website||'');
+    if(u.protocol!=='https:'||u.hostname!=='faktaark.naturbase.no')return '';
+    const id=(u.searchParams.get('id')||'').toUpperCase();
+    return /^(FS|FK)\d{8}$/.test(id)?id:'';
+  }catch(e){return ''}
+}
+async function resolveNorwayFriluft(link,p){
+  const id=link.officialId||naturbaseFriluftId(p);
+  if(id&& !id.startsWith('FS'))throw Error('POTA-kildelenken viser et kartlagt friluftslivsområde ('+id+'), som tilhører et annet Naturbase-datasett enn statlig sikrede områder');
+  const quote=x=>String(x).replace(/'/g,"''");
+  const where=id?`friluftId='${quote(id)}'`:`UPPER(omraadeNavn)=UPPER('${quote(link.officialName)}')`;
+  const params=new URLSearchParams({f:'geojson',where,outFields:'friluftId,omraadeNavn,faktaark',returnGeometry:'true',outSR:'4326'});
+  const d=await getJSON(NO_FRILUFT+'?'+params);
+  if(d.error)throw Error(d.error.message||'Naturbase returnerte en feil');
+  const fs=(d.features||[]).filter(f=>{
+    const pr=f.properties||{};
+    return id?pr.friluftId===id:norm(pr.omraadeNavn)===norm(link.officialName);
+  });
+  const ids=new Set(fs.map(f=>(f.properties||{}).friluftId).filter(Boolean));
+  if(!fs.length)throw Error('Fant ikke en verifisert kobling til et statlig sikret friluftslivsområde i Naturbase');
+  if(ids.size!==1)throw Error('Flere statlig sikrede friluftslivsområder har samme navn; en bekreftet Naturbase-ID er nødvendig');
+  const polygons=[];
+  for(const f of fs){
+    const g=f.geometry;
+    if(g?.type==='Polygon')polygons.push(g.coordinates);
+    else if(g?.type==='MultiPolygon')polygons.push(...g.coordinates);
+    else throw Error('Naturbase-området mangler gyldig områdegeometri');
+  }
+  if(!polygons.length)throw Error('Naturbase-området mangler områdegrense');
+  const pr=fs[0].properties;
+  return {source:'norway',sourceLabel:'Miljødirektoratets Naturbase – statlig sikrede friluftslivsområder',geometry:{type:'MultiPolygon',coordinates:polygons},name:pr.omraadeNavn,id:pr.friluftId,officialType:'Statlig sikret friluftslivsområde'};
+}
+
 function noNameValues(pr){return [pr.navn,pr.offisieltNavn,pr.offisielt_navn].filter(Boolean).map(norm)}
 function noNameMatch(expected,pr){
   const e=norm(expected);if(!e)return false;
@@ -904,10 +944,10 @@ async function focusOfficialGeometry(link,p){
   hideOfficialWms();
   st.innerHTML=`Henter offisiell geometri for <b>${esc(link.officialName)}</b>…`;
   try{
-    const r=await (link.layer==='notrail'?resolveNorwayTrail(link,p):link.layer==='novern'?resolveNorwayOfficial(link,p):link.layer==='auto'?resolveOfficialAuto(link,p):link.layer==='trail'?resolveStateTrail(link,p):link.layer==='world'?resolveWorldHeritage(link,p):link.layer==='historic'?resolveHistoricSite(link,p):resolveOfficial(link,p));
+    const r=await (link.layer==='nofriluft'?resolveNorwayFriluft(link,p):link.layer==='notrail'?resolveNorwayTrail(link,p):link.layer==='novern'?resolveNorwayOfficial(link,p):link.layer==='auto'?resolveOfficialAuto(link,p):link.layer==='trail'?resolveStateTrail(link,p):link.layer==='world'?resolveWorldHeritage(link,p):link.layer==='historic'?resolveHistoricSite(link,p):resolveOfficial(link,p));
     const raw=(r.source==='trail'||r.source==='world')?normalizeSpecialGeometry(r.geometry):r.source==='notrail'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:r.source==='historic'?{type:'Feature',properties:{name:r.name,id:r.id,url:r.url||''},geometry:r.geometry}:r.source==='norway'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:{type:'Feature',properties:{name:r.name,id:r.id},geometry:transformGeo(r.geometry)};
     selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:'#15803d',weight:6,opacity:.95}:{weight:6,opacity:.95};}return {weight:4,fillOpacity:.18};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
-    st.innerHTML=`Viser kun <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?'Miljødirektoratets offisielle Naturbase-data':'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
+    st.innerHTML=`Viser kun <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?(r.sourceLabel||'Miljødirektoratets offisielle Naturbase-data'):'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
     return r;
   }catch(e){
     st.innerHTML=`Kunne ikke hente en verifisert enkeltgeometri for <b>${esc(link.officialName)}</b>: ${esc(e.message)}. Ingen andre områder vises som en falsk match.`;
@@ -999,8 +1039,8 @@ async function loadPota(){
  applyCountryFilter();return {shown,linked,unknown,unsupported,byCountry};
 }
 async function init(){st.textContent='Laster POTA-referanser for Norge og Sverige…';let x={shown:0,linked:0,unknown:[],unsupported:[],byCountry:{}};try{x=await loadPota()}catch(e){st.innerHTML='POTA-listen kunne ikke lastes: '+esc(e.message);return}
- st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder verifiseres mot Miljødirektoratets Naturbase. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
- document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte v8.18: offisielle naturvernområder i Naturbase. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
+ st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder og statlig sikrede friluftslivsområder verifiseres mot sine egne datasett i Miljødirektoratets Naturbase. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
+ document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte: verneområder og statlig sikrede friluftslivsområder i Naturbase. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
 }
 function toggle(k){document.getElementById(k).addEventListener('change',e=>e.target.checked?layers[k].addTo(map):map.removeLayer(layers[k]));}
 ['np','nr','nvo','kr','hab','bird','pts'].forEach(toggle);
