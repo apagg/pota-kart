@@ -12,3 +12,8 @@
  .mobile-layout .leaflet-control-zoom{position:fixed;top:calc(14px + env(safe-area-inset-top));right:14px;bottom:auto;margin:0!important}.leaflet-control-attribution{max-width:calc(100vw - 30px);font-size:9px!important;bottom:calc(66px + env(safe-area-inset-bottom));opacity:.8}.leaflet-popup{display:none}.mobile-layout .leaflet-control-zoom a{width:36px;height:36px;line-height:36px}.mobile-layout button:focus-visible{outline:3px solid #93bbff;outline-offset:2px}
 }
 @media(max-width:700px) and (max-height:500px){.mobile-toolbar{gap:5px}.mobile-toolbar button{width:40px;height:40px}.mobile-sheet-header{padding-bottom:6px}.mobile-park-type{display:none}.mobile-sheet-actions{margin-top:5px}.panel-content{max-height:40dvh}.mobile-nav{height:54px}.panel{bottom:calc(54px + env(safe-area-inset-bottom))}}
+
+/* Mobile shows park information; technical diagnostics stay in desktop view. */
+@media(max-width:700px){
+  #diag,#overlapDiag,.panel[data-mobile-view=selected] .info-more{display:none!important}
+}
