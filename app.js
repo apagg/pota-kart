@@ -9,8 +9,8 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('app-core.js?v=mobile-010-2');
-    await load('mobile-ui.js?v=mobile-010-2');
+    await load('app-core.js?v=mobile-010-3');
+    await load('mobile-ui.js?v=mobile-010-3');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
