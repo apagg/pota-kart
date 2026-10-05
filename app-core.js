@@ -275,10 +275,11 @@ function updateSelectionDiagnostics(){
 
 function openParkInfo(p,link,latlng=null){
   const quality=link.confidence==='bekreftet overstyring'?'bekreftet':'automatisk';
+  document.dispatchEvent(new CustomEvent('pota:park',{detail:{p,link}}));
   linkbox.style.display='block';
   const sourceNote=link.layer==='nokultur'?'Appen bruker Kulturminnesøk-ID-en fra POTA-kildelenken til å vise lagret, verifisert registergeometri fra Riksantikvaren. Denne avgrensningen dekker ikke nødvendigvis hele POTA-området.':link.layer==='auto'?'Appen verifiserer navnet mot Naturvårdsverket og bruker den faktiske svenske objekttypen som registeret returnerer.':link.layer==='historic'?'Appen matcher registerbetegnelse/navn og POTA-koordinat mot Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data.':link.layer==='notrail'?'Appen bruker POTA sine kildelenker som ekstra rutealiaser og matcher disse mot Kartverkets Turrutebase.':(link.layer?'Appen henter det konkrete objektets geometri fra den offisielle datakilden.':(link.recognized?(link.geometryNote||'Kjent POTA-type, men geometri krever en annen eller verifisert datakilde.'):'Vernetypen kunne ikke bestemmes automatisk.'));
   linkbox.innerHTML=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br>Valgt POTA-park: <b>${esc(link.officialName)}</b> <span class="badge">${esc(link.type)}</span><br><span class="small">Matchmetode: ${esc(link.confidence)}. ${sourceNote}</span>`;
-  if(latlng){
+  if(latlng&&!matchMedia('(max-width:700px)').matches){
     L.popup({autoPan:false}).setLatLng(latlng).setContent(`<b>${esc(p.reference)}</b><br>${esc(p.name)}<hr style="border:0;border-top:1px solid #ddd"><b>Valgt POTA-park:</b> ${esc(link.officialName)}<br><b>Type:</b> ${esc(link.type)}<br><span class="small">${quality==='bekreftet'?'Denne koblingen er eksplisitt lagt inn.':'Denne koblingen er laget fra POTA-navn/type og kontrolleres mot registerdata når geometrien hentes.'}</span>`).openOn(map);
   }
 }
@@ -729,6 +730,7 @@ function clearSelectedParks(){
   selectedParks.clear();lastSelectedRef=null;renderSelectedList();updateOverlaps();
 }
 function renderSelectedList(){
+  document.dispatchEvent(new CustomEvent('pota:selection'));
   if(!multiMode.checked||!selectedParks.size){selectedBox.style.display='none';selectedList.innerHTML='';return}
   selectedBox.style.display='block';
   selectedList.innerHTML=[...selectedParks.values()].map(x=>`<div class="selitem"><span><b>${esc(x.p.reference)}</b> – ${esc(x.p.name)}</span><button class="remove" data-ref="${esc(x.p.reference)}" title="Fjern">×</button></div>`).join('');
@@ -1027,6 +1029,7 @@ async function showLink(p,openPopup=true,centerOnSearch=false){
     lastSelectedRef=p.reference;selectedMarker=null;selectedGeo=null;
     renderSelectedList();updateOverlaps();
   } else {lastSelectedRef=p.reference}
+  document.dispatchEvent(new CustomEvent('pota:selection'));
 }
 
 function setMultiMode(on){
@@ -1092,3 +1095,4 @@ countryFilter.addEventListener('change',applyCountryFilter);
 function search(){const q=norm(document.getElementById('q').value);if(!q)return;const c=countryFilter.value, pool=c==='ALL'?pota:pota.filter(x=>countryOf(x)===c);let t=pool.find(x=>norm(x.reference)===q)||pool.find(x=>norm(x.name).includes(q));if(t){showLink(t,true,true)}else st.innerHTML='Fant ikke «'+esc(document.getElementById('q').value)+'» i POTA-listen.'}
 document.getElementById('search').onclick=search;document.getElementById('q').onkeydown=e=>{if(e.key==='Enter')search()};
 init();
+

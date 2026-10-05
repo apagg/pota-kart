@@ -1,4 +1,4 @@
-// POTA Kart 0.9.0 bootstrap loader
+// POTA Kart 0.10.0 bootstrap loader
 (async()=>{
   const load=src=>new Promise((resolve,reject)=>{
     const s=document.createElement('script');
@@ -9,7 +9,8 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('app-core.js?v=kultur-all-2');
+    await load('app-core.js?v=mobile-010-1');
+    await load('mobile-ui.js?v=mobile-010-1');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
