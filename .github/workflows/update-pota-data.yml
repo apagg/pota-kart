@@ -5,27 +5,44 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/update-pota-data.yml'
+      - 'scripts/update-kulturminner.py'
+      - 'scripts/test_update_kulturminner.py'
   workflow_dispatch:
   schedule:
     - cron: '17 3 * * *'
 
 permissions:
   contents: write
+  pages: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Test heritage importer
+        run: python3 scripts/test_update_kulturminner.py
       - name: Fetch park data
         run: |
           mkdir -p data
           curl -fsSL https://api.pota.app/program/parks/NO -o data/pota-NO.json
           curl -fsSL https://api.pota.app/program/parks/SE -o data/pota-SE.json
+      - name: Refresh verified heritage geometry
+        run: python3 scripts/update-kulturminner.py --attempts 2 --timeout 60
       - name: Commit data
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/pota-NO.json data/pota-SE.json
+          git add data/pota-NO.json data/pota-SE.json data/kulturminner
           git diff --cached --quiet || git commit -m 'Update POTA park data'
           git push
+      - name: Publish refreshed data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail-with-body --silent --show-error -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/pages/builds"

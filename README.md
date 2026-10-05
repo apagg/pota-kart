@@ -18,3 +18,12 @@ Publiser fra `main`-branchen med GitHub Pages. Siden må kjøres over HTTPS for 
 ## Personvern
 
 GPS-posisjonen behandles lokalt i nettleseren og sendes ikke til dette repositoryet. Eksterne kart- og geodatatjenester vil fortsatt motta vanlige nettverksforespørsler fra nettleseren.
+
+
+### Kulturminner fra Riksantikvaren
+
+Parker med en Kulturminnesøk-lenke og en numerisk lokalitets-ID bruker først verifisert geometri fra `data/kulturminner/<id>.geojson`. Hvis en lagret kopi mangler, forsøker kartet et direkte oppslag hos Riksantikvaren. Kartet oppgir verifiseringsdato og viser registerets avgrensning; den dekker ikke nødvendigvis hele POTA-området.
+
+Den daglige POTA-oppdateringen oppdager automatisk slike ID-er og kjører `scripts/update-kulturminner.py`. Skriptet bruker Riksantikvarens JSON-API, med det offisielle lokalitetsdatasettet hos Geonorge WFS som reserve. Bare eksakte ID-treff godtas. Registrerte undernummer tas med når registerets egen Kulturminnesøk-lenke bekrefter samme hoved-ID. WFS-delpolygoner og hull beholdes, og EPSG:4326-aksene konverteres fra bredde/lengde til GeoJSONs lengde/bredde. En kildefeil erstatter aldri en tidligere verifisert kopi. `data/kulturminner/index.json` viser hvilke parker som har tilgjengelig geometri og eventuelle oppdateringsfeil. Oppdateringsjobben ber GitHub Pages bygge på nytt etterpå.
+
+Manuelt: `python3 scripts/update-kulturminner.py --attempts 2 --timeout 60`.

@@ -276,7 +276,7 @@ function updateSelectionDiagnostics(){
 function openParkInfo(p,link,latlng=null){
   const quality=link.confidence==='bekreftet overstyring'?'bekreftet':'automatisk';
   linkbox.style.display='block';
-  const sourceNote=link.layer==='nokultur'?'Appen bruker Kulturminnesøk-ID-en fra POTA-kildelenken til å hente registergeometri hos Riksantikvaren. Denne avgrensningen dekker ikke nødvendigvis hele POTA-området.':link.layer==='auto'?'Appen verifiserer navnet mot Naturvårdsverket og bruker den faktiske svenske objekttypen som registeret returnerer.':link.layer==='historic'?'Appen matcher registerbetegnelse/navn og POTA-koordinat mot Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data.':link.layer==='notrail'?'Appen bruker POTA sine kildelenker som ekstra rutealiaser og matcher disse mot Kartverkets Turrutebase.':(link.layer?'Appen henter det konkrete objektets geometri fra den offisielle datakilden.':(link.recognized?(link.geometryNote||'Kjent POTA-type, men geometri krever en annen eller verifisert datakilde.'):'Vernetypen kunne ikke bestemmes automatisk.'));
+  const sourceNote=link.layer==='nokultur'?'Appen bruker Kulturminnesøk-ID-en fra POTA-kildelenken til å vise lagret, verifisert registergeometri fra Riksantikvaren. Denne avgrensningen dekker ikke nødvendigvis hele POTA-området.':link.layer==='auto'?'Appen verifiserer navnet mot Naturvårdsverket og bruker den faktiske svenske objekttypen som registeret returnerer.':link.layer==='historic'?'Appen matcher registerbetegnelse/navn og POTA-koordinat mot Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data.':link.layer==='notrail'?'Appen bruker POTA sine kildelenker som ekstra rutealiaser og matcher disse mot Kartverkets Turrutebase.':(link.layer?'Appen henter det konkrete objektets geometri fra den offisielle datakilden.':(link.recognized?(link.geometryNote||'Kjent POTA-type, men geometri krever en annen eller verifisert datakilde.'):'Vernetypen kunne ikke bestemmes automatisk.'));
   linkbox.innerHTML=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br>Valgt POTA-park: <b>${esc(link.officialName)}</b> <span class="badge">${esc(link.type)}</span><br><span class="small">Matchmetode: ${esc(link.confidence)}. ${sourceNote}</span>`;
   if(latlng){
     L.popup({autoPan:false}).setLatLng(latlng).setContent(`<b>${esc(p.reference)}</b><br>${esc(p.name)}<hr style="border:0;border-top:1px solid #ddd"><b>Valgt POTA-park:</b> ${esc(link.officialName)}<br><b>Type:</b> ${esc(link.type)}<br><span class="small">${quality==='bekreftet'?'Denne koblingen er eksplisitt lagt inn.':'Denne koblingen er laget fra POTA-navn/type og kontrolleres mot registerdata når geometrien hentes.'}</span>`).openOn(map);
@@ -387,7 +387,7 @@ function inferNorwayLink(p){
 function kulturminneIdFromPota(p){
   try{
     const u=new URL(p.website||'');
-    if(u.protocol!=='https:'||!['kulturminnesok.no','www.kulturminnesok.no'].includes(u.hostname))return '';
+    if(!['http:','https:'].includes(u.protocol)||!['kulturminnesok.no','www.kulturminnesok.no'].includes(u.hostname))return '';
     const id=u.searchParams.get('id')||u.pathname.match(/^\/ra\/lokalitet\/(\d+)\/?$/)?.[1]||'';
     return /^\d+$/.test(id)?id:'';
   }catch(e){return ''}
@@ -396,21 +396,25 @@ async function resolveNorwayKulturminne(link,p){
   const id=link.officialId||kulturminneIdFromPota(p);
   if(!/^\d+$/.test(id))throw Error('Denne POTA-parken trenger en bekreftet Kulturminnesøk-ID før registergeometrien kan vises');
   let f,usedCache=false;
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
   try{
-    const response=await fetch('https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/'+encodeURIComponent(id)+'?f=json',{signal:controller.signal});
-    if(!response.ok)throw Error('HTTP '+response.status);
-    f=await response.json();
-  }catch(directError){
-    try{f=await getJSON('data/kulturminner/'+encodeURIComponent(id)+'.geojson');usedCache=true}
-    catch(cacheError){throw Error('Kunne ikke laste kulturminnegeometrien fra Riksantikvaren, og ingen tilgjengelig reservekopi finnes for ID '+id)}
-  }finally{clearTimeout(timer)}
+    f=await getJSON('data/kulturminner/'+encodeURIComponent(id)+'.geojson');
+    usedCache=true;
+  }catch(cacheError){
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+    try{
+      const response=await fetch('https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/'+encodeURIComponent(id)+'?f=json',{signal:controller.signal});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      f=await response.json();
+    }catch(directError){throw Error('Ingen tilgjengelig lagret kulturminnegeometri for ID '+id+', og direkteoppslaget hos Riksantikvaren feilet')}
+    finally{clearTimeout(timer)}
+  }
   const pr=f.properties||{},g=f.geometry;
   if(f.type!=='Feature'||String(pr.kulturminneId||f.id)!==id)throw Error('Riksantikvarens svar matcher ikke den bekreftede kulturminne-ID-en');
   if(!g||!['Polygon','MultiPolygon','Point','MultiPoint','LineString','MultiLineString'].includes(g.type)||!Array.isArray(g.coordinates)||!g.coordinates.length)throw Error('Kulturminnelokaliteten mangler tilgjengelig registergeometri');
   const parts=g.type==='MultiPolygon'?g.coordinates.length:g.type==='Polygon'?1:null;
   let note='Viser Riksantikvarens registrerte kulturminnegeometri'+(parts?' ('+parts+' delområde'+(parts===1?'':'r')+')':'')+'. Avgrensningen dekker ikke nødvendigvis hele POTA-området.';
-  if(usedCache)note+=' Bruker verifisert reservekopi'+(f.cacheMetadata?.verifiedDate?' fra '+f.cacheMetadata.verifiedDate:'')+' fordi direkteoppslaget ikke var tilgjengelig.';
+  if(usedCache)note+=' Viser lagret geometri'+(f.cacheMetadata?.verifiedDate?', verifisert '+f.cacheMetadata.verifiedDate:'')+'.';
+  else note+=' Hentet direkte fra Riksantikvaren; lagret kopi er ennå ikke tilgjengelig.';
   return {source:'norway',sourceLabel:'Riksantikvarens kulturminneregister',name:pr.navn||link.officialName,id,geometry:g,officialType:'Kulturminnelokalitet',geometryNote:note};
 }
 
@@ -1080,7 +1084,7 @@ async function loadPota(){
 }
 async function init(){st.textContent='Laster POTA-referanser for Norge og Sverige…';let x={shown:0,linked:0,unknown:[],unsupported:[],byCountry:{}};try{x=await loadPota()}catch(e){st.innerHTML='POTA-listen kunne ikke lastes: '+esc(e.message);return}
  st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder, statlig sikrede og kartlagte friluftslivsområder verifiseres mot sine egne datasett i Miljødirektoratets Naturbase. Kulturminner med Kulturminnesøk-ID hentes fra Riksantikvaren. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
- document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte: verneområder, statlig sikrede og kartlagte friluftslivsområder i Naturbase. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
+ document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte: verneområder, statlig sikrede og kartlagte friluftslivsområder i Naturbase, samt verifisert kulturminnegeometri fra Riksantikvaren. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
 }
 function toggle(k){document.getElementById(k).addEventListener('change',e=>e.target.checked?layers[k].addTo(map):map.removeLayer(layers[k]));}
 ['np','nr','nvo','kr','hab','bird','pts'].forEach(toggle);

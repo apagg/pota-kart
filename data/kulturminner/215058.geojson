@@ -1,0 +1,153 @@
+{
+  "type": "Feature",
+  "id": "215058",
+  "properties": {
+    "kulturminneId": "215058",
+    "navn": "Trøgstad fort",
+    "sourceFeatureIds": [
+      "lokalitet.89633"
+    ],
+    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/215058"
+  },
+  "geometry": {
+    "type": "MultiPolygon",
+    "coordinates": [
+      [
+        [
+          [
+            11.340775,
+            59.635111
+          ],
+          [
+            11.340341,
+            59.635125
+          ],
+          [
+            11.340055,
+            59.635213
+          ],
+          [
+            11.339599,
+            59.635279
+          ],
+          [
+            11.339237,
+            59.635278
+          ],
+          [
+            11.339011,
+            59.635132
+          ],
+          [
+            11.338971,
+            59.634859
+          ],
+          [
+            11.33878,
+            59.634557
+          ],
+          [
+            11.338847,
+            59.634252
+          ],
+          [
+            11.339628,
+            59.633907
+          ],
+          [
+            11.340234,
+            59.633574
+          ],
+          [
+            11.340663,
+            59.633289
+          ],
+          [
+            11.341024,
+            59.633141
+          ],
+          [
+            11.341568,
+            59.632588
+          ],
+          [
+            11.343117,
+            59.632159
+          ],
+          [
+            11.346113,
+            59.631613
+          ],
+          [
+            11.346832,
+            59.631825
+          ],
+          [
+            11.347224,
+            59.632195
+          ],
+          [
+            11.347349,
+            59.632793
+          ],
+          [
+            11.347408,
+            59.633048
+          ],
+          [
+            11.347486,
+            59.633435
+          ],
+          [
+            11.347387,
+            59.63387
+          ],
+          [
+            11.346843,
+            59.634266
+          ],
+          [
+            11.346328,
+            59.634558
+          ],
+          [
+            11.345591,
+            59.634983
+          ],
+          [
+            11.345122,
+            59.635162
+          ],
+          [
+            11.344138,
+            59.635319
+          ],
+          [
+            11.34376,
+            59.635299
+          ],
+          [
+            11.343043,
+            59.635218
+          ],
+          [
+            11.341818,
+            59.635053
+          ],
+          [
+            11.340775,
+            59.635111
+          ]
+        ]
+      ]
+    ]
+  },
+  "cacheMetadata": {
+    "verifiedDate": "2026-10-05",
+    "sourceUrl": "https://wfs.geonorge.no/skwms1/wfs.kulturminner?service=WFS&version=2.0.0&request=GetFeature&typeNames=app%3ALokalitet&srsName=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A4326&count=1000&startIndex=0&filter=%3Cfes%3AFilter+xmlns%3Afes%3D%22http%3A%2F%2Fwww.opengis.net%2Ffes%2F2.0%22+xmlns%3Aapp%3D%22http%3A%2F%2Fskjema.geonorge.no%2FSOSI%2Fproduktspesifikasjon%2FLokaliteterEnkeltminnerOgSikringssoner%2F20210217%22%3E%3Cfes%3AOr%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AkulturminneId%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3E215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AlinkKulturminnes%C3%B8k%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3Ehttps%3A%2F%2Fkulturminnesok.no%2Fra%2Flokalitet%2F215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3C%2Ffes%3AOr%3E%3C%2Ffes%3AFilter%3E",
+    "sourceUrls": [
+      "https://wfs.geonorge.no/skwms1/wfs.kulturminner?service=WFS&version=2.0.0&request=GetFeature&typeNames=app%3ALokalitet&srsName=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A4326&count=1000&startIndex=0&filter=%3Cfes%3AFilter+xmlns%3Afes%3D%22http%3A%2F%2Fwww.opengis.net%2Ffes%2F2.0%22+xmlns%3Aapp%3D%22http%3A%2F%2Fskjema.geonorge.no%2FSOSI%2Fproduktspesifikasjon%2FLokaliteterEnkeltminnerOgSikringssoner%2F20210217%22%3E%3Cfes%3AOr%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AkulturminneId%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3E215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AlinkKulturminnes%C3%B8k%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3Ehttps%3A%2F%2Fkulturminnesok.no%2Fra%2Flokalitet%2F215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3C%2Ffes%3AOr%3E%3C%2Ffes%3AFilter%3E"
+    ],
+    "service": "wfs"
+  }
+}
