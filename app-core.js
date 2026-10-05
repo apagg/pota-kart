@@ -1033,7 +1033,13 @@ async function showLink(p,openPopup=true,centerOnSearch=false){
 }
 
 function setMultiMode(on){
-  if(on){renderSelectedList();updateOverlaps();return}
+  if(on){
+    if(lastSelectedRef&&!selectedParks.has(lastSelectedRef)&&(selectedMarker||selectedGeo)){
+      const p=pota.find(x=>x.reference===lastSelectedRef);
+      if(p){selectedParks.set(p.reference,{p,link:linkTable[p.reference]||inferLink(p),marker:selectedMarker,geo:selectedGeo});selectedMarker=null;selectedGeo=null;}
+    }
+    renderSelectedList();updateOverlaps();return;
+  }
   if(selectedParks.size){
     const keepRef=lastSelectedRef&&selectedParks.has(lastSelectedRef)?lastSelectedRef:[...selectedParks.keys()].pop();
     const keep=selectedParks.get(keepRef);

@@ -1,4 +1,4 @@
-# POTA Kart 0.9.0
+# POTA Kart 0.10.0
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
 
