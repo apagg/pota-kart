@@ -9,7 +9,7 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('app-core.js?v=kulturminne-1');
+    await load('app-core.js?v=kultur-cache-1');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
