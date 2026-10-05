@@ -264,7 +264,7 @@ function updateSelectionDiagnostics(){
   const vals=[...selectedParks.values()];
   if(!vals.length){el.innerHTML='<b>Valg-/overlappsdiagnostikk</b><br>Velg minst én park for å vise geometriinformasjon.';return}
   let h='<b>Valg-/overlappsdiagnostikk</b><br><span class="small">Parkareal bruker rekonstruert ringtopologi. Stier behandles som en 61 m bred korridor (30,5 m på hver side) ved overlappsberegning.</span>';
-  h+='<div style="margin-top:6px">'+vals.map(x=>{const m=selectedGeometryMeta(x);const id=m.ids.length?m.ids.join(', '):'ikke oppgitt';const typ=m.types.length?m.types.join(', '):'ukjent';const area=m.features.length?`${fmtHa(m.areaHa)} ha`:'ikke polygon';const topo=m.trail?` · Overlappskorridor: <b>${TRAIL_CORRIDOR_WIDTH_M} m</b>`:(m.raw?` · Kilde: ${m.raw.encodedPolygons} kodet polygon, ${m.raw.sourceRings} rå ringer → rekonstruert: ${m.raw.polygons.length} delpolygon${m.raw.polygons.length===1?'':'er'}, ${m.raw.rings} ringer, ${m.raw.holes} hull`:'');const areaLabel=m.trail?'Korridorareal':'Areal';return `<div style="margin:4px 0"><b>${esc(x.p.reference)}</b> – ${esc(x.p.name)}<br>ID/kode: ${esc(id)} · Geometri: ${esc(typ)} · ${areaLabel}: <b>${esc(area)}</b>${topo}</div>`}).join('')+'</div>';
+  h+='<div style="margin-top:6px">'+vals.map(x=>{const m=selectedGeometryMeta(x);const id=m.ids.length?m.ids.join(', '):'ikke oppgitt';const typ=!x.geo?'geometri kunne ikke lastes':m.types.length?m.types.join(', '):'ukjent';const area=!x.geo?'ikke tilgjengelig':m.features.length?`${fmtHa(m.areaHa)} ha`:'ikke polygon';const topo=!x.geo?'':m.trail?` · Overlappskorridor: <b>${TRAIL_CORRIDOR_WIDTH_M} m</b>`:(m.raw?` · Kilde: ${m.raw.encodedPolygons} kodet polygon, ${m.raw.sourceRings} rå ringer → rekonstruert: ${m.raw.polygons.length} delpolygon${m.raw.polygons.length===1?'':'er'}, ${m.raw.rings} ringer, ${m.raw.holes} hull`:'');const areaLabel=m.trail?'Korridorareal':'Areal';return `<div style="margin:4px 0"><b>${esc(x.p.reference)}</b> – ${esc(x.p.name)}<br>ID/kode: ${esc(id)} · Geometri: ${esc(typ)} · ${areaLabel}: <b>${esc(area)}</b>${topo}</div>`}).join('')+'</div>';
   if(vals.length>=2){
     h+='<div style="margin-top:7px"><b>Parvis overlapp</b>';
     for(let i=0;i<vals.length;i++)for(let j=i+1;j<vals.length;j++){const o=pairOverlapInfo(vals[i],vals[j]);const warn=o.invalid?` <span class="warn">⚠ ugyldig: større enn minste park (${fmtHa(o.maxAllowed)} ha)</span>`:'';h+=`<br>${esc(vals[i].p.reference)} × ${esc(vals[j].p.reference)}: <b>${fmtHa(o.areaHa)} ha</b> (${o.parts} overlappspolygon${o.parts===1?'':'er'} fra ${o.pairsHit} treffende delpolygonpar, rekonstruert ringtopologi / 61 m stikorridor ved ruteoverlapp)${warn}`}
@@ -395,12 +395,22 @@ function kulturminneIdFromPota(p){
 async function resolveNorwayKulturminne(link,p){
   const id=link.officialId||kulturminneIdFromPota(p);
   if(!/^\d+$/.test(id))throw Error('Denne POTA-parken trenger en bekreftet Kulturminnesøk-ID før registergeometrien kan vises');
-  const f=await getJSON('https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/'+encodeURIComponent(id)+'?f=json');
+  let f,usedCache=false;
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+  try{
+    const response=await fetch('https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/'+encodeURIComponent(id)+'?f=json',{signal:controller.signal});
+    if(!response.ok)throw Error('HTTP '+response.status);
+    f=await response.json();
+  }catch(directError){
+    try{f=await getJSON('data/kulturminner/'+encodeURIComponent(id)+'.geojson');usedCache=true}
+    catch(cacheError){throw Error('Kunne ikke laste kulturminnegeometrien fra Riksantikvaren, og ingen tilgjengelig reservekopi finnes for ID '+id)}
+  }finally{clearTimeout(timer)}
   const pr=f.properties||{},g=f.geometry;
   if(f.type!=='Feature'||String(pr.kulturminneId||f.id)!==id)throw Error('Riksantikvarens svar matcher ikke den bekreftede kulturminne-ID-en');
   if(!g||!['Polygon','MultiPolygon','Point','MultiPoint','LineString','MultiLineString'].includes(g.type)||!Array.isArray(g.coordinates)||!g.coordinates.length)throw Error('Kulturminnelokaliteten mangler tilgjengelig registergeometri');
   const parts=g.type==='MultiPolygon'?g.coordinates.length:g.type==='Polygon'?1:null;
-  const note='Viser Riksantikvarens registrerte kulturminnegeometri'+(parts?' ('+parts+' delområde'+(parts===1?'':'r')+')':'')+'. Avgrensningen dekker ikke nødvendigvis hele POTA-området.';
+  let note='Viser Riksantikvarens registrerte kulturminnegeometri'+(parts?' ('+parts+' delområde'+(parts===1?'':'r')+')':'')+'. Avgrensningen dekker ikke nødvendigvis hele POTA-området.';
+  if(usedCache)note+=' Bruker verifisert reservekopi'+(f.cacheMetadata?.verifiedDate?' fra '+f.cacheMetadata.verifiedDate:'')+' fordi direkteoppslaget ikke var tilgjengelig.';
   return {source:'norway',sourceLabel:'Riksantikvarens kulturminneregister',name:pr.navn||link.officialName,id,geometry:g,officialType:'Kulturminnelokalitet',geometryNote:note};
 }
 
