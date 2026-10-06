@@ -24,7 +24,31 @@ SE_CONFIRMED_IDS={
  'SE-0026':'2049265', # Åsnen -> Åsnens nationalpark
  'SE-0028':'2001828', # Söderåsen Nationalpark, not landscape protection
  'SE-0030':'2001830', # Stenshuvud Nationalpark, not the nature reserve
- 'SE-0245':'2000583','SE-0266':'2000370','SE-1418':'SE0520187'}
+ 'SE-0245':'2000583','SE-0266':'2000370','SE-1418':'SE0520187',
+ # Distinguish same-name protection areas using confirmed POTA type and position.
+ 'SE-0044':'2000143', # Häringe-Hammersta Nature Reserve
+ 'SE-0075':'2001963', # Äskhult Nature Reserve
+ 'SE-0083':'2052884', # Härskogen Nature Reserve
+ 'SE-0092':'2002023', # Vesslunda Nature Reserve
+ 'SE-0104':'2000038', # Halen Nature Reserve
+ 'SE-0122':'2001391', # Ulriksdal Nature Reserve
+ 'SE-0220':'2002310', # Taberg Nature Reserve
+ 'SE-0278':'2001390', # Bornsjön Nature Reserve
+ 'SE-0280':'2000788', # Hålta Nature Reserve
+ 'SE-0330':'2001231', # Lysegården Nature Reserve
+ 'SE-0334':'2032589', # Marstrand Nature Reserve
+ 'SE-0468':'2000791', # Tofta Nature Reserve
+ 'SE-1023':'2012976', # Tyllinge Nature Reserve
+ 'SE-1235':'2002683', # Arontorp Nature Reserve
+ 'SE-1428':'2000529', # Hullsjön Nature Reserve
+ 'SE-1458':'2001110', # Tyresta Nature Reserve
+ 'SE-1460':'2047798', # Klövberget Nature Reserve
+ 'SE-1733':'2001867', # Herrfallet Nature Reserve
+ 'SE-1801':'2000696', # Norrfällsviken Nature Reserve
+ 'SE-2050':'2000416', # Torpanäset Nature Reserve
+ 'SE-2153':'2005013', # Äskhult National Heritage Area
+ 'SE-2214':'2000413', # Gullbringa Nature Reserve
+}
 
 def norm(v):return re.sub(r'[^a-z0-9]+',' ',''.join(c for c in unicodedata.normalize('NFD',str(v or '').lower().replace('ø','o').replace('æ','ae')) if not unicodedata.combining(c))).strip()
 def request(base,params):

@@ -23,6 +23,13 @@ class GeometryTests(unittest.TestCase):
   p=dict(p,reference='SE-0021',name='Tyresta National Park')
   self.assertEqual(g.se_match(p,{'id:2001214':[right],'name:tyresta':[right,wrong]})['id'],'2001214')
   with self.assertRaises(ValueError):g.se_match(p,{'id:2001110':[wrong],'name:tyresta':[wrong]})
+ def test_confirmed_reserves_ignore_name_conflicts(self):
+  poly={'type':'Polygon','coordinates':[[[11,57],[12,57],[12,58],[11,58],[11,57]]]}
+  right={'type':'Feature','properties':{'NVRID':'2000791','NAMN':'Tofta','SKYDDSTYP':'Naturreservat'},'geometry':poly}
+  wrong=dict(right,properties={'NVRID':'2048337','NAMN':'Tofta','SKYDDSTYP':'Landskapsbildsskyddsområde'})
+  p={'reference':'SE-0468','name':'Tofta Nature Reserve','latitude':57.8556,'longitude':11.697}
+  self.assertEqual(g.se_match(p,{'id:2000791':[right],'name:tofta':[wrong,right]})['id'],'2000791')
+  with self.assertRaises(ValueError):g.se_match(p,{'name:tofta':[wrong],'id:2048337':[wrong]})
  def test_catalogue_requests_confirmed_ids(self):
   from unittest.mock import patch
   with patch.object(g,'request',return_value={'features':[]}) as request:
