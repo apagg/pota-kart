@@ -126,7 +126,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);
  assert.match(await page.locator('#gpsStatus').innerText(),/Innenfor valgt POTA: GPS-FIXTURE/);
  const firstMarker=await page.evaluate(()=>L.stamp(gpsMarker));
- await page.evaluate(()=>map.panBy([80,40],{animate:false}));const panned=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
+ await page.evaluate(()=>{map.panBy([80,40],{animate:false})});const panned=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
  await emitGps(0,60.011,10.011,7);
  assert.equal(await page.evaluate(()=>L.stamp(gpsMarker)),firstMarker,'reuse position marker');assert.equal(await page.evaluate(()=>gpsAccuracy.getRadius()),7);
  assert.deepEqual(await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng})),panned,'GPS updates must preserve manual pan');
