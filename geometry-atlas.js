@@ -113,7 +113,7 @@ async function initializeGeometryAtlas(){
 }
 
 // Only the worker intersects park boundaries. The UI filters and draws its results.
-const atlasOverlapState={epoch:0,timer:null,cache:new WeakMap(),pairs:[],worker:null,uploaded:new Set(),layers:new Map(),lastSignature:null,requests:0,completed:0,busy:false,stats:{}};
+const atlasOverlapState={epoch:0,timer:null,cache:new WeakMap(),pairs:[],worker:null,uploaded:new Set(),layers:new Map(),lastSignature:null,country:null,requests:0,completed:0,busy:false,stats:{}};
 function atlasOverlapPolygons(geometry){
  if(!atlasOverlapState.cache.has(geometry))atlasOverlapState.cache.set(geometry,atlasGeometryPolygons(geometry));
  return atlasOverlapState.cache.get(geometry);
@@ -141,6 +141,7 @@ function atlasOverlapWorker(){
 }
 function scheduleAtlasOverlaps(){
  clearTimeout(atlasOverlapState.timer);
+ if(atlasOverlapState.country!==countryFilter.value){atlasOverlapState.country=countryFilter.value;atlasOverlapState.lastSignature=null}
  // Country changes hide foreign overlays immediately, without intersecting again.
  for(const [key,x] of atlasOverlapState.layers)if(!x.refs.every(atlasInCountry)){overlapLayer.removeLayer(x.layer);atlasOverlapState.layers.delete(key)}
  atlasOverlapState.pairs=atlasOverlapState.pairs.filter(x=>x.refs.every(atlasInCountry));
