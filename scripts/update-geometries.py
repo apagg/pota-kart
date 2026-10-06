@@ -107,6 +107,7 @@ def merge(fs):
  if len(gs)!=len(fs) or not gs:raise ValueError('Missing or invalid geometry')
  if len(gs)==1:return gs[0]
  if all(g['type'] in ('Polygon','MultiPolygon') for g in gs):return dict(type='MultiPolygon',coordinates=[p for g in gs for p in ([g['coordinates']] if g['type']=='Polygon' else g['coordinates'])])
+ if all(g['type'] in ('LineString','MultiLineString') for g in gs):return dict(type='MultiLineString',coordinates=[line for g in gs for line in ([g['coordinates']] if g['type']=='LineString' else g['coordinates'])])
  return dict(type='GeometryCollection',geometries=gs)
 def rdp(a,tol):
  if len(a)<=2:return a

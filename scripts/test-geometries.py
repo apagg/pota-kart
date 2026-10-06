@@ -17,6 +17,10 @@ class GeometryTests(unittest.TestCase):
   ring=[[10,59],[11,59],[11,60],[10,60],[10,59]];hole=[[10.2,59.2],[10.3,59.2],[10.3,59.3],[10.2,59.2]]
   p={'type':'Polygon','coordinates':[ring,hole]};r=g.merge([{'geometry':p},{'geometry':p}])
   self.assertEqual(r['type'],'MultiPolygon');self.assertEqual(len(r['coordinates']),2);self.assertEqual(r['coordinates'][0][1],hole)
+ def test_multisegment_trail(self):
+  a=[[10,59],[10.01,59.01]];b=[[10.02,59.02],[10.03,59.03]]
+  r=g.merge([{'geometry':{'type':'LineString','coordinates':a}},{'geometry':{'type':'MultiLineString','coordinates':[b]}}])
+  self.assertEqual(r,{'type':'MultiLineString','coordinates':[a,b]})
  def test_invalid_coordinates(self):
   self.assertFalse(g.valid({'type':'Point','coordinates':[200,59]}))
   self.assertFalse(g.valid({'type':'Point','coordinates':[10,float('nan')]}))

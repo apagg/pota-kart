@@ -177,6 +177,7 @@ function lineFeaturesFromLayer(layer){
     if(!o)return;
     if(o.type==='FeatureCollection'){for(const f of o.features||[])walk(f);return;}
     if(o.type==='Feature'){walk(o.geometry);return;}
+    if(o.type==='GeometryCollection'){for(const g of o.geometries||[])walk(g);return;}
     if(o.type==='LineString'&&Array.isArray(o.coordinates)&&o.coordinates.length>1){out.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:o.coordinates}});return;}
     if(o.type==='MultiLineString'){for(const c of o.coordinates||[])if(c&&c.length>1)out.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:c}});}
   }
@@ -1053,7 +1054,7 @@ async function showParkLink(p,openPopup=true,centerOnSearch=false){
   openParkInfo(p,link,(openPopup&&Number.isFinite(lat)&&Number.isFinite(lon))?L.latLng(lat,lon):null);
   const result=await focusOfficialGeometry(link,p);
   if(result&&selectedGeo&&selectedMarker){map.removeLayer(selectedMarker);selectedMarker=null}
-  if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:'#b45309',fillColor:'#d97706',fillOpacity:.95}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',()=>openParkInfo(p,link,L.latLng(lat,lon)));}
+  if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:'#b45309',fillColor:'#d97706',fillOpacity:.95}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,L.latLng(lat,lon))});}
   if(selectedGeo)bindSelectedGeometry(selectedGeo,p,link);
   if(multi){
     selectedParks.set(p.reference,{p,link,marker:selectedMarker,geo:selectedGeo});
@@ -1117,7 +1118,7 @@ async function loadPota(){
  for(const p of pota){const lat=+p.latitude,lon=+p.longitude;if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;shown++;const cc=countryOf(p);byCountry[cc]=(byCountry[cc]||0)+1;const link=linkTable[p.reference];if(link&&link.layer)linked++;else if(link&&link.recognized)unsupported.push({reference:p.reference,name:p.name,type:link.type});else unknown.push({reference:p.reference,name:p.name});
    const marker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(false)}):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:1,color:'#e67e22',fillColor:'#f39c12',fillOpacity:.8});
    bindParkHover(marker,p,link);
-   marker.on('click',()=>showLink(p,true,false));
+   marker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);showLink(p,true,false)});
    marker.bindPopup(()=>`<b>${esc(p.reference)}</b><br>${esc(p.name)}<br><b>Valgt POTA-park:</b> ${esc(link?.officialName||'ukjent')}<br><b>Type:</b> ${esc(link?.type||'ukjent')}<br><a target="_blank" href="https://pota.app/#/park/${encodeURIComponent(p.reference)}">Åpne i POTA</a>`);
    layers.pts.addLayer(marker);potaMarkers.push({marker,country:cc,reference:p.reference});
  }
