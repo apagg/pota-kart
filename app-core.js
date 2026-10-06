@@ -293,13 +293,14 @@ function updateSelectionDiagnostics(){
 }
 
 function openParkInfo(p,link,latlng=null){
+  const potaLink=`<a href="https://pota.app/#/park/${encodeURIComponent(p.reference)}" target="_blank" rel="noopener noreferrer">Åpne parken på pota.app</a>`;
   const quality=link.confidence==='bekreftet overstyring'?'bekreftet':'automatisk';
   document.dispatchEvent(new CustomEvent('pota:park',{detail:{p,link}}));
   linkbox.style.display='block';
   const sourceNote='Områdegeometrien er lagret fra den offisielle kilden. Oversiktskartet bruker forenklede grenser; detaljene lastes når du zoomer inn. Kulturminnegeometri dekker ikke nødvendigvis hele POTA-området.';
-  linkbox.innerHTML=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br>Valgt POTA-park: <b>${esc(link.officialName)}</b> <span class="badge">${esc(link.type)}</span><br><span class="small">Matchmetode: ${esc(link.confidence)}. ${sourceNote}</span>`;
+  linkbox.innerHTML=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br>Valgt POTA-park: <b>${esc(link.officialName)}</b> <span class="badge">${esc(link.type)}</span><br><span class="small">Matchmetode: ${esc(link.confidence)}. ${sourceNote}</span><br>${potaLink}`;
   if(latlng&&!matchMedia('(max-width:700px)').matches){
-    L.popup({autoPan:false}).setLatLng(latlng).setContent(`<b>${esc(p.reference)}</b><br>${esc(p.name)}<hr style="border:0;border-top:1px solid #ddd"><b>Valgt POTA-park:</b> ${esc(link.officialName)}<br><b>Type:</b> ${esc(link.type)}<br><span class="small">${quality==='bekreftet'?'Denne koblingen er eksplisitt lagt inn.':'Denne koblingen er laget fra POTA-navn/type og kontrolleres mot registerdata når geometrien hentes.'}</span>`).openOn(map);
+    L.popup({autoPan:false}).setLatLng(latlng).setContent(`<b>${esc(p.reference)}</b><br>${esc(p.name)}<hr style="border:0;border-top:1px solid #ddd"><b>Valgt POTA-park:</b> ${esc(link.officialName)}<br><b>Type:</b> ${esc(link.type)}<br><span class="small">${quality==='bekreftet'?'Denne koblingen er eksplisitt lagt inn.':'Denne koblingen er laget fra POTA-navn/type og kontrolleres mot registerdata når geometrien hentes.'}</span><br>${potaLink}`).openOn(map);
   }
 }
 function reopenSelectedPark(ref,latlng=null){
@@ -308,6 +309,7 @@ function reopenSelectedPark(ref,latlng=null){
 }
 function bindSelectedGeometry(layer,p,link){
   if(!layer||!layer.on)return;
+  bindParkGeometryHover(layer,p);
   layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,p.reference)});
 }
 function openOverlapChooser(refs,latlng){
@@ -328,6 +330,7 @@ function updateOverlaps(){
     if(!o.geometry||o.invalid)continue;
     const refs=[parks[i].p.reference,parks[j].p.reference];
     const lyr=L.geoJSON(o.geometry,{pane:'overlapPane',interactive:true,style:{color:'#7e22ce',weight:2,fillColor:'#a855f7',fillOpacity:.48}}).addTo(overlapLayer);
+    lyr.bindTooltip([parks[i].p,parks[j].p].map(p=>`<b>${esc(p.reference)}</b><br>${esc(p.name)}`).join('<hr>'),{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});
     lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});
   }
 }
@@ -1027,18 +1030,19 @@ async function focusOfficialGeometry(link,p){
 function isTrailLink(link){return !!(link&&(link.layer==='trail'||link.layer==='notrail'||link.type==='State Trail'||link.type==='National Recreation Trail'))}
 function makeTrailIcon(selected=false){const svg=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;return L.divIcon({className:'',html:`<div class="trail-pota-icon${selected?' selected':''}" aria-label="Tursti">${svg}</div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-11]})}
 function bindParkHover(marker,p,link){if(!marker)return marker;marker.bindTooltip(`<b>${esc(p.reference)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',direction:'top',offset:[0,-7],opacity:.96,className:'pota-hover-tooltip',sticky:false});return marker}
+function bindParkGeometryHover(layer,p){if(!layer)return layer;layer.bindTooltip(`<b>${esc(p.reference)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});return layer}
 let parkSelectionQueue=Promise.resolve();
-function showLink(p,openPopup=true,centerOnSearch=false){
- const task=parkSelectionQueue.then(()=>showParkLink(p,openPopup,centerOnSearch));
+function showLink(p,openPopup=true,centerOnSearch=false,popupLatLng=null){
+ const task=parkSelectionQueue.then(()=>showParkLink(p,openPopup,centerOnSearch,popupLatLng));
  parkSelectionQueue=task.catch(e=>console.error(e));return task;
 }
-async function showParkLink(p,openPopup=true,centerOnSearch=false){
+async function showParkLink(p,openPopup=true,centerOnSearch=false,popupLatLng=null){
   const multi=multiMode.checked;
   if(multi&&selectedParks.has(p.reference)){
     lastSelectedRef=p.reference;
     const existing=selectedParks.get(p.reference);
     if(centerOnSearch)map.setView(existing.marker?.getLatLng()||[+p.latitude,+p.longitude],Math.max(11,map.getZoom()));
-    openParkInfo(existing.p,existing.link,openPopup?(existing.marker?.getLatLng()||null):null);
+    openParkInfo(existing.p,existing.link,openPopup?(popupLatLng||existing.marker?.getLatLng()||L.latLng(+p.latitude,+p.longitude)):null);
     renderSelectedList();return;
   }
   if(!multi){clearSelectedParks();clearSelection()}
@@ -1051,7 +1055,7 @@ async function showParkLink(p,openPopup=true,centerOnSearch=false){
     bindParkHover(selectedMarker,p,link);
     selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,e.latlng||selectedMarker.getLatLng())});
   }
-  openParkInfo(p,link,(openPopup&&Number.isFinite(lat)&&Number.isFinite(lon))?L.latLng(lat,lon):null);
+  openParkInfo(p,link,openPopup?(popupLatLng||(Number.isFinite(lat)&&Number.isFinite(lon)?L.latLng(lat,lon):null)):null);
   const result=await focusOfficialGeometry(link,p);
   if(result&&selectedGeo&&selectedMarker){map.removeLayer(selectedMarker);selectedMarker=null}
   if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:'#b45309',fillColor:'#d97706',fillOpacity:.95}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,L.latLng(lat,lon))});}

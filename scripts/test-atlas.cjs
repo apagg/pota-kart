@@ -9,7 +9,21 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Selecting Enhusvidda');await page.fill('#q','NO-3198');await page.click('#search');await page.waitForFunction(()=>selectedParks.has('NO-3198'),null,{timeout:60000});
  assert.equal(await page.evaluate(()=>selectedParks.get('NO-3198').marker),null);assert.equal(await page.evaluate(()=>!!selectedParks.get('NO-3198').geo),true);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.reference==='NO-3198'&&layers.pts.hasLayer(x.marker)).length),0);
- await page.waitForTimeout(2000);await page.screenshot({path:'atlas-desktop.png'});
+ console.log('Geometry mouseover and repeated click');
+ const selectedId=await page.evaluate(()=>L.stamp(selectedParks.get('NO-3198').geo));
+ const hover=await page.evaluate(()=>{const g=selectedParks.get('NO-3198').geo;const c=turf.pointOnFeature(g.toGeoJSON()).geometry.coordinates;map.setView([c[1],c[0]],15);return c});
+ await page.waitForTimeout(1500);
+ const screen=await page.evaluate(c=>{const p=map.latLngToContainerPoint([c[1],c[0]]),r=map.getContainer().getBoundingClientRect();return {x:r.left+p.x,y:r.top+p.y}},hover);
+ await page.mouse.move(screen.x,screen.y);
+ await page.locator('.leaflet-tooltip').filter({hasText:'NO-3198'}).waitFor({state:'visible'});
+ for(let i=0;i<2;i++){
+  await page.evaluate(()=>map.closePopup());await page.mouse.click(screen.x,screen.y);
+  const choice=page.locator('.leaflet-popup button').filter({hasText:'NO-3198'});if(await choice.count())await choice.click();
+  const link=page.locator('.leaflet-popup a[href="https://pota.app/#/park/NO-3198"]');await link.waitFor({state:'visible'});assert.equal(await link.getAttribute('target'),'_blank');assert.match(await link.getAttribute('rel'),/noopener/);
+  assert.equal(await page.evaluate(()=>L.stamp(selectedParks.get('NO-3198').geo)),selectedId);
+ }
+ await page.screenshot({path:'atlas-desktop.png'});
+
  await page.selectOption('#countryFilter','SE');await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>map.hasLayer(selectedParks.get('NO-3198').geo)),false);
  await page.selectOption('#countryFilter','NO');await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>map.hasLayer(selectedParks.get('NO-3198').geo)),true);
  // Shared source geometry must offer every POTA park, including unselected parks.
@@ -27,6 +41,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.click('#clearSelected');assert.equal(await page.evaluate(()=>selectedParks.size),0);assert(await page.evaluate(()=>geometryAtlas.layers.get('NO-2542')&&map.hasLayer(geometryAtlas.layers.get('NO-2542'))));
  const missing=await page.evaluate(()=>pota.find(p=>countryOf(p)==='NO'&&!atlasHasGeometry(p.reference)).reference);
  await page.fill('#q',missing);await page.click('#search');await page.waitForFunction(ref=>selectedParks.has(ref),missing);assert.equal(await page.evaluate(ref=>!!selectedParks.get(ref).marker,missing),true);assert.equal(await page.evaluate(ref=>selectedParks.get(ref).geo,missing),null);
+ const reserveLink=page.locator('#linkbox a');assert.equal(await reserveLink.getAttribute('href'),'https://pota.app/#/park/'+missing);
  console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/0\.11\.0 test/);
  await page.getByRole('button',{name:'Innstillinger',exact:true}).click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.getByRole('button',{name:'Kart',exact:true}).click();await page.screenshot({path:'atlas-mobile.png'});
