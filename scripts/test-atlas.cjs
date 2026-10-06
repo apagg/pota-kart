@@ -13,6 +13,16 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
  console.log('Country filter');await page.selectOption('#countryFilter','NO');await page.waitForTimeout(800);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.country==='SE'&&layers.pts.hasLayer(x.marker)).length),0);
+ console.log('Automatic overlap without selection');
+ const automaticPair=await page.evaluate(()=>{
+  const groups=new Map();for(const [ref,meta] of Object.entries(geometryAtlas.indexes.NO.parks)){const key=meta.source+':'+meta.id;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(ref)}
+  const pair=[...groups.values()].find(refs=>refs.length>1);if(!pair)throw Error('No shared geometry fixture');
+  map.fitBounds(geometryAtlas.layers.get(pair[0]).getBounds(),{maxZoom:11});return pair.slice(0,2);
+ });
+ await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
+ assert.equal(await page.evaluate(()=>selectedParks.size),0);assert(await page.evaluate(()=>overlapLayer.getLayers().length)>0);
+ await page.selectOption('#countryFilter','SE');await page.waitForFunction(()=>atlasOverlapState.pairs.every(p=>p.refs.every(ref=>ref.startsWith('SE-'))));
+ await page.selectOption('#countryFilter','NO');await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
  console.log('Selecting Enhusvidda');await page.fill('#q','NO-3198');await page.click('#search');await page.waitForFunction(()=>selectedParks.has('NO-3198'),null,{timeout:60000});
  assert.equal(await page.evaluate(()=>selectedParks.get('NO-3198').marker),null);assert.equal(await page.evaluate(()=>!!selectedParks.get('NO-3198').geo),true);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.reference==='NO-3198'&&layers.pts.hasLayer(x.marker)).length),0);

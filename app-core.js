@@ -345,18 +345,7 @@ function openOverlapChooser(refs,latlng){
   L.popup({autoPan:false}).setLatLng(latlng).setContent(box).openOn(map);
 }
 function updateOverlaps(){
-  overlapLayer.clearLayers();
-  updateSelectionDiagnostics();
-  if(!multiMode.checked||selectedParks.size<2||typeof polygonClipping==='undefined')return;
-  const parks=[...selectedParks.values()].filter(x=>atlasInCountry(x.p.reference)&&overlapPolygonsForSelected(x).length);
-  for(let i=0;i<parks.length;i++)for(let j=i+1;j<parks.length;j++){
-    const o=pairOverlapInfo(parks[i],parks[j]);
-    if(!o.geometry||o.invalid)continue;
-    const refs=[parks[i].p.reference,parks[j].p.reference];
-    const lyr=L.geoJSON(o.geometry,{pane:'overlapPane',interactive:true,style:{color:'#7e22ce',weight:2,fillColor:'#a855f7',fillOpacity:.48}}).addTo(overlapLayer);
-    lyr.bindTooltip([parks[i].p,parks[j].p].map(p=>`<b>${esc(p.reference)}</b><br>${esc(p.name)}`).join('<hr>'),{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});
-    lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});
-  }
+  updateSelectionDiagnostics();scheduleAtlasOverlaps();
 }
 const NVREST='https://geodata.naturvardsverket.se/naturvardsregistret/rest/v3';
 const N2REST='https://geodata.naturvardsverket.se/n2000/rest/v3';
