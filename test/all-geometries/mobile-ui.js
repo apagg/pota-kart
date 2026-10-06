@@ -107,7 +107,6 @@
     $('mobileNotice').hidden=!show;$('mobileNotice').textContent=show?text:'';
     update();
   }).observe($('status'),{childList:true,subtree:true});
-  new MutationObserver(()=>{if(enabled){$('mobileNotice').hidden=false;$('mobileNotice').textContent=$('gpsStatus').textContent;$('mobileLocate').disabled=$('locateBtn').disabled;}}).observe($('gpsStatus'),{childList:true,subtree:true});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();openView('park',false);}});
   map.on('popupopen',()=>{if(enabled)map.closePopup();});
   mq.addEventListener('change',activate);activate();
