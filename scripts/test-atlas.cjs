@@ -11,6 +11,12 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Opening test map');await page.goto('http://127.0.0.1:8765');await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Kartet viser'),null,{timeout:120000});
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
+ console.log('Restored Swedish national parks');
+ const restored={'SE-0006':'2001223','SE-0011':'2000934','SE-0016':'2014914','SE-0021':'2001214','SE-0026':'2049265','SE-0028':'2001828','SE-0030':'2001830'};
+ for(const [ref,id] of Object.entries(restored)){
+  const info=await page.evaluate(async ref=>{const meta=atlasMeta(ref),record=await atlasRecord(ref);return {id:String(record?.id),type:record?.officialType,visible:map.hasLayer(geometryAtlas.layers.get(ref)),hasGeometry:atlasHasGeometry(ref),marker:potaMarkers.some(x=>x.reference===ref&&layers.pts.hasLayer(x.marker))}},ref);
+  assert.equal(info.id,id,ref);assert.equal(info.type,'Nationalpark',ref);assert(info.visible&&info.hasGeometry,ref);assert.equal(info.marker,false,ref);
+ }
  console.log('SE-2071 separate exterior rings');
  const ramsvik=await page.evaluate(async()=>{
   const record=await atlasRecord('SE-2071'),polygons=atlasOverlapPolygons(record.geometry);

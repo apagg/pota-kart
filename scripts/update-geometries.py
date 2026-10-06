@@ -14,6 +14,18 @@ SOURCES={
  'FS':('https://kart.miljodirektoratet.no/arcgis/rest/services/friluftsliv_statlig_sikra/MapServer/0/query','friluftId','omraadeNavn',None,'Miljødirektoratets Naturbase – statlig sikrede friluftslivsområder'),
  'FK':('https://kart.miljodirektoratet.no/arcgis/rest/services/friluftsliv_kartlagt/MapServer/0/query','kartlagt_foid','omraadenavn',None,'Miljødirektoratets Naturbase – kartlagte friluftslivsområder')}
 DATE=datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+# Confirmed against current Naturvårdsverket IDs, park names/types and POTA positions.
+# Some national parks share their name with a separate nature reserve.
+SE_CONFIRMED_IDS={
+ 'SE-0006':'2001223', # Muddus/Muottos -> Muddus/Muttos
+ 'SE-0011':'2000934', # Sonfjället -> Sånfjället
+ 'SE-0016':'2014914', # Kosterhavet -> Kosterhavets nationalpark
+ 'SE-0021':'2001214', # Tyresta Nationalpark, not the adjacent nature reserve
+ 'SE-0026':'2049265', # Åsnen -> Åsnens nationalpark
+ 'SE-0028':'2001828', # Söderåsen Nationalpark, not landscape protection
+ 'SE-0030':'2001830', # Stenshuvud Nationalpark, not the nature reserve
+ 'SE-0245':'2000583','SE-0266':'2000370','SE-1418':'SE0520187'}
+
 def norm(v):return re.sub(r'[^a-z0-9]+',' ',''.join(c for c in unicodedata.normalize('NFD',str(v or '').lower().replace('ø','o').replace('æ','ae')) if not unicodedata.combining(c))).strip()
 def request(base,params):
  url=base+'?'+urllib.parse.urlencode(params);CACHE.mkdir(exist_ok=True);f=CACHE/(hashlib.sha256(url.encode()).hexdigest()+'.json')
@@ -58,7 +70,7 @@ def se_catalog(kind,parks):
   # This endpoint truncates unfiltered results and does not reliably page them.
   # Bounded exact-name/ID filters avoid its pagination altogether.
   names=sorted({se_official_name(p) for p in parks if 'natura 2000' not in p['name'].lower()})
-  clauses=[('NAMN',name) for name in names]+[('NVRID','2000583'),('NVRID','2000370'),('NAMN','Tanumskusten'),('NAMN','Gökstenen')]
+  clauses=[('NAMN',name) for name in names]+[('NVRID',sid) for sid in sorted(set(SE_CONFIRMED_IDS.values())) if sid.isdigit()]+[('NAMN','Tanumskusten'),('NAMN','Gökstenen')]
   def batch(values):
    parts=['<fes:PropertyIsEqualTo matchCase="false"><fes:ValueReference>'+field+'</fes:ValueReference><fes:Literal>'+escape(value)+'</fes:Literal></fes:PropertyIsEqualTo>' for field,value in values]
    f='<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">'+('<fes:Or>'+''.join(parts)+'</fes:Or>' if len(parts)>1 else parts[0])+'</fes:Filter>'
@@ -136,8 +148,7 @@ def se_match(p,catalogue):
  url=urllib.parse.unquote(p.get('website') or '')
  ids=re.findall(r'(?:NVRID[=/]|nvrid[=/]|omrade/)(\d{6,})|\b(SE\d{7})\b',url,re.I)
  confirmed={v.upper() for pair in ids for v in pair if v}
- override={'SE-0245':'2000583','SE-0266':'2000370','SE-1418':'SE0520187'}
- if p['reference'] in override:confirmed={override[p['reference']]}
+ if p['reference'] in SE_CONFIRMED_IDS:confirmed={SE_CONFIRMED_IDS[p['reference']]}
  pool=[]
  for key in (['id:'+v for v in confirmed] if confirmed else ['name:'+want]):pool.extend(catalogue.get(key,[]))
  for f in pool:

@@ -13,6 +13,23 @@ class GeometryTests(unittest.TestCase):
   with self.assertRaises(ValueError):g.se_match(p,{'name:test':[f,dict(f,properties={'NVRID':'2','NAMN':'Test'})]})
   with self.assertRaises(ValueError):g.se_match(dict(p,name='Testing Nature Reserve'),{'name:test':[f]})
   with self.assertRaises(ValueError):g.se_match(dict(p,longitude=20),{'name:test':[f]})
+ def test_confirmed_nationalparks(self):
+  poly={'type':'Polygon','coordinates':[[[10,58],[12,58],[12,60],[10,60],[10,58]]]}
+  park={'type':'Feature','properties':{'NVRID':'2014914','NAMN':'Kosterhavets nationalpark','SKYDDSTYP':'Nationalpark'},'geometry':poly}
+  p={'reference':'SE-0016','name':'Kosterhavet National Park','latitude':58.8803,'longitude':11.0329}
+  self.assertEqual(g.se_match(p,{'id:2014914':[park]})['id'],'2014914')
+  wrong=dict(park,properties={'NVRID':'2001110','NAMN':'Tyresta','SKYDDSTYP':'Naturreservat'})
+  right=dict(park,properties={'NVRID':'2001214','NAMN':'Tyresta','SKYDDSTYP':'Nationalpark'})
+  p=dict(p,reference='SE-0021',name='Tyresta National Park')
+  self.assertEqual(g.se_match(p,{'id:2001214':[right],'name:tyresta':[right,wrong]})['id'],'2001214')
+  with self.assertRaises(ValueError):g.se_match(p,{'id:2001110':[wrong],'name:tyresta':[wrong]})
+ def test_catalogue_requests_confirmed_ids(self):
+  from unittest.mock import patch
+  with patch.object(g,'request',return_value={'features':[]}) as request:
+   g.se_catalog('national',[{'name':'Kosterhavet National Park'}])
+   filters=''.join(call.args[1]['filter'] for call in request.call_args_list)
+   for ref in ['SE-0006','SE-0011','SE-0016','SE-0021','SE-0026','SE-0028','SE-0030']:
+    self.assertIn('<fes:Literal>'+g.SE_CONFIRMED_IDS[ref]+'</fes:Literal>',filters)
  def test_holes_and_parts(self):
   ring=[[10,59],[11,59],[11,60],[10,60],[10,59]];hole=[[10.2,59.2],[10.3,59.2],[10.3,59.3],[10.2,59.2]]
   p={'type':'Polygon','coordinates':[ring,hole]};r=g.merge([{'geometry':p},{'geometry':p}])
