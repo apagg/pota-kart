@@ -39,6 +39,18 @@ jobs:
           node --check app-core.js
           node --check geometry-atlas.js
           node --check mobile-ui.js
+      - name: Save verified geometry on the feature branch
+        working-directory: candidate
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/geometries
+          git diff --cached --quiet || git commit -m 'Refresh verified geometry for geometry test map'
+          git push origin HEAD:feature/all-park-geometries
+      - uses: actions/cache/save@v4
+        with:
+          path: candidate/.geometry-source-cache
+          key: geometry-sources-${{ github.run_id }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -61,14 +73,6 @@ jobs:
         with:
           name: geometry-browser-checks
           path: candidate/atlas-*.png
-      - name: Save verified geometry on the feature branch
-        working-directory: candidate
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/geometries
-          git diff --cached --quiet || git commit -m 'Refresh verified geometry for geometry test map'
-          git push origin HEAD:feature/all-park-geometries
       - uses: actions/checkout@v4
         with:
           ref: main

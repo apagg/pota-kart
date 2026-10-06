@@ -5,6 +5,7 @@ Failed updates retain the last verified copy. No runtime source requests are nee
 """
 import argparse, concurrent.futures, datetime, hashlib, json, math, re, time, unicodedata
 import urllib.request, urllib.parse, xml.etree.ElementTree as ET
+from xml.sax.saxutils import escape
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CACHE=ROOT/'.geometry-source-cache'
@@ -47,9 +48,34 @@ def get_no(prefix,ids):
     pr=f['properties'];k=pr[field];out.setdefault(k,[]).append(f)
  print(prefix,len(out),'source IDs',flush=True);return out
 
-def se_catalog(kind):
+def se_official_name(p):
+ return re.sub(r'\s+(National Park|Nature Reserve|Natural Reserve|Protected Landscape|National Heritage Area|Natura 2000.*|National Reserve|Conservation Reserve|Nature Park|Park Reserve|Natural Monument|Wilderness Area|Nature Refuge|Landscape Area)$','',p['name'],flags=re.I)
+
+def se_catalog(kind,parks):
  base='https://geodata.naturvardsverket.se/'+('n2000' if kind=='n2000' else 'naturvardsregistret')+'/wfs'
  typ='N2000_WFS:N2000' if kind=='n2000' else 'Naturvardsregistret_WFS:SkyddadeOmraden'
+ if kind=='national':
+  # This endpoint truncates unfiltered results and does not reliably page them.
+  # Bounded exact-name/ID filters avoid its pagination altogether.
+  names=sorted({se_official_name(p) for p in parks if 'natura 2000' not in p['name'].lower()})
+  clauses=[('NAMN',name) for name in names]+[('NVRID','2000583'),('NVRID','2000370'),('NAMN','Tanumskusten'),('NAMN','Gökstenen')]
+  def batch(values):
+   parts=['<fes:PropertyIsEqualTo matchCase="false"><fes:ValueReference>'+field+'</fes:ValueReference><fes:Literal>'+escape(value)+'</fes:Literal></fes:PropertyIsEqualTo>' for field,value in values]
+   f='<fes:Filter xmlns:fes="http://www.opengis.net/fes/2.0">'+('<fes:Or>'+''.join(parts)+'</fes:Or>' if len(parts)>1 else parts[0])+'</fes:Filter>'
+   d=request(base,dict(service='WFS',version='2.0.0',request='GetFeature',typeNames=typ,outputFormat='GEOJSON',srsName='EPSG:4326',count=500,filter=f))
+   fs=d.get('features',[])
+   if len(fs)>=500:
+    if len(values)==1:raise ValueError('Single name exceeded the source feature limit')
+    mid=len(values)//2;return batch(values[:mid])+batch(values[mid:])
+   return fs
+  out={}
+  groups=[clauses[i:i+20] for i in range(0,len(clauses),20)]
+  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+   for fs in pool.map(batch,groups):
+    for feature in fs:
+     key=feature.get('properties',{}).get('GmlID') or json.dumps(feature)
+     out[key]=feature
+  print(kind,len(out),'filtered source features',flush=True);return list(out.values())
  out=[];start=0
  while True:
   d=request(base,dict(service='WFS',version='2.0.0',request='GetFeature',typeNames=typ,outputFormat='GEOJSON',srsName='EPSG:4326',count=500,startIndex=start))
@@ -104,7 +130,7 @@ def simplify(g):
  return g
 
 def se_match(p,catalogue):
- name=re.sub(r'\s+(National Park|Nature Reserve|Natural Reserve|Protected Landscape|National Heritage Area|Natura 2000.*|National Reserve|Conservation Reserve|Nature Park|Park Reserve|Natural Monument|Wilderness Area|Nature Refuge|Landscape Area)$','',p['name'],flags=re.I)
+ name=se_official_name(p)
  want=norm(name);candidates=[]
  url=urllib.parse.unquote(p.get('website') or '')
  ids=re.findall(r'(?:NVRID[=/]|nvrid[=/]|omrade/)(\d{6,})|\b(SE\d{7})\b',url,re.I)
@@ -160,7 +186,7 @@ def main():
   else:
    for kind in ['national','n2000']:
     try:
-     rows=se_catalog(kind);catalogs[kind]={}
+     rows=se_catalog(kind,parks);catalogs[kind]={}
      for f in rows:
       pr=f.get('properties') or {}
       if pr.get('BESLUTSSTATUS') not in (None,'Gällande'):continue
