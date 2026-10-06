@@ -71,6 +71,12 @@
   $('mobileSearchClose').onclick=closeSearch;
   $('mobileLayers').onclick=()=>{openView('settings');$('baseMapSelect').focus();};
   $('mobileLocate').onclick=()=>{$('locateBtn').click();};
+  function syncMobileGps(){
+    const active=$('locateBtn').getAttribute('aria-pressed')==='true',button=$('mobileLocate');
+    button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',active?'Stopp GPS':'Min posisjon');
+    button.title=active?'Stopp GPS':'Min posisjon';button.disabled=false;
+  }
+  document.addEventListener('pota:gps',syncMobileGps);syncMobileGps();
   $('mobileMapTab').onclick=()=>openView('park',false);
   $('mobileSelectedTab').onclick=()=>openView('selected');
   $('mobileSettingsTab').onclick=()=>openView('settings');
