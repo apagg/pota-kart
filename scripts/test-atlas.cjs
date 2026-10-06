@@ -123,7 +123,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await gpsButton.click();assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.equal(await gpsButton.getAttribute('aria-label'),'Stopp GPS');assert.equal(await gpsButton.isEnabled(),true);
  const emitGps=(id,latitude,longitude,accuracy)=>page.evaluate(({id,latitude,longitude,accuracy})=>testGps.watches.get(id).success({coords:{latitude,longitude,accuracy}}),{id,latitude,longitude,accuracy});
  await emitGps(0,60.01,10.01,12);
- await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);
+ await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  assert.match(await page.locator('#gpsStatus').innerText(),/Innenfor valgt POTA: GPS-FIXTURE/);
  const firstMarker=await page.evaluate(()=>L.stamp(gpsMarker));
  await page.evaluate(()=>{map.panBy([80,40],{animate:false})});const panned=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
@@ -132,15 +132,15 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.deepEqual(await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng})),panned,'GPS updates must preserve manual pan');
  await emitGps(0,60.05,10.05,20);assert.match(await page.locator('#gpsStatus').innerText(),/Ikke innenfor/);
  assert.deepEqual(await page.evaluate(()=>({lat:gpsMarker.getLatLng().lat,lng:gpsMarker.getLatLng().lng})),{lat:60.05,lng:10.05});
- await page.evaluate(()=>testGps.watches.get(0).error({code:3,message:'Timed out'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.match(await page.locator('#mobileNotice').innerText(),/Oppfølgingen fortsetter/);
+ await page.evaluate(()=>testGps.watches.get(0).error({code:3,message:'Timed out'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.match(await page.locator('#gpsStatus').innerText(),/Oppfølgingen fortsetter/);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  await emitGps(0,60.01,10.01,5);assert.match(await page.locator('#gpsStatus').innerText(),/GPS-FIXTURE/);
  await gpsButton.click();assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0]);
  await emitGps(0,61,11,5);assert.equal(await page.evaluate(()=>gpsMarker),null);assert.match(await page.locator('#gpsStatus').innerText(),/slått av/);
  // Starting again recenters only once and ignores callbacks from the old watch.
  await gpsButton.click();await emitGps(0,62,12,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
- await emitGps(1,60.01,10.01,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);
+ await emitGps(1,60.01,10.01,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  await page.evaluate(()=>{selectedParks.delete('GPS-FIXTURE');document.dispatchEvent(new CustomEvent('pota:selection'))});assert.match(await page.locator('#gpsStatus').innerText(),/Ikke innenfor/);
- await page.evaluate(()=>testGps.watches.get(1).error({code:1,message:'Denied'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.match(await page.locator('#mobileNotice').innerText(),/Posisjonstilgang er avslått/);
+ await page.evaluate(()=>testGps.watches.get(1).error({code:1,message:'Denied'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.match(await page.locator('#gpsStatus').innerText(),/Posisjonstilgang er avslått/);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0,1]);assert.equal(await page.evaluate(()=>testGps.oneShotCalls),0);
  // A pending first fix can also be cancelled immediately.
  await gpsButton.click();await gpsButton.click();await emitGps(2,63,13,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
