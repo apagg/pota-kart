@@ -6,7 +6,7 @@
   const icons={search:'<circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/>',layers:'<path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/>',locate:'<path d="m21 3-6 18-4-8-8-4 18-6Z"/>',map:'<path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5ZM9 3v16M15 5v16"/>',settings:'<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1 1-3Z"/>',chevron:'<path d="m6 14 6-6 6 6"/>'};
   const svg=name=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]}</svg>`;
   const root=document.createElement('div');root.className='mobile-chrome';root.innerHTML=`
-    <div class="mobile-brand">POTA Kart <span>0.10.0</span></div>
+    <div class="mobile-brand">POTA Kart <span>${esc(content.querySelector('.version')?.textContent||'0.11.0 test')}</span></div>
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false">${svg('search')}</button>
       <button id="mobileLayers" aria-label="Velg karttype">${svg('layers')}</button>
