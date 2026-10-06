@@ -10,6 +10,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  });
  console.log('Opening test map');await page.goto('http://127.0.0.1:8765');await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Kartet viser'),null,{timeout:120000});
+ await page.evaluate(()=>{window.overlapHeartbeats=0;window.overlapHeartbeatTimer=setInterval(()=>window.overlapHeartbeats++,10)});
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
  console.log('Restored Swedish national parks');
  const restored={'SE-0006':'2001223','SE-0011':'2000934','SE-0016':'2014914','SE-0021':'2001214','SE-0026':'2049265','SE-0028':'2001828','SE-0030':'2001830'};
@@ -43,6 +44,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  });
  await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
  assert.equal(await page.evaluate(()=>selectedParks.size),0);assert(await page.evaluate(()=>overlapLayer.getLayers().length)>0);
+ assert.equal(await page.evaluate(()=>atlasOverlapState.worker instanceof Worker),true);
+ assert(await page.evaluate(()=>window.overlapHeartbeats)>10);await page.evaluate(()=>clearInterval(window.overlapHeartbeatTimer));
+ const completed=await page.evaluate(()=>atlasOverlapState.completed);await page.evaluate(()=>{map.panBy([1,0],{animate:false})});
+ await page.waitForFunction(n=>atlasOverlapState.completed>n,completed,{timeout:60000});assert(await page.evaluate(()=>atlasOverlapState.stats.cacheHits)>0);
+
  await page.selectOption('#countryFilter','SE');await page.waitForFunction(()=>atlasOverlapState.pairs.every(p=>p.refs.every(ref=>ref.startsWith('SE-'))));
  await page.selectOption('#countryFilter','NO');await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
  console.log('Selecting Enhusvidda');await page.fill('#q','NO-3198');await page.click('#search');await page.waitForFunction(()=>selectedParks.has('NO-3198'),null,{timeout:60000});
@@ -65,6 +71,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await page.waitForFunction(()=>[...document.querySelectorAll('.leaflet-popup [data-pota-activation-count]')].at(-1)?.textContent==='0');
   assert.equal(await page.evaluate(()=>L.stamp(selectedParks.get('NO-3198').geo)),selectedId);
  }
+ await page.waitForTimeout(500);await page.waitForFunction(()=>!atlasOverlapState.busy,null,{timeout:60000});
+ const requests=await page.evaluate(()=>atlasOverlapState.requests);
+ await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3198'),false,false)});await page.waitForTimeout(300);
+ assert.equal(await page.evaluate(()=>atlasOverlapState.requests),requests,'park selection must not recompute automatic overlaps');
  assert.equal(statRequests['NO-3198'],1);
  await page.screenshot({path:'atlas-desktop.png'});
 
@@ -77,6 +87,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   const geo=geometryAtlas.byRef.get(pair[0]);let g=geo;while(g.type==='GeometryCollection')g=g.geometries[0];const c=g.type==='Polygon'?g.coordinates[0][0]:g.coordinates[0][0][0];atlasPick(L.latLng(c[1],c[0]),pair[0]);return pair;
  });
  if(overlap){await page.getByText('Velg POTA-park',{exact:true}).waitFor();for(const ref of overlap)assert(await page.locator('.leaflet-popup button').filter({hasText:ref}).count()>0);await page.evaluate(()=>{map.closePopup()})}
+ console.log('Return to overview after zooming out');
+ await page.evaluate(()=>{map.setZoom(5)});
+ await page.waitForFunction(()=>geometryAtlas.byRef.get('NO-3198')===geometryAtlas.overviewByRef.get('NO-3198'),null,{timeout:60000});
+ assert(await page.evaluate(()=>geometryAtlas.records.has('NO-3198')));
  // Rapid taps must keep each park's own geometry.
  await page.evaluate(async()=>{await Promise.all([showLink(pota.find(p=>p.reference==='NO-3374'),false,false),showLink(pota.find(p=>p.reference==='NO-3198'),false,false)])});
  assert.equal(await page.evaluate(()=>selectedGeometryMeta(selectedParks.get('NO-3374')).ids.includes('94448')),true);
