@@ -35,12 +35,14 @@ for(const layer of Object.values(baseLayers))layer.on('tileerror',()=>{st.innerH
 let initialBase='osm';try{initialBase=localStorage.getItem('potaBaseMap')||'osm'}catch(e){}
 setBaseMap(initialBase);
 baseMapSelect.addEventListener('change',e=>setBaseMap(e.target.value));
-let gpsMarker=null,gpsAccuracy=null,lastGps=null;
+let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0;
 function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-marker" aria-label="Min posisjon"></div>',iconSize:[18,18],iconAnchor:[9,9]})}
 function featuresOfGeoJson(gj){if(!gj)return[];if(gj.type==='FeatureCollection')return gj.features||[];if(gj.type==='Feature')return[gj];return[{type:'Feature',properties:{},geometry:gj}]}
 function gpsInsideSelected(lat,lon){
   if(typeof turf==='undefined')return[];const pt=turf.point([lon,lat]),hits=[];
-  for(const [ref,x] of selectedParks){if(!x.geo)continue;let hit=false;
+  const entries=[...selectedParks];
+  if(!multiMode.checked&&lastSelectedRef&&selectedGeo)entries.push([lastSelectedRef,{geo:selectedGeo,link:linkTable[lastSelectedRef]}]);
+  for(const [ref,x] of entries){if(!x.geo)continue;let hit=false;
     for(const f of featuresOfGeoJson(x.geo.toGeoJSON())){const g=f.geometry;if(!g)continue;try{
       if(g.type==='Polygon'||g.type==='MultiPolygon')hit=turf.booleanPointInPolygon(pt,f);
       else if(isTrailLink(x.link)&&(g.type==='LineString'||g.type==='MultiLineString')){const b=turf.buffer(f,TRAIL_BUFFER_M/1000,{units:'kilometers',steps:12});hit=!!b&&turf.booleanPointInPolygon(pt,b)}
@@ -52,18 +54,48 @@ function updateGpsStatus(lat,lon,accuracy){
   const hits=gpsInsideSelected(lat,lon);gpsStatus.classList.add('visible');
   gpsStatus.innerHTML=`<b>GPS:</b> ${lat.toFixed(5)}, ${lon.toFixed(5)}${Number.isFinite(accuracy)?` · nøyaktighet ca. ${Math.round(accuracy)} m`:''}${hits.length?`<br><b>Innenfor valgt POTA:</b> ${hits.map(esc).join(', ')}`:'<br>Ikke innenfor noen valgt POTA-geometri.'}`;
 }
-function locateUser(){
-  if(!navigator.geolocation){gpsStatus.classList.add('visible');gpsStatus.textContent='GPS/geolokasjon støttes ikke av denne nettleseren.';return}
-  locateBtn.classList.add('locating');locateBtn.disabled=true;gpsStatus.classList.add('visible');gpsStatus.textContent='Henter posisjon…';
-  navigator.geolocation.getCurrentPosition(pos=>{
-    locateBtn.classList.remove('locating');locateBtn.disabled=false;const {latitude:lat,longitude:lon,accuracy}=pos.coords;lastGps={lat,lon,accuracy};
-    if(gpsMarker)map.removeLayer(gpsMarker);if(gpsAccuracy)map.removeLayer(gpsAccuracy);
-    gpsAccuracy=L.circle([lat,lon],{pane:'overlapPane',radius:Number.isFinite(accuracy)?accuracy:0,color:'#2563eb',weight:1,fillColor:'#60a5fa',fillOpacity:.08,interactive:false}).addTo(map);
-    gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
-    const z=map.getZoom()<12?14:map.getZoom();map.setView([lat,lon],z);updateGpsStatus(lat,lon,accuracy);
-  },err=>{locateBtn.classList.remove('locating');locateBtn.disabled=false;gpsStatus.classList.add('visible');gpsStatus.textContent='Kunne ikke hente posisjon: '+(err.message||'ukjent feil')+'. Sjekk at nettleseren har fått posisjonstilgang.'},{enableHighAccuracy:true,timeout:15000,maximumAge:10000});
+function syncGpsControl(waiting=false){
+  const active=gpsWatchId!==null;
+  locateBtn.disabled=false;locateBtn.classList.toggle('locating',active&&waiting);locateBtn.classList.toggle('gps-active',active);
+  locateBtn.textContent=active?'Stopp GPS':'Min posisjon';locateBtn.setAttribute('aria-pressed',String(active));
+  document.dispatchEvent(new CustomEvent('pota:gps',{detail:{active,waiting:active&&waiting}}));
 }
-locateBtn.addEventListener('click',locateUser);
+function stopGps(){
+  gpsGeneration++;
+  if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);
+  gpsWatchId=null;lastGps=null;
+  if(gpsMarker)map.removeLayer(gpsMarker);if(gpsAccuracy)map.removeLayer(gpsAccuracy);
+  gpsMarker=null;gpsAccuracy=null;syncGpsControl();
+}
+function locateUser(){
+  if(gpsWatchId!==null){stopGps();gpsStatus.textContent='GPS er slått av.';return}
+  gpsStatus.classList.add('visible');
+  if(!navigator.geolocation){gpsStatus.textContent='GPS/geolokasjon støttes ikke av denne nettleseren.';return}
+  const generation=++gpsGeneration;let firstPosition=true;
+  gpsStatus.textContent='Henter posisjon…';
+  const fail=err=>{
+    if(generation!==gpsGeneration)return;
+    if(err.code===1){stopGps();gpsStatus.textContent='Posisjonstilgang er avslått. Tillat posisjon i nettleseren og trykk Min posisjon igjen.';return}
+    syncGpsControl();gpsStatus.textContent='Venter på GPS-posisjon. '+(lastGps?'Siste posisjon vises i kartet. ':'')+'Oppfølgingen fortsetter.';
+  };
+  try{
+    gpsWatchId=navigator.geolocation.watchPosition(pos=>{
+      if(generation!==gpsGeneration)return;
+      const {latitude:lat,longitude:lon,accuracy}=pos.coords;lastGps={lat,lon,accuracy};
+      const radius=Number.isFinite(accuracy)?Math.max(0,accuracy):0;
+      if(gpsAccuracy)gpsAccuracy.setLatLng([lat,lon]).setRadius(radius);
+      else gpsAccuracy=L.circle([lat,lon],{pane:'overlapPane',radius,color:'#2563eb',weight:1,fillColor:'#60a5fa',fillOpacity:.08,interactive:false}).addTo(map);
+      if(gpsMarker)gpsMarker.setLatLng([lat,lon]);
+      else gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
+      if(firstPosition){firstPosition=false;map.setView([lat,lon],map.getZoom()<12?14:map.getZoom())}
+      syncGpsControl();updateGpsStatus(lat,lon,accuracy);
+    },fail,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    syncGpsControl(true);
+  }catch(err){stopGps();gpsStatus.textContent='Kunne ikke starte GPS. Sjekk nettleserens posisjonstilgang.'}
+}
+locateBtn.addEventListener('click',locateUser);syncGpsControl();
+// Refresh membership when the user changes the selection without moving.
+document.addEventListener('pota:selection',()=>{if(lastGps)updateGpsStatus(lastGps.lat,lastGps.lon,lastGps.accuracy)});
 const NV='https://geodata.naturvardsverket.se/naturvardsregistret/wms';
 const N2='https://geodata.naturvardsverket.se/n2000/wms';
 function wms(url,layer,opacity=.55,extra={}){return L.tileLayer.wms(url,Object.assign({layers:layer,format:'image/png',transparent:true,version:'1.3.0',opacity,attribution:'Kilde: Naturvårdsverket'},extra));}
