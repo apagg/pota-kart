@@ -85,8 +85,13 @@ function atlasHit(geometry,ll){
  }
  try{return hit(geometry)}catch(e){return false}
 }
+function atlasRefsAt(latlng,candidates=geometryAtlas.byRef.keys()){
+ const refs=[];
+ for(const ref of candidates){const g=geometryAtlas.byRef.get(ref);if(g&&atlasInCountry(ref)&&atlasPointNearBounds(atlasMeta(ref)?.bbox,latlng)&&atlasHit(g,latlng))refs.push(ref)}
+ return refs;
+}
 function atlasPick(latlng,clickedRef){
- const refs=[...geometryAtlas.byRef].filter(([ref,g])=>atlasInCountry(ref)&&atlasPointNearBounds(atlasMeta(ref)?.bbox,latlng)&&atlasHit(g,latlng)).map(([ref])=>ref);
+ const refs=atlasRefsAt(latlng);
  if(clickedRef&&!refs.includes(clickedRef))refs.push(clickedRef);
  if(refs.length===1){const p=pota.find(x=>x.reference===refs[0]);if(p)showLink(p,true,false,latlng);return}
  if(!refs.length)return;
@@ -165,17 +170,38 @@ function refreshAtlasOverlaps(){
   atlasOverlapState.lastSignature=signature;atlasOverlapState.requests++;atlasOverlapState.busy=true;
  }catch(e){atlasOverlapFailure(e.message)}
 }
+function bindAtlasOverlapHover(layer,fallbackRefs){
+ const parkByRef=geometryAtlas.parkByRef||(geometryAtlas.parkByRef=new Map(pota.map(p=>[p.reference,p])));
+ const content=refs=>refs.map(ref=>`<b>${esc(ref)}</b><br>${esc(parkByRef.get(ref)?.name||ref)}`).join('<hr>');
+ let candidates=[],epoch=-1,country=null,frame=null,latest=null,signature=null;
+ function update(latlng){
+  if(!latlng)return;
+  if(epoch!==geometryAtlas.epoch||country!==countryFilter.value){
+   const b=map.getBounds().pad(.2),w=b.getWest(),s=b.getSouth(),e=b.getEast(),n=b.getNorth();
+   candidates=[...geometryAtlas.byRef.keys()].filter(ref=>{const box=atlasMeta(ref)?.bbox;return atlasInCountry(ref)&&box&&box[0]<=e&&box[2]>=w&&box[1]<=n&&box[3]>=s});
+   epoch=geometryAtlas.epoch;country=countryFilter.value;
+  }
+  const refs=atlasRefsAt(latlng,candidates).sort(),key=refs.join('|');
+  if(key!==signature){signature=key;layer.setTooltipContent(content(refs.length?refs:fallbackRefs))}
+ }
+ function cancel(){if(frame!==null)cancelAnimationFrame(frame);frame=null;latest=null}
+ layer.bindTooltip(content(fallbackRefs),{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});
+ layer.on('mouseover',e=>{cancel();update(e.latlng)});
+ layer.on('mousemove',e=>{latest=e.latlng;if(frame===null)frame=requestAnimationFrame(()=>{frame=null;update(latest)})});
+ layer.on('mouseout remove',cancel);
+ return layer;
+}
 async function applyAtlasOverlaps(data){
  const current=()=>data.id===atlasOverlapState.epoch&&data.viewKey===atlasOverlapView().viewKey;
  const wanted=new Set(data.results.map(x=>x.key));
  for(const [key,x] of atlasOverlapState.layers)if(!wanted.has(key)){overlapLayer.removeLayer(x.layer);atlasOverlapState.layers.delete(key)}
- const parkByRef=geometryAtlas.parkByRef||(geometryAtlas.parkByRef=new Map(pota.map(p=>[p.reference,p])));let slice=performance.now();
+ let slice=performance.now();
  for(const result of data.results){
   if(!current()){if(data.id===atlasOverlapState.epoch){atlasOverlapState.busy=false;atlasOverlapState.lastSignature=null}return}
   const previous=atlasOverlapState.layers.get(result.key);
   if(previous?.version===result.version)continue;
   const layer=L.geoJSON(result.geometry,{pane:'overlapPane',style:{color:'#7e22ce',weight:1,fillColor:'#a855f7',fillOpacity:.48}});
-  layer.bindTooltip(result.refs.map(ref=>`<b>${esc(ref)}</b><br>${esc(parkByRef.get(ref)?.name||ref)}`).join('<hr>'),{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});
+  bindAtlasOverlapHover(layer,result.refs);
   layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});
   if(previous)overlapLayer.removeLayer(previous.layer);layer.addTo(overlapLayer);atlasOverlapState.layers.set(result.key,{...result,layer});
   if(performance.now()-slice>6){await new Promise(r=>setTimeout(r,0));slice=performance.now()}
