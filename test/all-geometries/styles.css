@@ -22,4 +22,4 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
 }
 
 /* Overview area colour matches the visible boundaries. */
-.mapkey .areakey{border-color:#e67e22;background:rgba(243,156,18,.12)}
+.mapkey .areakey{border-color:#3388ff;background:rgba(51,136,255,.09)}

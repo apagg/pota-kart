@@ -14,7 +14,7 @@ async function atlasRecord(ref){
 function atlasStyle(ref){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref;
  const trail=isTrailLink(linkTable[ref]);
- return {color:selected?(trail?'#14532d':'#9a3412'):(trail?'#15803d':'#e67e22'),weight:selected?3:1.5,opacity:.9,fillColor:selected?'#b45309':'#f39c12',fillOpacity:selected?.22:.09};
+ return {color:selected?(trail?'#14532d':'#1d4ed8'):(trail?'#15803d':'#3388ff'),weight:selected?3:1.5,opacity:.9,fillColor:selected?'#1d4ed8':'#3388ff',fillOpacity:selected?.22:.09};
 }
 function atlasBuildLayer(ref,geometry){
  const p=pota.find(x=>x.reference===ref);if(!p)return null;
