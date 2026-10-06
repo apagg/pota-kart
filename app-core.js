@@ -18,7 +18,8 @@ const multiMode=document.getElementById('multiMode'), selectedBox=document.getEl
 const baseMapSelect=document.getElementById('baseMapSelect'), locateBtn=document.getElementById('locateBtn'), gpsStatus=document.getElementById('gpsStatus');
 const baseLayers={
   osm:L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap-bidragsytere'}),
-  esri:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Bakgrunn: Esri'})
+  esri:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Bakgrunn: Esri'}),
+  satellite:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Satellittbilder: Esri, Vantor, Earthstar Geographics og GIS User Community'})
 };
 let activeBase=null;
 function setBaseMap(key){

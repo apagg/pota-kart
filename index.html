@@ -19,7 +19,7 @@
   <div class="small" style="margin-top:-4px;margin-bottom:7px">Norge og Sverige – offisielle grenser</div>
   <div class="row"><input id="q" placeholder="Søk POTA-ID eller navn"><button id="search">Søk</button></div>
   <div class="row" style="align-items:center"><label class="small" for="countryFilter"><b>Land:</b></label><select id="countryFilter" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="ALL">Norge + Sverige</option><option value="NO">Norge</option><option value="SE">Sverige</option></select></div>
-  <div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="osm">OpenStreetMap</option><option value="esri">Esri</option></select><button id="locateBtn" type="button">Min posisjon</button></div>
+  <div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="osm">OpenStreetMap</option><option value="esri">Esri</option><option value="satellite">Satellitt</option></select><button id="locateBtn" type="button">Min posisjon</button></div>
   <div id="gpsStatus" class="small gps-status"></div>
   <div style="display:none" aria-hidden="true">
     <input type="checkbox" id="np">
@@ -49,5 +49,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=mobile-010-3"></script>
+<script src="app.js?v=satellite-1"></script>
 </body></html>
