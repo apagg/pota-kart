@@ -20,7 +20,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  for(let i=0;i<2;i++){
   await page.evaluate(()=>{map.closePopup()});await page.mouse.click(screen.x,screen.y);
   const choice=page.locator('.leaflet-popup button').filter({hasText:'NO-3198'});if(await choice.count())await choice.click();
-  const link=page.locator('.leaflet-popup a[href="https://pota.app/#/park/NO-3198"]');await link.waitFor({state:'visible'});assert.equal(await link.getAttribute('target'),'_blank');assert.match(await link.getAttribute('rel'),/noopener/);
+  const link=page.locator('.leaflet-popup a[href="https://pota.app/#/park/NO-3198"]').last();await link.waitFor({state:'visible'});assert.equal(await link.getAttribute('target'),'_blank');assert.match(await link.getAttribute('rel'),/noopener/);
   assert.equal(await page.evaluate(()=>L.stamp(selectedParks.get('NO-3198').geo)),selectedId);
  }
  await page.screenshot({path:'atlas-desktop.png'});
