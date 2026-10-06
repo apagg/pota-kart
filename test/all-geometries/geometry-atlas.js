@@ -65,7 +65,7 @@ async function atlasRefresh(){
  await Promise.all(Array.from({length:Math.min(4,jobs.length)},async()=>{
   while(cursor<jobs.length){const ref=jobs[cursor++];try{const r=await atlasRecord(ref);if(epoch!==geometryAtlas.epoch)return;if(geometryAtlas.records.get(ref)!==r){geometryAtlas.records.set(ref,r);atlasShow(ref,r.geometry)}}catch(e){console.warn('Geometri:',ref,e.message)}}
  }));
- if(epoch===geometryAtlas.epoch)atlasReport();
+ if(epoch===geometryAtlas.epoch){atlasReport();scheduleAtlasOverlaps()}
 }
 function atlasHit(geometry,ll){
  const pt=turf.point([ll.lng,ll.lat]);
@@ -110,4 +110,66 @@ async function initializeGeometryAtlas(){
  let timer;map.on('moveend',()=>{clearTimeout(timer);timer=setTimeout(atlasRefresh,100)});
  document.addEventListener('pota:selection',()=>requestAnimationFrame(()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(()=>atlasStyle(ref))}));
  map.on('click',e=>atlasPick(e.latlng,null));
+}
+
+// Automatic overlap uses the same country/view and geometry detail as the atlas.
+const atlasOverlapState={epoch:0,timer:null,cache:new WeakMap(),pairs:[]};
+function atlasOverlapPolygons(geometry){
+ if(atlasOverlapState.cache.has(geometry))return atlasOverlapState.cache.get(geometry);
+ const polygons=[];
+ function walk(g){
+  if(!g)return;
+  if(g.type==='GeometryCollection'){for(const child of g.geometries||[])walk(child)}
+  else if(g.type==='Polygon')polygons.push(g.coordinates);
+  else if(g.type==='MultiPolygon')polygons.push(...g.coordinates);
+  else if(g.type==='LineString'||g.type==='MultiLineString'){
+   const buffered=trailCorridorPolygonsFromLayer({toGeoJSON:()=>g});polygons.push(...buffered);
+  }
+ }
+ walk(geometry);atlasOverlapState.cache.set(geometry,polygons);return polygons;
+}
+function scheduleAtlasOverlaps(){
+ const epoch=++atlasOverlapState.epoch;clearTimeout(atlasOverlapState.timer);
+ atlasOverlapState.timer=setTimeout(()=>refreshAtlasOverlaps(epoch).catch(e=>console.warn('Overlapp:',e.message)),120);
+}
+async function refreshAtlasOverlaps(epoch){
+ if(!geometryAtlas.ready||typeof polygonClipping==='undefined')return;
+ const bounds=map.getBounds(),west=bounds.getWest(),east=bounds.getEast(),south=bounds.getSouth(),north=bounds.getNorth();
+ const view=[[[west,south],[east,south],[east,north],[west,north],[west,south]]];
+ const candidates=[];
+ // Clip to the viewport first, so detailed boundaries outside the map cost nothing.
+ let slice=performance.now();
+ for(const [ref,geometry] of geometryAtlas.byRef){
+  if(!atlasInCountry(ref))continue;
+  const bb=atlasMeta(ref)?.bbox;if(!bb)continue;
+  const pad=.001; // Include the 30.5 m trail buffer at the source bounds.
+  if(bb[0]-pad>east||bb[2]+pad<west||bb[1]-pad>north||bb[3]+pad<south)continue;
+  try{
+   const polygons=atlasOverlapPolygons(geometry);
+   if(polygons.length){const clipped=polygonClipping.intersection(polygons,view);if(clipped.length)candidates.push({ref,polygons:clipped,box:[Math.max(west,bb[0]-pad),Math.max(south,bb[1]-pad),Math.min(east,bb[2]+pad),Math.min(north,bb[3]+pad)]})}
+  }catch(e){console.warn('Overlappsgeometri:',ref,e.message)}
+  if(performance.now()-slice>12){await new Promise(r=>setTimeout(r,0));if(epoch!==atlasOverlapState.epoch)return;slice=performance.now()}
+ }
+ candidates.sort((a,b)=>a.box[0]-b.box[0]);
+ const results=[];
+ for(let i=0;i<candidates.length;i++){
+  const a=candidates[i];
+  for(let j=i+1;j<candidates.length&&candidates[j].box[0]<=a.box[2];j++){
+   const b=candidates[j];if(a.box[1]>b.box[3]||a.box[3]<b.box[1])continue;
+   try{
+    const coordinates=polygonClipping.intersection(a.polygons,b.polygons);
+    if(coordinates.length)results.push({refs:[a.ref,b.ref],geometry:{type:'MultiPolygon',coordinates}});
+   }catch(e){console.warn('Overlappsberegning:',a.ref,b.ref,e.message)}
+   if(performance.now()-slice>12){await new Promise(r=>setTimeout(r,0));if(epoch!==atlasOverlapState.epoch)return;slice=performance.now()}
+  }
+ }
+ if(epoch!==atlasOverlapState.epoch)return;
+ overlapLayer.clearLayers();atlasOverlapState.pairs=results;
+ const parkByRef=new Map(pota.map(p=>[p.reference,p]));
+ for(const result of results){
+  const layer=L.geoJSON(result.geometry,{pane:'overlapPane',style:{color:'#7e22ce',weight:1,fillColor:'#a855f7',fillOpacity:.48}});
+  layer.bindTooltip(result.refs.map(ref=>`<b>${esc(ref)}</b><br>${esc(parkByRef.get(ref)?.name||ref)}`).join('<hr>'),{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});
+  layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});layer.addTo(overlapLayer);
+ }
+ document.dispatchEvent(new CustomEvent('pota:overlaps'));
 }
