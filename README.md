@@ -35,3 +35,26 @@ Manuelt: `python3 scripts/update-kulturminner.py --attempts 2 --timeout 60`.
 På skjermbredder opptil 700 px fyller kartet skjermen. Runde knapper åpner søk og kartinnstillinger eller henter egen posisjon. Parkinformasjonen vises i en kompakt boks nederst; dra håndtaket opp eller trykk «Vis detaljer» for å utvide. Bunnmenyen gir tilgang til kart, valgte parker og innstillinger. Enkeltvalg, flervalg, fjerning, registergrenser og overlappsdiagnostikk bruker de eksisterende kartfunksjonene. På større skjermer brukes sidepanelet.
 
 `preview-mobile.html` viser appen i en 390 × 844 px ramme for kontroll på en datamaskin.
+
+## Versjon 0.11.0 – prøvevisning med alle geometriene
+
+Utvikles på `feature/all-park-geometries`. Testadressen er
+`https://apagg.github.io/pota-kart/test/all-geometries/`.
+Hovedkartet endres ikke av testpubliseringen.
+
+Alle parker i valgt land vises med lagret, verifisert registergeometri. Parker
+uten geometri beholder POTA-punktet. Oversiktsgrensene er forenklet for rask
+lasting; fra zoomnivå 10 lastes full geometri for kartutsnittet. Parkvalg og
+analysen bruker full geometri. Kyststien beholder sitt 61 meter brede belte.
+Ved overlapp kan man velge mellom alle parkene under trykkpunktet.
+
+`python3 scripts/update-geometries.py` henter Naturbase via bekreftet VV/FS/FK-ID,
+lagrede kulturminner via kulturminne-ID og svenske registerdata via ID eller
+entydig eksakt navn nær POTA-posisjonen. Usikre koblinger beholdes som punkter.
+En kildefeil beholder forrige verifiserte kopi hvis POTA-kildelenken er den samme.
+`data/geometries/*-index.json` dokumenterer tilgjengelig geometri og mangler.
+
+Arbeidsflyten `Build geometry test map` klargjør data, kjører geometri- og
+nettlesertester, lagrer data på feature-branchen og kopierer deretter kun
+prøvevisningen til `test/all-geometries` på hovedbranchen. Den kan kjøres manuelt
+for å oppdatere data og testpubliseringen.

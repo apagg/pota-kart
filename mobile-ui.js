@@ -24,14 +24,14 @@
     <button id="mobileSheetClose" class="mobile-sheet-close" aria-label="Lukk panelet">×</button>
     <div id="mobileParkRef" class="mobile-park-ref"></div>
     <h2 id="mobileParkTitle">Velg en POTA-park</h2>
-    <div id="mobileParkType" class="mobile-park-type">Trykk på et punkt eller søk etter navn</div>
+    <div id="mobileParkType" class="mobile-park-type">Trykk på et område, en sti eller et punkt</div>
     <div class="mobile-sheet-actions"><button id="mobileSelectionToggle" hidden></button><button id="mobileDetailsToggle">Vis detaljer ${svg('chevron')}</button></div>`;panel.prepend(header);
   const single=document.createElement('div');single.id='mobileSingleSelection';single.dataset.mobileSection='selected';content.appendChild(single);
   const empty=document.createElement('p');empty.id='mobileEmptySelection';empty.textContent='Ingen parker er valgt. Trykk på et POTA-punkt eller bruk søket.';empty.dataset.mobileSection='selected';content.appendChild(empty);
   const searchRow=$('q').closest('.row'), anchor=document.createComment('desktop search');searchRow.before(anchor);
   const mark=(node,section)=>{if(node)node.dataset.mobileSection=section;};
   mark($('countryFilter').closest('.row'),'settings');mark($('baseMapSelect').closest('.row'),'settings');mark($('multiMode').closest('.selectbar'),'settings');
-  mark($('gpsStatus'),'settings details');mark($('status'),'details');mark($('linkbox'),'details');mark($('selectedBox'),'selected');mark(content.querySelector('.info-more'),'details selected');
+  mark($('geometrySummary'),'settings');mark($('gpsStatus'),'settings details');mark($('status'),'details');mark($('linkbox'),'details');mark($('selectedBox'),'selected');mark(content.querySelector('.info-more'),'details selected');
   mark(content.querySelector('.mapkey'),'settings');
   let current=null,view='park',expanded=false,enabled=false;
   function closeSearch(){ $('mobileSearchPopover').hidden=true;$('mobileSearch').setAttribute('aria-expanded','false'); }
@@ -45,7 +45,7 @@
     const isPark=view==='park';
     $('mobileParkRef').textContent=isPark&&current?current.p.reference:'';
     $('mobileParkTitle').textContent=isPark?(current?current.link.officialName:'Velg en POTA-park'):view==='selected'?'Valgte parker':'Innstillinger';
-    $('mobileParkType').textContent=isPark?(current?current.link.type:'Trykk på et punkt eller søk etter navn'):view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:'Land, kart og flervalg';
+    $('mobileParkType').textContent=isPark?(current?current.link.type:'Trykk på et område, en sti eller et punkt'):view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:'Land, kart og flervalg';
     $('mobileDetailsToggle').hidden=!isPark||!current;
     $('mobileDetailsToggle').firstChild.textContent=expanded?'Vis mindre ':'Vis detaljer ';
     const selected=current&&(selectedParks.has(current.p.reference)||(!multiMode.checked&&lastSelectedRef===current.p.reference));
