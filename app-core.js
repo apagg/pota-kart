@@ -7,6 +7,9 @@ map.getPane('gpsPane').style.zIndex='700';
 map.createPane('topTooltipPane');
 map.getPane('topTooltipPane').style.zIndex='1200';
 map.getPane('topTooltipPane').style.pointerEvents='none';
+map.createPane('trailCorridorPane');
+map.getPane('trailCorridorPane').style.zIndex='390';
+map.getPane('trailCorridorPane').style.pointerEvents='none';
 map.createPane('overlapPane');
 map.getPane('overlapPane').style.zIndex='625';
 map.getPane('overlapPane').style.pointerEvents='auto';
@@ -193,6 +196,20 @@ function trailCorridorPolygonsFromLayer(layer){
     }catch(e){}
   }
   return polys;
+}
+function isKyststienPark(p){
+  return /^(NO|LA)-2542$/i.test((p&&p.reference)||'')||/kyststien/i.test((p&&p.name)||'');
+}
+function addKyststienCorridor(layer){
+  // Samme geometri og radius som GPS-sjekk og overlappsberegning: 30,5 m på hver side.
+  const polygons=trailCorridorPolygonsFromLayer(layer);
+  if(!polygons.length)throw Error('Kunne ikke beregne Kyststiens 61 meter brede belte');
+  const corridor=L.geoJSON({type:'Feature',properties:{corridorWidthM:TRAIL_CORRIDOR_WIDTH_M},geometry:{type:'MultiPolygon',coordinates:polygons}},{
+    pane:'trailCorridorPane',interactive:false,
+    style:{color:'#15803d',weight:1,opacity:.65,fillColor:'#22c55e',fillOpacity:.28}
+  });
+  // Beltet følger stiens livsløp ved flervalg, fjerning og bytte av park.
+  layer.addLayer(corridor);
 }
 function overlapPolygonsForSelected(x){
   return isSelectedTrail(x)?trailCorridorPolygonsFromLayer(x&&x.geo):rawLayerGeometryInfo(x&&x.geo).polygons;
@@ -992,8 +1009,10 @@ async function focusOfficialGeometry(link,p){
   try{
     const r=await (link.layer==='nokultur'?resolveNorwayKulturminne(link,p):link.layer==='nofriluft'?resolveNorwayFriluft(link,p):link.layer==='notrail'?resolveNorwayTrail(link,p):link.layer==='novern'?resolveNorwayOfficial(link,p):link.layer==='auto'?resolveOfficialAuto(link,p):link.layer==='trail'?resolveStateTrail(link,p):link.layer==='world'?resolveWorldHeritage(link,p):link.layer==='historic'?resolveHistoricSite(link,p):resolveOfficial(link,p));
     const raw=(r.source==='trail'||r.source==='world')?normalizeSpecialGeometry(r.geometry):r.source==='notrail'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:r.source==='historic'?{type:'Feature',properties:{name:r.name,id:r.id,url:r.url||''},geometry:r.geometry}:r.source==='norway'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:{type:'Feature',properties:{name:r.name,id:r.id},geometry:transformGeo(r.geometry)};
-    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:'#15803d',weight:6,opacity:.95}:{weight:6,opacity:.95};}return {weight:4,fillOpacity:.18};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
+    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:'#15803d',weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}return {weight:4,fillOpacity:.18};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
+    if(isKyststienPark(p)&&isTrailLink(link))addKyststienCorridor(selectedGeo);
     st.innerHTML=`Viser kun <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?(r.sourceLabel||'Miljødirektoratets offisielle Naturbase-data'):'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
+    if(isKyststienPark(p)&&isTrailLink(link))st.innerHTML+=`<br><span class="small">Kyststien vises som et ${TRAIL_CORRIDOR_WIDTH_M} meter bredt belte (${TRAIL_BUFFER_M} meter på hver side av midtlinjen).</span>`;
     if(r.geometryNote)st.innerHTML+=`<br><span class="small">${esc(r.geometryNote)}</span>`;
     return r;
   }catch(e){
