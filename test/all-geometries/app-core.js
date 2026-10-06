@@ -292,16 +292,40 @@ function updateSelectionDiagnostics(){
   el.innerHTML=h;
 }
 
+const potaActivationCache=new Map();
+function getPotaActivationCount(ref){
+  const cached=potaActivationCache.get(ref);
+  if(cached&&cached.expires>Date.now())return cached.promise;
+  const entry={expires:Date.now()+300000,promise:null};
+  entry.promise=(async()=>{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+    try{
+      const response=await fetch(`https://api.pota.app/park/stats/${encodeURIComponent(ref)}`,{signal:controller.signal});
+      if(!response.ok)throw Error('POTA-statistikk kunne ikke hentes');
+      const stats=await response.json(),raw=stats.activations;
+      const count=(typeof raw==='number'||(typeof raw==='string'&&raw.trim()!==''))?Number(raw):NaN;
+      if((stats.reference&&stats.reference!==ref)||!Number.isSafeInteger(count)||count<0)throw Error('Ugyldig aktiveringstall');
+      return count;
+    }catch(e){entry.expires=Date.now()+60000;return null}
+    finally{clearTimeout(timer)}
+  })();
+  potaActivationCache.set(ref,entry);return entry.promise;
+}
 function openParkInfo(p,link,latlng=null){
   const potaLink=`<a href="https://pota.app/#/park/${encodeURIComponent(p.reference)}" target="_blank" rel="noopener noreferrer">Åpne parken på pota.app</a>`;
-  const quality=link.confidence==='bekreftet overstyring'?'bekreftet':'automatisk';
-  document.dispatchEvent(new CustomEvent('pota:park',{detail:{p,link}}));
-  linkbox.style.display='block';
-  const sourceNote='Områdegeometrien er lagret fra den offisielle kilden. Oversiktskartet bruker forenklede grenser; detaljene lastes når du zoomer inn. Kulturminnegeometri dekker ikke nødvendigvis hele POTA-området.';
-  linkbox.innerHTML=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br>Valgt POTA-park: <b>${esc(link.officialName)}</b> <span class="badge">${esc(link.type)}</span><br><span class="small">Matchmetode: ${esc(link.confidence)}. ${sourceNote}</span><br>${potaLink}`;
+  const content=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br><b>Antall aktiveringer:</b> <span data-pota-activation-count aria-live="polite">Henter …</span><br>${potaLink}`;
+  linkbox.style.display='block';linkbox.innerHTML=content;
+  const countNodes=[linkbox.querySelector('[data-pota-activation-count]')];
   if(latlng&&!matchMedia('(max-width:700px)').matches){
-    L.popup({autoPan:false}).setLatLng(latlng).setContent(`<b>${esc(p.reference)}</b><br>${esc(p.name)}<hr style="border:0;border-top:1px solid #ddd"><b>Valgt POTA-park:</b> ${esc(link.officialName)}<br><b>Type:</b> ${esc(link.type)}<br><span class="small">${quality==='bekreftet'?'Denne koblingen er eksplisitt lagt inn.':'Denne koblingen er laget fra POTA-navn/type og kontrolleres mot registerdata når geometrien hentes.'}</span><br>${potaLink}`).openOn(map);
+    const popupContent=document.createElement('div');popupContent.innerHTML=content;
+    countNodes.push(popupContent.querySelector('[data-pota-activation-count]'));
+    L.popup({autoPan:false}).setLatLng(latlng).setContent(popupContent).openOn(map);
   }
+  getPotaActivationCount(p.reference).then(count=>{
+    const text=count===null?'ikke tilgjengelig':count.toLocaleString('nb-NO');
+    for(const node of countNodes)node.textContent=text;
+  });
+  document.dispatchEvent(new CustomEvent('pota:park',{detail:{p,link}}));
 }
 function reopenSelectedPark(ref,latlng=null){
   const x=selectedParks.get(ref);if(!x)return;
@@ -1123,7 +1147,6 @@ async function loadPota(){
    const marker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(false)}):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:1,color:'#e67e22',fillColor:'#f39c12',fillOpacity:.8});
    bindParkHover(marker,p,link);
    marker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);showLink(p,true,false)});
-   marker.bindPopup(()=>`<b>${esc(p.reference)}</b><br>${esc(p.name)}<br><b>Valgt POTA-park:</b> ${esc(link?.officialName||'ukjent')}<br><b>Type:</b> ${esc(link?.type||'ukjent')}<br><a target="_blank" href="https://pota.app/#/park/${encodeURIComponent(p.reference)}">Åpne i POTA</a>`);
    layers.pts.addLayer(marker);potaMarkers.push({marker,country:cc,reference:p.reference});
  }
  applyCountryFilter();return {shown,linked,unknown,unsupported,byCountry};
