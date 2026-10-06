@@ -27,7 +27,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.click('#clearSelected');assert.equal(await page.evaluate(()=>selectedParks.size),0);assert(await page.evaluate(()=>geometryAtlas.layers.get('NO-2542')&&map.hasLayer(geometryAtlas.layers.get('NO-2542'))));
  const missing=await page.evaluate(()=>pota.find(p=>countryOf(p)==='NO'&&!atlasHasGeometry(p.reference)).reference);
  await page.fill('#q',missing);await page.click('#search');await page.waitForFunction(ref=>selectedParks.has(ref),missing);assert.equal(await page.evaluate(ref=>!!selectedParks.get(ref).marker,missing),true);assert.equal(await page.evaluate(ref=>selectedParks.get(ref).geo,missing),null);
- console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);
+ console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/0\.11\.0 test/);
  await page.getByRole('button',{name:'Innstillinger',exact:true}).click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.getByRole('button',{name:'Kart',exact:true}).click();await page.screenshot({path:'atlas-mobile.png'});
  assert.deepEqual(errors,[]);console.log('PASS',counts,'country filter, geometries without markers, overlap chooser, 61 m trail, clear selection, point reserve, mobile and satellite');await browser.close();
