@@ -1,0 +1,173 @@
+{
+  "type": "Feature",
+  "id": "226593",
+  "geometry": {
+    "type": "MultiPolygon",
+    "coordinates": [
+      [
+        [
+          [
+            7.664063806484953,
+            63.1140103033381
+          ],
+          [
+            7.66478620176239,
+            63.11400849076226
+          ],
+          [
+            7.665966454954312,
+            63.11408178099744
+          ],
+          [
+            7.66637558872134,
+            63.11414122878531
+          ],
+          [
+            7.66703416060657,
+            63.11427687782486
+          ],
+          [
+            7.667591482791403,
+            63.114531346376
+          ],
+          [
+            7.667531750074937,
+            63.11466306667966
+          ],
+          [
+            7.66727002294442,
+            63.11474968745973
+          ],
+          [
+            7.66652329792197,
+            63.114899391396946
+          ],
+          [
+            7.665695865130181,
+            63.11498285354813
+          ],
+          [
+            7.664338763559116,
+            63.115004170927556
+          ],
+          [
+            7.663649516432507,
+            63.11497907044417
+          ],
+          [
+            7.662967279088406,
+            63.11487439087124
+          ],
+          [
+            7.662177646293042,
+            63.114611399142625
+          ],
+          [
+            7.662078926124226,
+            63.11434615811693
+          ],
+          [
+            7.662156799841101,
+            63.11422612169657
+          ],
+          [
+            7.662427830328281,
+            63.114134027771414
+          ],
+          [
+            7.662561789543639,
+            63.11408372389789
+          ],
+          [
+            7.662859194759928,
+            63.11405385147146
+          ],
+          [
+            7.663507334055018,
+            63.11401238891818
+          ],
+          [
+            7.664063806484953,
+            63.1140103033381
+          ]
+        ]
+      ]
+    ]
+  },
+  "properties": {
+    "navn": "Stavneset",
+    "opphav": "Møre og Romsdal fylkeskommune",
+    "informasjon": "Fyrstasjon med tilhøyrande bygningar. Totalt fire bygningar, tre på holmen. Bygningane er restaurera i nyare tid. Steinmur rundt anlegget.",
+    "førsteDigitaliseringsdato": "2017-03-04T10:12:30Z",
+    "kommune": "1554",
+    "kulturminneId": "226593",
+    "antallEnkeltminner": 2,
+    "linkAskeladden": "https://askeladden.ra.no/askeladden/?kid=226593",
+    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/226593",
+    "lokalId": "226593",
+    "lokalitetsart": "20135",
+    "lokalitetskategori": "L-BVF",
+    "målemetode": 82,
+    "navnerom": "http://skjema.geonorge.no/SOSI/produktspesifikasjon/LokaliteterEnkeltminnerOgSikringssoner/20210217",
+    "versjonId": "20210217",
+    "nøyaktighet": 500,
+    "nåværendeFunksjon": null,
+    "områdefredning": null,
+    "synlig": false,
+    "vernetype": "REG",
+    "vernedato": "2017-06-15T00:00:00Z",
+    "vernelov": null,
+    "verneparagraf": null,
+    "opprinneligFunksjon": null,
+    "datafangstdato": "2017-03-04T00:00:00Z",
+    "opprettet": "2017-03-04T10:12:30Z",
+    "oppdateringsdato": "2022-02-17T01:53:38Z",
+    "senterpunkt": {
+      "type": "Point",
+      "coordinates": [
+        7.664712315580584,
+        63.11450003697286
+      ]
+    }
+  },
+  "links": [
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=json",
+      "rel": "self",
+      "type": "application/geo+json",
+      "title": "Dieses Dokument"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=csv",
+      "rel": "alternate",
+      "type": "text/csv",
+      "title": "Dieses Dokument als CSV"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=fgb",
+      "rel": "alternate",
+      "type": "application/flatgeobuf",
+      "title": "Dieses Dokument als FlatGeobuf"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=html",
+      "rel": "alternate",
+      "type": "text/html",
+      "title": "Dieses Dokument als HTML"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter?f=json",
+      "rel": "collection",
+      "type": "application/json",
+      "title": "Die Datensammlung, zu der das Objekt gehört"
+    }
+  ],
+  "cacheMetadata": {
+    "verifiedDate": "2026-10-06",
+    "sourceUrl": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=json",
+    "sourceUrls": [
+      "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=json"
+    ],
+    "service": "api"
+  }
+}
