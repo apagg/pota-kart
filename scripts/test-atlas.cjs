@@ -11,10 +11,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.reference==='NO-3198'&&layers.pts.hasLayer(x.marker)).length),0);
  console.log('Geometry mouseover and repeated click');
  const selectedId=await page.evaluate(()=>L.stamp(selectedParks.get('NO-3198').geo));
- const hover=await page.evaluate(()=>{const g=selectedParks.get('NO-3198').geo;const c=turf.pointOnFeature(g.toGeoJSON()).geometry.coordinates;map.setView([c[1],c[0]],15);return c});
+ const hover=await page.evaluate(()=>{map.closePopup();const g=selectedParks.get('NO-3198').geo;const c=turf.pointOnFeature(g.toGeoJSON()).geometry.coordinates;map.setView([c[1],c[0]],15);return c});
  await page.waitForTimeout(1500);
  const screen=await page.evaluate(c=>{const p=map.latLngToContainerPoint([c[1],c[0]]),r=map.getContainer().getBoundingClientRect();return {x:r.left+p.x,y:r.top+p.y}},hover);
- await page.mouse.move(screen.x,screen.y);
+ await page.mouse.move(screen.x,screen.y);await page.screenshot({path:'atlas-hover.png'});
+ console.log('Hover diagnostic',await page.evaluate(()=>({tooltips:[...document.querySelectorAll('.leaflet-tooltip')].map(x=>x.textContent),centerElement:document.elementFromPoint(innerWidth/2,innerHeight/2)?.outerHTML.slice(0,400),hasTooltip:!!selectedParks.get('NO-3198').geo.getTooltip()})));
  await page.locator('.leaflet-tooltip').filter({hasText:'NO-3198'}).waitFor({state:'visible'});
  for(let i=0;i<2;i++){
   await page.evaluate(()=>map.closePopup());await page.mouse.click(screen.x,screen.y);
