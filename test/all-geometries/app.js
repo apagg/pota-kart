@@ -9,8 +9,8 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('geometry-atlas.js?v=011-5');
-    await load('app-core.js?v=011-5');
+    await load('geometry-atlas.js?v=011-6');
+    await load('app-core.js?v=011-6');
     await load('mobile-ui.js?v=011-4');
   }catch(e){
     const el=document.getElementById('status');

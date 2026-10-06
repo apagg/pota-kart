@@ -24,7 +24,7 @@ function atlasBuildLayer(ref,geometry){
   if(polygons.length)lyr.addLayer(L.geoJSON({type:'MultiPolygon',coordinates:polygons},{pane:'atlasPane',renderer:geometryAtlas.renderer,style:{color:'#15803d',weight:1,fillColor:'#22c55e',fillOpacity:.16}}));
  }
  lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,ref)});
- lyr.bindTooltip(`<b>${esc(ref)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',sticky:true,className:'pota-hover-tooltip'});
+ bindParkGeometryHover(lyr,p);
  return lyr;
 }
 function atlasShow(ref,geometry){
@@ -88,11 +88,11 @@ function atlasHit(geometry,ll){
 function atlasPick(latlng,clickedRef){
  const refs=[...geometryAtlas.byRef].filter(([ref,g])=>atlasInCountry(ref)&&atlasHit(g,latlng)).map(([ref])=>ref);
  if(clickedRef&&!refs.includes(clickedRef))refs.push(clickedRef);
- if(refs.length===1){const p=pota.find(x=>x.reference===refs[0]);if(p)showLink(p,true,false);return}
+ if(refs.length===1){const p=pota.find(x=>x.reference===refs[0]);if(p)showLink(p,true,false,latlng);return}
  if(!refs.length)return;
  const box=document.createElement('div'),title=document.createElement('b');title.textContent='Velg POTA-park';box.append(title);
  box.style.cssText='max-height:45vh;overflow:auto';
- for(const ref of refs.sort()){const p=pota.find(x=>x.reference===ref);if(!p)continue;const btn=document.createElement('button');btn.type='button';btn.style.cssText='display:block;width:100%;margin-top:6px;text-align:left';btn.textContent=ref+' – '+p.name;btn.onclick=()=>{map.closePopup();showLink(p,true,false)};box.append(btn)}
+ for(const ref of refs.sort()){const p=pota.find(x=>x.reference===ref);if(!p)continue;const btn=document.createElement('button');btn.type='button';btn.style.cssText='display:block;width:100%;margin-top:6px;text-align:left';btn.textContent=ref+' – '+p.name;btn.onclick=()=>{map.closePopup();showLink(p,true,false,latlng)};box.append(btn)}
  L.popup({autoPan:false,maxWidth:320}).setLatLng(latlng).setContent(box).openOn(map);
 }
 async function initializeGeometryAtlas(){
