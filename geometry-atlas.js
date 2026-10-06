@@ -72,7 +72,7 @@ function atlasHit(geometry,ll){
  function hit(g){
   if(!g)return false;
   if(g.type==='GeometryCollection')return g.geometries.some(hit);
-  if(g.type==='Polygon'||g.type==='MultiPolygon')return turf.booleanPointInPolygon(pt,g);
+  if(g.type==='Polygon'||g.type==='MultiPolygon')return turf.booleanPointInPolygon(pt,{type:'MultiPolygon',coordinates:atlasOverlapPolygons(g)});
   if(g.type==='LineString'||g.type==='MultiLineString'){
    const px=map.containerPointToLatLng(map.latLngToContainerPoint(ll).add([8,0]));
    const tolerance=Math.max(30.5,ll.distanceTo(px))/1000;
@@ -120,8 +120,8 @@ function atlasOverlapPolygons(geometry){
  function walk(g){
   if(!g)return;
   if(g.type==='GeometryCollection'){for(const child of g.geometries||[])walk(child)}
-  else if(g.type==='Polygon')polygons.push(g.coordinates);
-  else if(g.type==='MultiPolygon')polygons.push(...g.coordinates);
+  else if(g.type==='Polygon')polygons.push(...reconstructPolygonRings(g.coordinates));
+  else if(g.type==='MultiPolygon'){for(const coordinates of g.coordinates)polygons.push(...reconstructPolygonRings(coordinates))}
   else if(g.type==='LineString'||g.type==='MultiLineString'){
    const buffered=trailCorridorPolygonsFromLayer({toGeoJSON:()=>g});polygons.push(...buffered);
   }

@@ -11,6 +11,22 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Opening test map');await page.goto('http://127.0.0.1:8765');await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Kartet viser'),null,{timeout:120000});
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
+ console.log('SE-2071 separate exterior rings');
+ const ramsvik=await page.evaluate(async()=>{
+  const record=await atlasRecord('SE-2071'),polygons=atlasOverlapPolygons(record.geometry);
+  const overlaps=polygons.map(p=>polygonClipping.intersection(polygons,[p]));
+  const hits=polygons.map(p=>{const c=p[0][0];return atlasHit(record.geometry,L.latLng(c[1],c[0]))});
+  const area=overlapAreaHaForPolygons(polygons);
+  return {polygons:polygons.length,holes:polygons.reduce((n,p)=>n+p.length-1,0),area,hitEveryPart:hits.every(Boolean),overlapEveryPart:overlaps.every(x=>x.length>0)};
+ });
+ assert.equal(ramsvik.polygons,11);assert.equal(ramsvik.holes,0);assert(ramsvik.area>840&&ramsvik.area<860);assert(ramsvik.hitEveryPart);assert(ramsvik.overlapEveryPart);
+ // Reordered exteriors and genuine holes must keep distinct meanings.
+ const topology=await page.evaluate(()=>{
+  const outer=[[0,0],[10,0],[10,10],[0,10],[0,0]],hole=[[2,2],[4,2],[4,4],[2,4],[2,2]],island=[[20,0],[22,0],[22,2],[20,2],[20,0]];
+  const geometry={type:'Polygon',coordinates:[hole,island,outer]},polygons=atlasOverlapPolygons(geometry);
+  return {parts:polygons.length,holes:polygons.reduce((n,p)=>n+p.length-1,0),holeHit:atlasHit(geometry,L.latLng(3,3)),islandHit:atlasHit(geometry,L.latLng(1,21)),holeOverlap:polygonClipping.intersection(polygons,[hole]).length};
+ });
+ assert.deepEqual(topology,{parts:2,holes:1,holeHit:false,islandHit:true,holeOverlap:0});
  console.log('Country filter');await page.selectOption('#countryFilter','NO');await page.waitForTimeout(800);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.country==='SE'&&layers.pts.hasLayer(x.marker)).length),0);
  console.log('Automatic overlap without selection');
