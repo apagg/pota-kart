@@ -1,4 +1,4 @@
-const map=L.map('map',{zoomControl:false,preferCanvas:true}).setView([62.0,13.0],5);L.control.zoom({position:'bottomright'}).addTo(map);
+const map=L.map('map',{zoomControl:false,preferCanvas:false}).setView([62.0,13.0],5);L.control.zoom({position:'bottomright'}).addTo(map);
 // POTA-punkter ligger i en egen pane over områdepolygonene, men under popup-vinduene.
 map.createPane('potaPane');
 map.getPane('potaPane').style.zIndex='650';
