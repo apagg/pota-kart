@@ -321,13 +321,13 @@ function updateOverlaps(){
   overlapLayer.clearLayers();
   updateSelectionDiagnostics();
   if(!multiMode.checked||selectedParks.size<2||typeof polygonClipping==='undefined')return;
-  const parks=[...selectedParks.values()].filter(x=>overlapPolygonsForSelected(x).length);
+  const parks=[...selectedParks.values()].filter(x=>atlasInCountry(x.p.reference)&&overlapPolygonsForSelected(x).length);
   for(let i=0;i<parks.length;i++)for(let j=i+1;j<parks.length;j++){
     const o=pairOverlapInfo(parks[i],parks[j]);
     if(!o.geometry||o.invalid)continue;
     const refs=[parks[i].p.reference,parks[j].p.reference];
     const lyr=L.geoJSON(o.geometry,{pane:'overlapPane',interactive:true,style:{color:'#7e22ce',weight:2,fillColor:'#a855f7',fillOpacity:.48}}).addTo(overlapLayer);
-    lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openOverlapChooser(refs,e.latlng)});
+    lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});
   }
 }
 const NVREST='https://geodata.naturvardsverket.se/naturvardsregistret/rest/v3';
@@ -1026,7 +1026,12 @@ async function focusOfficialGeometry(link,p){
 function isTrailLink(link){return !!(link&&(link.layer==='trail'||link.layer==='notrail'||link.type==='State Trail'||link.type==='National Recreation Trail'))}
 function makeTrailIcon(selected=false){const svg=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;return L.divIcon({className:'',html:`<div class="trail-pota-icon${selected?' selected':''}" aria-label="Tursti">${svg}</div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-11]})}
 function bindParkHover(marker,p,link){if(!marker)return marker;marker.bindTooltip(`<b>${esc(p.reference)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',direction:'top',offset:[0,-7],opacity:.96,className:'pota-hover-tooltip',sticky:false});return marker}
-async function showLink(p,openPopup=true,centerOnSearch=false){
+let parkSelectionQueue=Promise.resolve();
+function showLink(p,openPopup=true,centerOnSearch=false){
+ const task=parkSelectionQueue.then(()=>showParkLink(p,openPopup,centerOnSearch));
+ parkSelectionQueue=task.catch(e=>console.error(e));return task;
+}
+async function showParkLink(p,openPopup=true,centerOnSearch=false){
   const multi=multiMode.checked;
   if(multi&&selectedParks.has(p.reference)){
     lastSelectedRef=p.reference;
@@ -1047,6 +1052,7 @@ async function showLink(p,openPopup=true,centerOnSearch=false){
   }
   openParkInfo(p,link,(openPopup&&Number.isFinite(lat)&&Number.isFinite(lon))?L.latLng(lat,lon):null);
   const result=await focusOfficialGeometry(link,p);
+  if(result&&selectedGeo&&selectedMarker){map.removeLayer(selectedMarker);selectedMarker=null}
   if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:'#b45309',fillColor:'#d97706',fillOpacity:.95}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',()=>openParkInfo(p,link,L.latLng(lat,lon)));}
   if(selectedGeo)bindSelectedGeometry(selectedGeo,p,link);
   if(multi){

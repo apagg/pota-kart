@@ -16,7 +16,7 @@ DATE=datetime.datetime.now(datetime.timezone.utc).date().isoformat()
 def norm(v):return re.sub(r'[^a-z0-9]+',' ',''.join(c for c in unicodedata.normalize('NFD',str(v or '').lower().replace('ø','o').replace('æ','ae')) if not unicodedata.combining(c))).strip()
 def request(base,params):
  url=base+'?'+urllib.parse.urlencode(params);CACHE.mkdir(exist_ok=True);f=CACHE/(hashlib.sha256(url.encode()).hexdigest()+'.json')
- if f.exists():return json.loads(f.read_text())
+ if f.exists() and time.time()-f.stat().st_mtime<86400:return json.loads(f.read_text())
  for n in range(3):
   try:
    r=urllib.request.urlopen(url,timeout=90);raw=r.read();d=json.loads(raw)

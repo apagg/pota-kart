@@ -16,7 +16,7 @@ permissions:
   pages: write
 concurrency:
   group: geometry-test-map
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
           SERVER_PID=$!
           trap 'kill "$SERVER_PID"' EXIT
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
-          node scripts/test-atlas.cjs
+          timeout 300 node scripts/test-atlas.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
