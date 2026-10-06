@@ -48,6 +48,10 @@ SE_CONFIRMED_IDS={
  'SE-2050':'2000416', # Torpanäset Nature Reserve
  'SE-2153':'2005013', # Äskhult National Heritage Area
  'SE-2214':'2000413', # Gullbringa Nature Reserve
+ 'SE-1319':'2043731', # Naturreservatet Fyledalen, not same-name landscape protection
+ 'SE-1783':'2001300', # Ridö-Sundbyholmsarkipelagen: southern Södermanland part (SE-D)
+ 'SE-2032':'2001952', # Hökensås: Tidaholm / Västra Götaland (SE-O)
+ 'SE-2033':'2002586', # Hökensås: Habo / Jönköping (SE-F)
 }
 
 def norm(v):return re.sub(r'[^a-z0-9]+',' ',''.join(c for c in unicodedata.normalize('NFD',str(v or '').lower().replace('ø','o').replace('æ','ae')) if not unicodedata.combining(c))).strip()

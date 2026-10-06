@@ -30,6 +30,14 @@ class GeometryTests(unittest.TestCase):
   p={'reference':'SE-0468','name':'Tofta Nature Reserve','latitude':57.8556,'longitude':11.697}
   self.assertEqual(g.se_match(p,{'id:2000791':[right],'name:tofta':[wrong,right]})['id'],'2000791')
   with self.assertRaises(ValueError):g.se_match(p,{'name:tofta':[wrong],'id:2048337':[wrong]})
+ def test_confirmed_county_parts_and_alternative_name(self):
+  poly={'type':'Polygon','coordinates':[[[10,55],[17,55],[17,61],[10,61],[10,55]]]}
+  for ref,name,sid,official in [('SE-1319','Fyledalen','2043731','Naturreservatet Fyledalen'),('SE-1783','Ridö-Sundbyholmsarkipelagen','2001300','Ridö-Sundbyholmsarkipelagen'),('SE-2032','Hökensås','2001952','Hökensås'),('SE-2033','Hökensås','2002586','Hökensås')]:
+   with self.subTest(ref=ref):
+    f={'type':'Feature','properties':{'NVRID':sid,'NAMN':official},'geometry':poly}
+    p={'reference':ref,'name':name+' Nature Reserve','latitude':58,'longitude':14}
+    self.assertEqual(g.se_match(p,{'id:'+sid:[f]})['id'],sid)
+    with self.assertRaises(ValueError):g.se_match(p,{'name:'+g.norm(name):[f]})
  def test_catalogue_requests_confirmed_ids(self):
   from unittest.mock import patch
   with patch.object(g,'request',return_value={'features':[]}) as request:
