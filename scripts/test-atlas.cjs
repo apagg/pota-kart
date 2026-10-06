@@ -18,7 +18,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Hover diagnostic',await page.evaluate(()=>({tooltips:[...document.querySelectorAll('.leaflet-tooltip')].map(x=>x.textContent),centerElement:document.elementFromPoint(innerWidth/2,innerHeight/2)?.outerHTML.slice(0,400),hasTooltip:!!selectedParks.get('NO-3198').geo.getTooltip()})));
  await page.locator('.leaflet-tooltip').filter({hasText:'NO-3198'}).waitFor({state:'visible'});
  for(let i=0;i<2;i++){
-  await page.evaluate(()=>map.closePopup());await page.mouse.click(screen.x,screen.y);
+  await page.evaluate(()=>{map.closePopup()});await page.mouse.click(screen.x,screen.y);
   const choice=page.locator('.leaflet-popup button').filter({hasText:'NO-3198'});if(await choice.count())await choice.click();
   const link=page.locator('.leaflet-popup a[href="https://pota.app/#/park/NO-3198"]');await link.waitFor({state:'visible'});assert.equal(await link.getAttribute('target'),'_blank');assert.match(await link.getAttribute('rel'),/noopener/);
   assert.equal(await page.evaluate(()=>L.stamp(selectedParks.get('NO-3198').geo)),selectedId);
