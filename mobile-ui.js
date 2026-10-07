@@ -30,6 +30,7 @@
       <a id="mobilePotaLink" target="_blank" rel="noopener noreferrer">pota.app ↗</a>
       <div class="mobile-sheet-actions"><button id="mobileSelectionToggle" hidden></button></div>
     </div>`;panel.prepend(header);
+  const choices=document.createElement('div');choices.id='mobileOverlapChoices';choices.className='mobile-overlap-list';choices.dataset.mobileSection='overlap';choices.hidden=true;content.appendChild(choices);
   const single=document.createElement('div');single.id='mobileSingleSelection';single.dataset.mobileSection='selected';content.appendChild(single);
   const empty=document.createElement('p');empty.id='mobileEmptySelection';empty.textContent='Ingen parker er valgt. Trykk på et POTA-punkt eller bruk søket.';empty.dataset.mobileSection='selected';content.appendChild(empty);
   const searchRow=$('q').closest('.row'), anchor=document.createComment('desktop search');searchRow.before(anchor);
@@ -53,8 +54,8 @@
     empty.hidden=count>0;
     const isPark=view==='park';
     $('mobileParkRef').textContent=isPark&&current?current.p.reference:'';
-    $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='selected'?'Valgte parker':'Innstillinger';
-    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:'Land, kart og flervalg';
+    $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='overlap'?'Velg POTA-park':view==='selected'?'Valgte parker':'Innstillinger';
+    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:'Land, kart og flervalg';
     $('mobileParkType').hidden=!!(isPark&&current);
     $('mobileParkSummary').hidden=!isPark||!current;
     if(current)$('mobilePotaLink').href='https://pota.app/#/park/'+encodeURIComponent(current.p.reference);
@@ -66,7 +67,7 @@
     panel.dataset.mobileView=view;panel.classList.toggle('sheet-expanded',expanded);
     $('mobileHandle').setAttribute('aria-expanded',String(expanded));
     $('mobileHandle').setAttribute('aria-label',expanded?'Minimer parkboksen':'Utvid parkboksen');
-    for(const [id,active] of [['mobileMapTab',isPark],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
+    for(const [id,active] of [['mobileMapTab',isPark||view==='overlap'],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
     if(enabled)for(const child of content.children){const visible=expanded&&(child.dataset.mobileSection||'').split(' ').includes(isPark?'details':view);child.hidden=!visible;}
     empty.hidden=!enabled||view!=='selected'||count>0;
     if(enabled&&expanded&&(view==='selected'||view==='park')){content.querySelector('.info-more').open=true;}
@@ -75,7 +76,7 @@
   function activate(){
     enabled=mq.matches;document.body.classList.toggle('mobile-layout',enabled);
     if(enabled){$('mobileSearchPopover').appendChild(searchRow);panel.classList.remove('hidden');$('showPanel').classList.remove('visible');update();}
-    else{anchor.after(searchRow);for(const child of content.children)child.hidden=false;empty.hidden=true;single.hidden=true;closeSearch();panel.classList.remove('hidden');}
+    else{anchor.after(searchRow);for(const child of content.children)child.hidden=false;empty.hidden=true;single.hidden=true;choices.hidden=true;if(view==='overlap'){view='park';expanded=false;}closeSearch();panel.classList.remove('hidden');}
     map.invalidateSize({pan:false});
   }
   $('mobileSearch').onclick=()=>{const open=$('mobileSearchPopover').hidden;$('mobileSearchPopover').hidden=!open;$('mobileSearch').setAttribute('aria-expanded',String(open));if(open)$('q').focus();};
@@ -106,6 +107,16 @@
   $('mobileHandle').addEventListener('pointerup',()=>{startY=null;});
   $('mobileHandle').addEventListener('pointercancel',()=>{startY=null;});
   $('mobileHandle').addEventListener('click',e=>{if(dragged){e.stopImmediatePropagation();dragged=false;}},true);
+  document.addEventListener('pota:overlap',e=>{
+    if(!enabled)return;
+    e.preventDefault();map.closePopup();choices.replaceChildren();
+    for(const ref of e.detail.refs){
+      const p=pota.find(park=>park.reference===ref);if(!p)continue;
+      const button=document.createElement('button');button.type='button';button.dataset.reference=ref;button.textContent=ref+' – '+p.name;
+      button.onclick=()=>showLink(p,true,false,e.detail.latlng);choices.appendChild(button);
+    }
+    openView('overlap');
+  });
   document.addEventListener('pota:park',e=>{current=e.detail;if(enabled)openView('park',false);else update();});
   document.addEventListener('pota:selection',update);
   $('multiMode').addEventListener('change',update);

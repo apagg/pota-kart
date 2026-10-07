@@ -189,6 +189,27 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.screenshot({path:'atlas-triple-hover.png'});
  await moveHover(10.003);await page.waitForFunction(()=>[...document.querySelectorAll('.leaflet-tooltip')].some(el=>getComputedStyle(el).visibility!=='hidden'&&el.textContent.includes('NO-HOVER-A')&&!el.textContent.includes('NO-HOVER-C')));
  assert.equal(await page.evaluate(()=>atlasOverlapState.requests),hoverRequests,'hover must not start overlap calculations');
+ console.log('Mobile overlap choices from actual map clicks');
+ await page.setViewportSize({width:390,height:844});await page.waitForTimeout(300);
+ await page.click('#mobileMapTab');
+ const clickOverlap=async lon=>{const pt=await page.evaluate(lon=>{const p=map.latLngToContainerPoint([30.005,lon]),r=map.getContainer().getBoundingClientRect();return {x:r.left+p.x,y:r.top+p.y}},lon);await page.mouse.click(pt.x,pt.y);await page.locator('#mobileOverlapChoices').waitFor({state:'visible'});};
+ await clickOverlap(10.003);assert.equal(await page.locator('#mobileOverlapChoices button').count(),2);
+ await page.click('#mobileSheetClose');assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);
+ await clickOverlap(10.007);assert.equal(await page.locator('#mobileOverlapChoices button').count(),3);
+ assert.equal(await page.locator('#mobileParkSummary').isVisible(),false);assert.equal(await page.locator('#mobileParkTitle').innerText(),'Velg POTA-park');
+ assert.equal(await page.locator('#mobileOverlapChoices b').count(),0,'park names are plain text');
+ await page.screenshot({path:'atlas-mobile-overlap.png'});
+ for(const ref of hoverRefs.slice(0,3)){
+   await page.locator('#mobileOverlapChoices button[data-reference="'+ref+'"]').click();
+   await page.waitForFunction(ref=>document.querySelector('#mobileParkRef').textContent===ref,ref);
+   assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);assert.equal(await page.locator('#mobileParkSummary').isVisible(),true);
+   assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'false');
+   await clickOverlap(10.007);assert.equal(await page.locator('#mobileOverlapChoices button').count(),3);
+ }
+ await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300);
+ assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);
+ await moveHover(10.007);const desktopPoint=await page.evaluate(()=>{const p=map.latLngToContainerPoint([30.005,10.007]);return {x:p.x,y:p.y}});await page.mouse.click(desktopPoint.x,desktopPoint.y);
+ await page.locator('.leaflet-popup:visible').waitFor();assert.equal(await page.locator('.leaflet-popup button').count(),3);await page.evaluate(()=>map.closePopup());
  await page.mouse.move(0,0);await page.evaluate(refs=>{for(const ref of refs){geometryAtlas.byRef.delete(ref);geometryAtlas.parkByRef.delete(ref);delete geometryAtlas.indexes.NO.parks[ref]}pota=pota.filter(p=>!refs.includes(p.reference))},hoverRefs);
  assert.deepEqual(errors,[]);console.log('PASS',counts,'country filter, geometries without markers, overlap chooser, 61 m trail, clear selection, point reserve, mobile and satellite');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

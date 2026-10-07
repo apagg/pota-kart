@@ -95,6 +95,8 @@ function atlasPick(latlng,clickedRef){
  if(clickedRef&&!refs.includes(clickedRef))refs.push(clickedRef);
  if(refs.length===1){const p=pota.find(x=>x.reference===refs[0]);if(p)showLink(p,true,false,latlng);return}
  if(!refs.length)return;
+ const choice=new CustomEvent('pota:overlap',{cancelable:true,detail:{refs:refs.slice().sort(),latlng}});
+ if(!document.dispatchEvent(choice))return;
  const box=document.createElement('div'),title=document.createElement('b');title.textContent='Velg POTA-park';box.append(title);
  box.style.cssText='max-height:45vh;overflow:auto';
  for(const ref of refs.sort()){const p=pota.find(x=>x.reference===ref);if(!p)continue;const btn=document.createElement('button');btn.type='button';btn.style.cssText='display:block;width:100%;margin-top:6px;text-align:left';btn.textContent=ref+' – '+p.name;btn.onclick=()=>{map.closePopup();showLink(p,true,false,latlng)};box.append(btn)}
