@@ -191,7 +191,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.evaluate(()=>atlasOverlapState.requests),hoverRequests,'hover must not start overlap calculations');
  console.log('Mobile overlap choices from actual map clicks');
  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(300);
- await page.click('#mobileMapTab');await page.evaluate(()=>map.setView([30.005,10.005],14,{animate:false}));
+ await page.click('#mobileMapTab');await page.evaluate(()=>{map.setView([30.005,10.005],14,{animate:false})});
  const clickOverlap=async lon=>{const pt=await page.evaluate(lon=>{const p=map.latLngToContainerPoint([30.005,lon]),r=map.getContainer().getBoundingClientRect();return {x:r.left+p.x,y:r.top+p.y}},lon);assert.ok(pt.x>0&&pt.x<390&&pt.y>0&&pt.y<500,'overlap must be in the visible map');await page.mouse.click(pt.x,pt.y);await page.locator('#mobileOverlapChoices').waitFor({state:'visible'});};
  await clickOverlap(10.003);assert.equal(await page.locator('#mobileOverlapChoices button').count(),2);
  await page.click('#mobileSheetClose');assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);
@@ -207,7 +207,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    await clickOverlap(10.007);assert.equal(await page.locator('#mobileOverlapChoices button').count(),3);
  }
  await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300);
- assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);await page.evaluate(()=>map.setView([30.005,10.005],14,{animate:false}));
+ assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);await page.evaluate(()=>{map.setView([30.005,10.005],14,{animate:false})});
  await moveHover(10.007);const desktopPoint=await page.evaluate(()=>{const p=map.latLngToContainerPoint([30.005,10.007]);return {x:p.x,y:p.y}});await page.mouse.click(desktopPoint.x,desktopPoint.y);
  await page.locator('.leaflet-popup:visible').waitFor();assert.equal(await page.locator('.leaflet-popup button').count(),3);await page.evaluate(()=>map.closePopup());
  await page.mouse.move(0,0);await page.evaluate(refs=>{for(const ref of refs){geometryAtlas.byRef.delete(ref);geometryAtlas.parkByRef.delete(ref);delete geometryAtlas.indexes.NO.parks[ref]}pota=pota.filter(p=>!refs.includes(p.reference))},hoverRefs);
