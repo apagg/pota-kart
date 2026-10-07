@@ -68,7 +68,7 @@ function stopGps(){
   if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);
   gpsWatchId=null;lastGps=null;gpsFollowing=false;
   if(gpsMarker)map.removeLayer(gpsMarker);if(gpsAccuracy)map.removeLayer(gpsAccuracy);
-  gpsMarker=null;gpsAccuracy=null;syncGpsControl();
+  gpsMarker=null;gpsAccuracy=null;syncGpsControl();updateGpsParkColors();
 }
 function locateUser(){
   if(gpsWatchId!==null){
@@ -95,7 +95,7 @@ function locateUser(){
       else gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
       if(gpsFollowing){if(firstPosition&&map.getZoom()<12)map.setView([lat,lon],14);else map.panTo([lat,lon],{animate:false})}
       firstPosition=false;
-      syncGpsControl();updateGpsStatus(lat,lon,accuracy);
+      syncGpsControl();updateGpsStatus(lat,lon,accuracy);updateGpsParkColors();
     },fail,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
     syncGpsControl(true);
   }catch(err){stopGps();gpsStatus.textContent='Kunne ikke starte GPS. Sjekk nettleserens posisjonstilgang.'}
@@ -103,7 +103,7 @@ function locateUser(){
 map.on('dragstart',()=>{if(gpsWatchId!==null&&gpsFollowing){gpsFollowing=false;syncGpsControl(!lastGps)}});
 locateBtn.addEventListener('click',locateUser);syncGpsControl();
 // Refresh membership when the user changes the selection without moving.
-document.addEventListener('pota:selection',()=>{if(lastGps)updateGpsStatus(lastGps.lat,lastGps.lon,lastGps.accuracy)});
+document.addEventListener('pota:selection',()=>{if(lastGps)updateGpsStatus(lastGps.lat,lastGps.lon,lastGps.accuracy);updateGpsParkColors()});
 const NV='https://geodata.naturvardsverket.se/naturvardsregistret/wms';
 const N2='https://geodata.naturvardsverket.se/n2000/wms';
 function wms(url,layer,opacity=.55,extra={}){return L.tileLayer.wms(url,Object.assign({layers:layer,format:'image/png',transparent:true,version:'1.3.0',opacity,attribution:'Kilde: Naturvårdsverket'},extra));}
@@ -199,7 +199,7 @@ function addKyststienCorridor(layer){
   if(!polygons.length)throw Error('Kunne ikke beregne Kyststiens 61 meter brede belte');
   const corridor=L.geoJSON({type:'Feature',properties:{corridorWidthM:TRAIL_CORRIDOR_WIDTH_M},geometry:{type:'MultiPolygon',coordinates:polygons}},{
     pane:'trailCorridorPane',interactive:false,
-    style:{color:'#15803d',weight:1,opacity:.65,fillColor:'#22c55e',fillOpacity:.28}
+    style:{color:'#1d4ed8',weight:1,opacity:.65,fillColor:'#1d4ed8',fillOpacity:.28}
   });
   // Beltet følger stiens livsløp ved flervalg, fjerning og bytte av park.
   layer.addLayer(corridor);
@@ -1021,7 +1021,7 @@ async function focusOfficialGeometry(link,p){
     if(!r)throw Error('Ingen verifisert geometri er lagret. Parken vises som punkt.');
 
     const raw=(r.source==='trail'||r.source==='world')?normalizeSpecialGeometry(r.geometry):r.source==='notrail'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:r.source==='historic'?{type:'Feature',properties:{name:r.name,id:r.id,url:r.url||''},geometry:r.geometry}:r.source==='norway'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:{type:'Feature',properties:{name:r.name,id:r.id},geometry:transformGeo(r.geometry)};
-    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:'#15803d',weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}return {color:'#1d4ed8',weight:3,fillColor:'#1d4ed8',fillOpacity:.22};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
+    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:gpsParkColor(p.reference,true),weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}return {color:gpsParkColor(p.reference,true),weight:3,fillColor:gpsParkColor(p.reference,true),fillOpacity:.22};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
     if(isKyststienPark(p)&&isTrailLink(link))addKyststienCorridor(selectedGeo);
     st.innerHTML=`Valgt område: <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?(r.sourceLabel||'Miljødirektoratets offisielle Naturbase-data'):'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
     if(isKyststienPark(p)&&isTrailLink(link))st.innerHTML+=`<br><span class="small">Kyststien vises som et ${TRAIL_CORRIDOR_WIDTH_M} meter bredt belte (${TRAIL_BUFFER_M} meter på hver side av midtlinjen).</span>`;
