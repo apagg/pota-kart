@@ -85,8 +85,9 @@
   $('mobileLocate').onclick=()=>{$('locateBtn').click();};
   function syncMobileGps(){
     const active=$('locateBtn').getAttribute('aria-pressed')==='true',button=$('mobileLocate');
-    button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',active?'Stopp GPS':'Min posisjon');
-    button.title=active?'Stopp GPS':'Min posisjon';button.disabled=false;
+    button.dataset.gpsState=$('locateBtn').dataset.gpsState;
+    button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',$('locateBtn').textContent);
+    button.title=$('locateBtn').title;button.disabled=false;
   }
   document.addEventListener('pota:gps',syncMobileGps);syncMobileGps();
   $('mobileMapTab').onclick=()=>openView('park',false);

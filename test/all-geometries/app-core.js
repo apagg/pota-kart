@@ -35,7 +35,7 @@ for(const layer of Object.values(baseLayers))layer.on('tileerror',()=>{st.innerH
 let initialBase='osm';try{initialBase=localStorage.getItem('potaBaseMap')||'osm'}catch(e){}
 setBaseMap(initialBase);
 baseMapSelect.addEventListener('change',e=>setBaseMap(e.target.value));
-let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0;
+let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0,gpsFollowing=false;
 function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-marker" aria-label="Min posisjon"></div>',iconSize:[18,18],iconAnchor:[9,9]})}
 function featuresOfGeoJson(gj){if(!gj)return[];if(gj.type==='FeatureCollection')return gj.features||[];if(gj.type==='Feature')return[gj];return[{type:'Feature',properties:{},geometry:gj}]}
 function gpsInsideSelected(lat,lon){
@@ -57,21 +57,27 @@ function updateGpsStatus(lat,lon,accuracy){
 function syncGpsControl(waiting=false){
   const active=gpsWatchId!==null;
   locateBtn.disabled=false;locateBtn.classList.toggle('locating',active&&waiting);locateBtn.classList.toggle('gps-active',active);
-  locateBtn.textContent=active?'Stopp GPS':'Min posisjon';locateBtn.setAttribute('aria-pressed',String(active));
-  document.dispatchEvent(new CustomEvent('pota:gps',{detail:{active,waiting:active&&waiting}}));
+  const state=active?(gpsFollowing?'following':'paused'):'off';
+  locateBtn.dataset.gpsState=state;
+  locateBtn.textContent=active?(gpsFollowing?'Stopp GPS':'Følg posisjon'):'Min posisjon';locateBtn.setAttribute('aria-pressed',String(active));
+  locateBtn.title=active?(gpsFollowing?'GPS følger posisjonen – trykk for å slå av GPS':'GPS er på, følging er pauset – trykk for å følge igjen'):'Slå på GPS og følg posisjonen';
+  document.dispatchEvent(new CustomEvent('pota:gps',{detail:{active,following:active&&gpsFollowing,waiting:active&&waiting}}));
 }
 function stopGps(){
   gpsGeneration++;
   if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);
-  gpsWatchId=null;lastGps=null;
+  gpsWatchId=null;lastGps=null;gpsFollowing=false;
   if(gpsMarker)map.removeLayer(gpsMarker);if(gpsAccuracy)map.removeLayer(gpsAccuracy);
   gpsMarker=null;gpsAccuracy=null;syncGpsControl();
 }
 function locateUser(){
-  if(gpsWatchId!==null){stopGps();gpsStatus.textContent='GPS er slått av.';return}
+  if(gpsWatchId!==null){
+    if(!gpsFollowing){gpsFollowing=true;if(lastGps)map.panTo([lastGps.lat,lastGps.lon],{animate:false});syncGpsControl(!lastGps);return}
+    stopGps();gpsStatus.textContent='GPS er slått av.';return;
+  }
   gpsStatus.classList.add('visible');
   if(!navigator.geolocation){gpsStatus.textContent='GPS/geolokasjon støttes ikke av denne nettleseren.';return}
-  const generation=++gpsGeneration;let firstPosition=true;
+  const generation=++gpsGeneration;let firstPosition=true;gpsFollowing=true;
   gpsStatus.textContent='Henter posisjon…';
   const fail=err=>{
     if(generation!==gpsGeneration)return;
@@ -87,12 +93,14 @@ function locateUser(){
       else gpsAccuracy=L.circle([lat,lon],{pane:'overlapPane',radius,color:'#2563eb',weight:1,fillColor:'#60a5fa',fillOpacity:.08,interactive:false}).addTo(map);
       if(gpsMarker)gpsMarker.setLatLng([lat,lon]);
       else gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
-      if(firstPosition){firstPosition=false;map.setView([lat,lon],map.getZoom()<12?14:map.getZoom())}
+      if(gpsFollowing){if(firstPosition&&map.getZoom()<12)map.setView([lat,lon],14);else map.panTo([lat,lon],{animate:false})}
+      firstPosition=false;
       syncGpsControl();updateGpsStatus(lat,lon,accuracy);
     },fail,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
     syncGpsControl(true);
   }catch(err){stopGps();gpsStatus.textContent='Kunne ikke starte GPS. Sjekk nettleserens posisjonstilgang.'}
 }
+map.on('dragstart',()=>{if(gpsWatchId!==null&&gpsFollowing){gpsFollowing=false;syncGpsControl(!lastGps)}});
 locateBtn.addEventListener('click',locateUser);syncGpsControl();
 // Refresh membership when the user changes the selection without moving.
 document.addEventListener('pota:selection',()=>{if(lastGps)updateGpsStatus(lastGps.lat,lastGps.lon,lastGps.accuracy)});
