@@ -138,7 +138,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  // Delayed stats update the compact summary and cannot overwrite the next park.
  await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3374'),false,false)});await page.waitForFunction(()=>document.querySelector('#mobileActivationCount').textContent==='17');
  await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3198'),false,false)});await page.waitForFunction(()=>document.querySelector('#mobileActivationCount').textContent==='0');
- console.log('Continuous mobile GPS');
+ console.log('GPS follows, pauses on drag and resumes with the same button');
+ const dragMap=async()=>{const pt=await page.evaluate(()=>{const r=map.getContainer().getBoundingClientRect();return {x:r.left+r.width*.6,y:r.top+r.height*.4}});await page.mouse.move(pt.x,pt.y);await page.mouse.down();await page.mouse.move(pt.x+60,pt.y+40,{steps:8});await page.mouse.up();await page.waitForTimeout(100);await page.evaluate(()=>{map.stop()});};
  await page.evaluate(()=>{
   selectedParks.set('GPS-FIXTURE',{link:{},geo:L.geoJSON({type:'Polygon',coordinates:[[[10,60],[10.02,60],[10.02,60.02],[10,60.02],[10,60]]]})});
  });
@@ -146,10 +147,12 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await gpsButton.click();assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.equal(await gpsButton.getAttribute('aria-label'),'Stopp GPS');assert.equal(await gpsButton.isEnabled(),true);
  const emitGps=(id,latitude,longitude,accuracy)=>page.evaluate(({id,latitude,longitude,accuracy})=>testGps.watches.get(id).success({coords:{latitude,longitude,accuracy}}),{id,latitude,longitude,accuracy});
  await emitGps(0,60.01,10.01,12);
- await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
+ await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<10);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  assert.match(await page.locator('#gpsStatus').innerText(),/Innenfor valgt POTA: GPS-FIXTURE/);
  const firstMarker=await page.evaluate(()=>L.stamp(gpsMarker));
- await page.evaluate(()=>{map.panBy([80,40],{animate:false})});const panned=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
+ await emitGps(0,60.0105,10.0105,9);await page.waitForFunction(()=>map.getCenter().distanceTo([60.0105,10.0105])<10);
+ assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');
+ await dragMap();assert.equal(await gpsButton.getAttribute('data-gps-state'),'paused');assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.equal(await gpsButton.getAttribute('aria-label'),'Følg posisjon');const panned=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
  await emitGps(0,60.011,10.011,7);
  assert.equal(await page.evaluate(()=>L.stamp(gpsMarker)),firstMarker,'reuse position marker');assert.equal(await page.evaluate(()=>gpsAccuracy.getRadius()),7);
  assert.deepEqual(await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng})),panned,'GPS updates must preserve manual pan');
@@ -157,19 +160,30 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.deepEqual(await page.evaluate(()=>({lat:gpsMarker.getLatLng().lat,lng:gpsMarker.getLatLng().lng})),{lat:60.05,lng:10.05});
  await page.evaluate(()=>testGps.watches.get(0).error({code:3,message:'Timed out'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.match(await page.locator('#gpsStatus').innerText(),/Oppfølgingen fortsetter/);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  await emitGps(0,60.01,10.01,5);assert.match(await page.locator('#gpsStatus').innerText(),/GPS-FIXTURE/);
- await gpsButton.click();assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0]);
+ await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<10);
+ assert.equal(await page.evaluate(()=>testGps.watches.size),1,'resume reuses the GPS watch');
+ await page.evaluate(()=>{map.setZoom(map.getZoom()-1)});const followZoom=await page.evaluate(()=>map.getZoom());
+ await emitGps(0,60.012,10.012,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.012,10.012])<10);assert.equal(await page.evaluate(()=>map.getZoom()),followZoom,'following preserves zoom');
+ await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'off');assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0]);
  await emitGps(0,61,11,5);assert.equal(await page.evaluate(()=>gpsMarker),null);assert.match(await page.locator('#gpsStatus').innerText(),/slått av/);
- // Starting again recenters only once and ignores callbacks from the old watch.
+ // Starting again follows new fixes and ignores callbacks from the old watch.
  await gpsButton.click();await emitGps(0,62,12,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
- await emitGps(1,60.01,10.01,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<1);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
+ await emitGps(1,60.01,10.01,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<10);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  await page.evaluate(()=>{selectedParks.delete('GPS-FIXTURE');document.dispatchEvent(new CustomEvent('pota:selection'))});assert.match(await page.locator('#gpsStatus').innerText(),/Ikke innenfor/);
  await page.evaluate(()=>testGps.watches.get(1).error({code:1,message:'Denied'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.match(await page.locator('#gpsStatus').innerText(),/Posisjonstilgang er avslått/);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0,1]);assert.equal(await page.evaluate(()=>testGps.oneShotCalls),0);
- // A pending first fix can also be cancelled immediately.
- await gpsButton.click();await gpsButton.click();await emitGps(2,63,13,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
+ // Pausing before the first fix keeps the watch and does not move the map.
+ await gpsButton.click();await dragMap();assert.equal(await gpsButton.getAttribute('data-gps-state'),'paused');
+ await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');assert.equal(await page.evaluate(()=>testGps.watches.size),3);
+ await gpsButton.click();await emitGps(2,63,13,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
  assert.deepEqual(await page.evaluate(()=>testGps.watches.get(0).options),{enableHighAccuracy:true,timeout:15000,maximumAge:0});
  await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300);await page.click('#locateBtn');await emitGps(3,60.01,10.01,6);
- assert.equal(await page.locator('#locateBtn').getAttribute('aria-pressed'),'true');await page.click('#locateBtn');assert.equal(await page.evaluate(()=>gpsMarker),null);
+ assert.equal(await page.locator('#locateBtn').getAttribute('aria-pressed'),'true');
+ await emitGps(3,60.011,10.011,6);await page.waitForFunction(()=>map.getCenter().distanceTo([60.011,10.011])<10);
+ await dragMap();assert.equal(await page.locator('#locateBtn').innerText(),'Følg posisjon');const desktopPan=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
+ await emitGps(3,60.012,10.012,6);assert.deepEqual(await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng})),desktopPan);
+ await page.click('#locateBtn');await page.waitForFunction(()=>map.getCenter().distanceTo([60.012,10.012])<10);assert.equal(await page.locator('#locateBtn').getAttribute('data-gps-state'),'following');
+ await page.click('#locateBtn');assert.equal(await page.evaluate(()=>gpsMarker),null);
  console.log('Mouseover lists all parks at the pointer without new worker jobs');
  const hoverRefs=['NO-HOVER-A','NO-HOVER-B','NO-HOVER-C','NO-HOVER-HOLE'];
  await page.evaluate(refs=>{

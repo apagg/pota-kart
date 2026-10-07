@@ -9,6 +9,8 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
 .gps-marker{width:18px;height:18px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 2px #2563eb,0 2px 8px #0005}
 #locateBtn.locating{opacity:.7}
 #locateBtn.gps-active,#mobileLocate[aria-pressed="true"]{background:#3388ff;color:#fff;border-color:#3388ff}
+#locateBtn[data-gps-state="paused"],#mobileLocate[data-gps-state="paused"]{background:#edf4ff;color:#155eef;box-shadow:inset 0 0 0 2px #3388ff,0 2px 9px #0003}
+#mobileLocate{position:relative}#mobileLocate[data-gps-state="paused"]::after{content:"Ⅱ";position:absolute;right:5px;bottom:3px;font-size:13px;font-weight:700}
 @media (max-width:700px){
   .panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:58vh;overflow:auto;padding:12px 13px calc(12px + env(safe-area-inset-bottom));border-radius:14px}
   .panel-toggle{top:auto;left:10px;bottom:calc(10px + env(safe-area-inset-bottom));width:44px;height:44px;line-height:44px;border-radius:12px}
