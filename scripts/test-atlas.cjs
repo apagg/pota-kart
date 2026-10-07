@@ -209,7 +209,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300);
  assert.equal(await page.locator('#mobileOverlapChoices').isVisible(),false);await page.evaluate(()=>{map.setView([30.005,10.005],14,{animate:false})});
  await moveHover(10.007);const desktopPoint=await page.evaluate(()=>{const p=map.latLngToContainerPoint([30.005,10.007]);return {x:p.x,y:p.y}});await page.mouse.click(desktopPoint.x,desktopPoint.y);
- await page.locator('.leaflet-popup:visible').waitFor();assert.equal(await page.locator('.leaflet-popup button').count(),3);await page.evaluate(()=>map.closePopup());
+ await page.locator('.leaflet-popup:visible').waitFor();assert.equal(await page.locator('.leaflet-popup button').count(),3);await page.evaluate(()=>{map.closePopup()});
  await page.mouse.move(0,0);await page.evaluate(refs=>{for(const ref of refs){geometryAtlas.byRef.delete(ref);geometryAtlas.parkByRef.delete(ref);delete geometryAtlas.indexes.NO.parks[ref]}pota=pota.filter(p=>!refs.includes(p.reference))},hoverRefs);
  assert.deepEqual(errors,[]);console.log('PASS',counts,'country filter, geometries without markers, overlap chooser, 61 m trail, clear selection, point reserve, mobile and satellite');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
