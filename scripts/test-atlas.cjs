@@ -130,7 +130,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const compactHeight=await page.locator('#infoPanel').evaluate(el=>el.getBoundingClientRect().height);assert(compactHeight<190,'compact sheet height '+compactHeight);
  await page.screenshot({path:'atlas-mobile-compact.png'});
  const handle=await page.locator('#mobileHandle').boundingBox();await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await page.mouse.down();await page.mouse.move(handle.x+handle.width/2,handle.y-65,{steps:6});await page.mouse.up();
- assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'true');assert.equal(await page.locator('#status').isVisible(),false);
+ assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'true');assert.equal(await page.locator('#status').isVisible(),false);assert.equal(await page.locator('.info-more>summary').isVisible(),false);assert.equal(await page.locator('.info-more').getAttribute('open'),'');
  assert.doesNotMatch(await page.locator('#infoPanel').innerText(),/Valgt område:|register-ID|offisiell type:|Miljødirektoratets Naturbase/);
  await page.screenshot({path:'atlas-mobile-expanded.png'});
  await page.click('#mobileHandle');assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'false');

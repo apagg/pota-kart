@@ -69,7 +69,7 @@
     for(const [id,active] of [['mobileMapTab',isPark],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
     if(enabled)for(const child of content.children){const visible=expanded&&(child.dataset.mobileSection||'').split(' ').includes(isPark?'details':view);child.hidden=!visible;}
     empty.hidden=!enabled||view!=='selected'||count>0;
-    if(enabled&&view==='selected'){content.querySelector('.info-more').open=true;}
+    if(enabled&&expanded&&(view==='selected'||view==='park')){content.querySelector('.info-more').open=true;}
   }
   function openView(next,full=true){view=next;expanded=full;closeSearch();panel.classList.remove('hidden');update();content.scrollTop=0;}
   function activate(){
