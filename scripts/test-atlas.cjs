@@ -121,6 +121,23 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/0\.11\.0 test/);
  await page.getByRole('button',{name:'Innstillinger',exact:true}).click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.getByRole('button',{name:'Kart',exact:true}).click();await page.screenshot({path:'atlas-mobile.png'});
+ console.log('Compact mobile park sheet');
+ await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3198'),false,false)});
+ await page.waitForFunction(()=>document.querySelector('#mobileActivationCount').textContent==='0');
+ assert.equal(await page.locator('#mobileDetailsToggle').count(),0);assert.equal(await page.locator('#mobileParkSummary').isVisible(),true);
+ assert.equal(await page.locator('#mobilePotaLink').getAttribute('href'),'https://pota.app/#/park/NO-3198');assert.equal(await page.locator('#mobilePotaLink').getAttribute('target'),'_blank');assert.match(await page.locator('#mobilePotaLink').getAttribute('rel'),/noopener/);
+ assert.equal(await page.locator('#mobileSelectionToggle').isVisible(),true);assert.equal(await page.locator('#status').isVisible(),false);assert.equal(await page.locator('#linkbox').isVisible(),false);
+ const compactHeight=await page.locator('#infoPanel').evaluate(el=>el.getBoundingClientRect().height);assert(compactHeight<190,'compact sheet height '+compactHeight);
+ await page.screenshot({path:'atlas-mobile-compact.png'});
+ const handle=await page.locator('#mobileHandle').boundingBox();await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await page.mouse.down();await page.mouse.move(handle.x+handle.width/2,handle.y-65,{steps:6});await page.mouse.up();
+ assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'true');assert.equal(await page.locator('#status').isVisible(),false);
+ assert.doesNotMatch(await page.locator('#infoPanel').innerText(),/Valgt område:|register-ID|offisiell type:|Miljødirektoratets Naturbase/);
+ await page.screenshot({path:'atlas-mobile-expanded.png'});
+ await page.click('#mobileHandle');assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'false');
+ await page.click('#mobileSelectionToggle');assert.equal(await page.evaluate(()=>selectedParks.has('NO-3198')),false);await page.click('#mobileSelectionToggle');await page.waitForFunction(()=>selectedParks.has('NO-3198'));
+ // Delayed stats update the compact summary and cannot overwrite the next park.
+ await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3374'),false,false)});await page.waitForFunction(()=>document.querySelector('#mobileActivationCount').textContent==='17');
+ await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3198'),false,false)});await page.waitForFunction(()=>document.querySelector('#mobileActivationCount').textContent==='0');
  console.log('Continuous mobile GPS');
  await page.evaluate(()=>{
   selectedParks.set('GPS-FIXTURE',{link:{},geo:L.geoJSON({type:'Polygon',coordinates:[[[10,60],[10.02,60],[10.02,60.02],[10,60.02],[10,60]]]})});
