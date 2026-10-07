@@ -1,213 +1,153 @@
 {
   "type": "Feature",
   "id": "215058",
+  "properties": {
+    "kulturminneId": "215058",
+    "navn": "Trøgstad fort",
+    "sourceFeatureIds": [
+      "lokalitet.89633"
+    ],
+    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/215058"
+  },
   "geometry": {
     "type": "MultiPolygon",
     "coordinates": [
       [
         [
           [
-            11.34077482907413,
-            59.63511102859359
+            11.340775,
+            59.635111
           ],
           [
-            11.340341457533407,
-            59.635125159545304
+            11.340341,
+            59.635125
           ],
           [
-            11.340055469442152,
-            59.635213380941444
+            11.340055,
+            59.635213
           ],
           [
-            11.339599171821094,
-            59.635279349504515
+            11.339599,
+            59.635279
           ],
           [
-            11.339236582288358,
-            59.63527796133864
+            11.339237,
+            59.635278
           ],
           [
-            11.339010699909693,
-            59.63513169851831
+            11.339011,
+            59.635132
           ],
           [
-            11.338971289167889,
-            59.634859445928605
+            11.338971,
+            59.634859
           ],
           [
-            11.33877974498903,
-            59.634556701113276
+            11.33878,
+            59.634557
           ],
           [
-            11.338847461880555,
-            59.63425245740395
+            11.338847,
+            59.634252
           ],
           [
-            11.339627859793575,
-            59.633906907254655
+            11.339628,
+            59.633907
           ],
           [
-            11.340234140704043,
-            59.6335739816354
+            11.340234,
+            59.633574
           ],
           [
-            11.340662508038085,
-            59.633288561832295
+            11.340663,
+            59.633289
           ],
           [
-            11.341024009596993,
-            59.63314122168957
+            11.341024,
+            59.633141
           ],
           [
-            11.341567911535062,
-            59.632587877622534
+            11.341568,
+            59.632588
           ],
           [
-            11.34311729184332,
-            59.63215882924147
+            11.343117,
+            59.632159
           ],
           [
-            11.346112904294793,
-            59.631612682334094
+            11.346113,
+            59.631613
           ],
           [
-            11.346832459008402,
-            59.63182518637608
+            11.346832,
+            59.631825
           ],
           [
-            11.347224056047176,
-            59.63219472632318
+            11.347224,
+            59.632195
           ],
           [
-            11.34734897705823,
-            59.63279298979232
+            11.347349,
+            59.632793
           ],
           [
-            11.347407571273116,
-            59.63304827906195
+            11.347408,
+            59.633048
           ],
           [
-            11.347486378794741,
-            59.63343533297059
+            11.347486,
+            59.633435
           ],
           [
-            11.347387295833341,
-            59.633869906663165
+            11.347387,
+            59.63387
           ],
           [
-            11.346843320204286,
-            59.63426582974578
+            11.346843,
+            59.634266
           ],
           [
-            11.346327939939071,
-            59.63455758744401
+            11.346328,
+            59.634558
           ],
           [
-            11.34559071496835,
-            59.634983101723314
+            11.345591,
+            59.634983
           ],
           [
-            11.345122092216616,
-            59.6351624525806
+            11.345122,
+            59.635162
           ],
           [
-            11.344137783642433,
-            59.63531866013681
+            11.344138,
+            59.635319
           ],
           [
-            11.343759870679444,
-            59.63529936290048
+            11.34376,
+            59.635299
           ],
           [
-            11.343043237069612,
-            59.63521812581716
+            11.343043,
+            59.635218
           ],
           [
-            11.341817581047296,
-            59.6350526931785
+            11.341818,
+            59.635053
           ],
           [
-            11.34077482907413,
-            59.63511102859359
+            11.340775,
+            59.635111
           ]
         ]
       ]
     ]
   },
-  "properties": {
-    "navn": "Trøgstad fort",
-    "opphav": "Østfold fylkeskommune",
-    "informasjon": "Trøgstad fort var et panserfort med 4 tårnkanoner som hovedvæpning sammen med et 8,4 cm feltbatteri. Fortet ble konstruert med flere separate deler med piggtrådsperringer rundt hver del.  Trøgstad er søsterfortet til Høytorp fort på Mysen og var underlagt dette. Anlegget ble besluttet bygget i 1911 og 1,5 millioner kr ble bevilget. Det kom senere noen tilleggsbevilgninger. Anleggsperioden var fra 1910 til 1917. Rundt tårnkanonene og på startegiske steder i terrenget er det konstruert ulike infanteriverk. Store deler av anlegget er konstruert med fjell som overdekning. Trøgstad fort var operativt fra 1917. I fredstid hadde fortet en garnison på rundt 70 mann. \rI løpet av mellomkrigstiden ble imidlertid aktiviteten ved fortet kraftig trappet ned og i 1939 huset fortet bare en rekruttskole på sommerstid.  \rVed krigsutbruddet i 1940 ble Trøgstad \"stille moblisert\" og rundt 300 av 800 mann kom etterhvert på plass. I likhet med Høytorp manglet fortet sammunisjon. 13. april kl. 1730 kom imidlertid 7,5 cm kanonene i aksjon og ga støtte til norske avdelinger ved Kolbjørnrød. 12 cm tårnene beskjøt området ved Øierud krysset. Tyske avdelinger trakk seg etterhvert tilbake i retning Lillestrøm, men fortsatte fremrykkningen dagen etter uten å bli beskutt fra fortet som ikke hadde OP poster ute.  På ettermiddagen 14. april nådde de tyske troppene Skjønhaug og Trøgstad fort ble etter forhandlinger overgitt. Tårnkanonene ble demontert av tyskerne i løpet av 1942-1943 og sendt til kystfortene.  \rEtterkrigstida: Flyvåpenets radarkontrollskole ble etablert på Trøgstad fort i 1953 og fungerte frem til 1958 da den ble nedlagt. NIKE batteriet overtok samme år og ble først deaktivet i 1991. Trøgstad ammunisjonslager med eksplosivverksted avsluttet sin virksomhet i januar 1995 som siste millitære virksomhet på Trøgstad fort.",
-    "førsteDigitaliseringsdato": "2015-11-03T09:33:46Z",
-    "kommune": "3118",
-    "kulturminneId": "215058",
-    "antallEnkeltminner": 6,
-    "linkAskeladden": "https://askeladden.ra.no/askeladden/?kid=215058",
-    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/215058",
-    "lokalId": "215058",
-    "lokalitetsart": "20102",
-    "lokalitetskategori": "L-BVF",
-    "målemetode": 82,
-    "navnerom": "http://skjema.geonorge.no/SOSI/produktspesifikasjon/LokaliteterEnkeltminnerOgSikringssoner/20210217",
-    "versjonId": "20210217",
-    "nøyaktighet": 500,
-    "nåværendeFunksjon": null,
-    "områdefredning": null,
-    "synlig": true,
-    "vernetype": "IKKEV",
-    "vernedato": "1900-01-01T00:00:00Z",
-    "vernelov": null,
-    "verneparagraf": null,
-    "opprinneligFunksjon": null,
-    "datafangstdato": "2015-11-03T00:00:00Z",
-    "opprettet": "2015-11-03T09:33:46Z",
-    "oppdateringsdato": "2025-06-24T11:43:56Z",
-    "senterpunkt": {
-      "type": "Point",
-      "coordinates": [
-        11.343613887243196,
-        59.63366225563022
-      ]
-    }
-  },
-  "links": [
-    {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/215058?f=json",
-      "rel": "self",
-      "type": "application/geo+json",
-      "title": "Dieses Dokument"
-    },
-    {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/215058?f=csv",
-      "rel": "alternate",
-      "type": "text/csv",
-      "title": "Dieses Dokument als CSV"
-    },
-    {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/215058?f=fgb",
-      "rel": "alternate",
-      "type": "application/flatgeobuf",
-      "title": "Dieses Dokument als FlatGeobuf"
-    },
-    {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/215058?f=html",
-      "rel": "alternate",
-      "type": "text/html",
-      "title": "Dieses Dokument als HTML"
-    },
-    {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter?f=json",
-      "rel": "collection",
-      "type": "application/json",
-      "title": "Die Datensammlung, zu der das Objekt gehört"
-    }
-  ],
   "cacheMetadata": {
-    "verifiedDate": "2026-10-06",
-    "sourceUrl": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/215058?f=json",
+    "verifiedDate": "2026-10-07",
+    "sourceUrl": "https://wfs.geonorge.no/skwms1/wfs.kulturminner?service=WFS&version=2.0.0&request=GetFeature&typeNames=app%3ALokalitet&srsName=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A4326&count=1000&startIndex=0&filter=%3Cfes%3AFilter+xmlns%3Afes%3D%22http%3A%2F%2Fwww.opengis.net%2Ffes%2F2.0%22+xmlns%3Aapp%3D%22http%3A%2F%2Fskjema.geonorge.no%2FSOSI%2Fproduktspesifikasjon%2FLokaliteterEnkeltminnerOgSikringssoner%2F20210217%22%3E%3Cfes%3AOr%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AkulturminneId%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3E215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AlinkKulturminnes%C3%B8k%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3Ehttps%3A%2F%2Fkulturminnesok.no%2Fra%2Flokalitet%2F215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3C%2Ffes%3AOr%3E%3C%2Ffes%3AFilter%3E",
     "sourceUrls": [
-      "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/215058?f=json"
+      "https://wfs.geonorge.no/skwms1/wfs.kulturminner?service=WFS&version=2.0.0&request=GetFeature&typeNames=app%3ALokalitet&srsName=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A4326&count=1000&startIndex=0&filter=%3Cfes%3AFilter+xmlns%3Afes%3D%22http%3A%2F%2Fwww.opengis.net%2Ffes%2F2.0%22+xmlns%3Aapp%3D%22http%3A%2F%2Fskjema.geonorge.no%2FSOSI%2Fproduktspesifikasjon%2FLokaliteterEnkeltminnerOgSikringssoner%2F20210217%22%3E%3Cfes%3AOr%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AkulturminneId%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3E215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AlinkKulturminnes%C3%B8k%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3Ehttps%3A%2F%2Fkulturminnesok.no%2Fra%2Flokalitet%2F215058%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3C%2Ffes%3AOr%3E%3C%2Ffes%3AFilter%3E"
     ],
-    "service": "api"
+    "service": "wfs"
   }
 }
