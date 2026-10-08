@@ -94,3 +94,7 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 ## Beslutning om testing (2026-10-08)
 - Brukeren krever automatisk test og kontroll av GitHub Actions etter hver kodeendring, med nettleser-, mobil- og GPS-test når relevant.
 - Dette er nå en fast regel i PROJECT.md. Tidligere moduluttrekk har fortsatt ikke bekreftet bestått CI/nettlesertest og er derfor uverifisert.
+
+## Feilsøking av PR #2 / Actions 37831758037
+- Kjøringen feilet under `node scripts/test-diagnostics.cjs` med `actual: Error: offline`, `expected: offline`. Årsak: `instanceof Error` gjenkjenner ikke Error fra et annet JavaScript-realm.
+- Rettet diagnostikkens normalisering og utvidet testen i `refactor/core-geometry-helpers`. Ikke testbekreftet ennå. `main` er urørt.
