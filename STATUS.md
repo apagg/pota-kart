@@ -79,3 +79,8 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - `scripts/test-geojson-utils.cjs` dekker null, FeatureCollection, Feature og ren geometri. CI kjører testen.
 - Isolert testpublisering inkluderer nå både `diagnostics.js` og `geojson-utils.js`.
 - Stisystemet er urørt. Automatiserte tester er konfigurert, men ikke verifisert kjørt i denne arbeidsøkten.
+
+## Siste endring: map-setup.js
+- Kartinitialisering, Leaflet-panes, UI-referanser og bakgrunnskart flyttet fra `app-core.js` til `map-setup.js` uten tilsiktet funksjonsendring.
+- `app.js` laster ny modul før kartkjernen. GitHub Actions sjekker JavaScript-syntaks og inkluderer modulen i testpublisering.
+- Ingen endringer i stier, stidata eller GPS-beregning. CI-status er foreløpig ikke bekreftet.
