@@ -59,3 +59,10 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - Runtime fallback i `app-core.js` bruker redigert Hvaler-fil dersom tilgjengelig.
 - **Uverifisert:** full nettlesertest, geografisk klipping av eventuelle grensekryssende segmenter, og deploy på Pages. Segmenter som krysser Hvaler-grensen og mangler `Kommune=Hvaler` kan fortsatt måtte klippes; dette er ikke ferdig validert.
 - Siste kodecommit for atlas: `86c5f3d`. Arbeid på `main` etter brukerens beslutning.
+
+## Teknisk kontroll av lokal Hvaler GeoPackage (2026-10-08)
+- Kontrollert den opplastede GeoPackage-kopien med SQLite, Shapely og pyproj. `hvaler_tillegg`: 449 rader, 448 linjer, én tom, 56 identiske duplikater, 392 unike geometrier; alle ikke-tomme linjer er gyldige og har positiv lengde. Lengde før deduplisering 73,732 km, etter deduplisering 63,412 km.
+- `hvaler_original` og `hvaler_redigering` er geometrisk identiske (35/35), 34,819 km.
+- Geografisk utstrekning av tillegg i EPSG:25832: 604985,75 / 6542390,70 til 620909,28 / 6552983,13. Nytt og gammelt nett er ikke identisk; ca. 31,13 km av gammelt nett ligger innen 30,5 m av nytt nett.
+- **Bestått:** dataintegritet og identisk-duplikat-kontroll av lokal GeoPackage.
+- **Ikke testet:** kommunegrenseklipping, GPS/61-meterskorridor i nettleser, GitHub Actions og Pages-publisering. Git-kloning fra container var blokkert av DNS/nettverk. Disse må fortsatt verifiseres før full godkjenning.
