@@ -161,3 +161,8 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - Dokumenter faktisk utførte tester, resultat, eventuelle begrensninger og commit i STATUS.md og oppdater TODO.md.
 - En commit eller konfigurert CI-test er ikke bevis for at testene er bestått. Oppgaven er ikke ferdig før testresultatene er bekreftet. Dersom tilgang eller testmiljø hindrer verifisering, oppgi tydelig at arbeidet er uverifisert og avvent videre risikofylt refaktorering.
 - Stisystemet, inkludert Hvaler, skal fortsatt ikke endres før brukeren ber om samlet omarbeiding.
+
+## CI-feil og retting 2026-10-08
+- GitHub Actions-kjøring 37831758037 feilet i `scripts/test-diagnostics.cjs`: Error-instans opprettet utenfor `node:vm` ble ikke gjenkjent med `instanceof Error` inne i VM. Testen forventet `offline`, men fikk `Error: offline`.
+- `diagnostics.js` bruker nå en streng `error.message` når tilgjengelig på tvers av JavaScript-realm, og fallback til `String(error)`. Testen dekker både host-Error og VM-Error.
+- Rettelsen ligger i testgrenen `refactor/core-geometry-helpers`; grønn GitHub Actions og nettlesertester må bekreftes før sammenslåing.
