@@ -14,6 +14,8 @@ on:
       - 'scripts/test-atlas.cjs'
       - 'scripts/test-overlap-engine.cjs'
       - '.github/workflows/geometry-preview.yml'
+  pull_request:
+    branches: ['main']
   workflow_dispatch:
 permissions:
   contents: write
