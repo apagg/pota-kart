@@ -130,10 +130,6 @@ const NVREST='https://geodata.naturvardsverket.se/naturvardsregistret/rest/v3';
 const N2REST='https://geodata.naturvardsverket.se/n2000/rest/v3';
 const restCatalogCache={national:null,n2000:null};
 
-function norm(s){return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function getJSON(url){const r=await fetch(url);if(!r.ok)throw Error(r.status+' '+r.statusText);return r.json()}
-
 // Eksplisitte koblinger trumfer automatisk navnetolkning.
 const OVERRIDES={
   'SE-0245':{officialName:'Kosteröarna',officialId:'2000583',layer:'nr',type:'Naturreservat',confidence:'bekreftet overstyring'},
