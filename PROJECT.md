@@ -101,7 +101,7 @@ Tidligere ble hele **Fotrute-kartlaget** etterspurt, særlig stiene vist i v8.10
 
 Per denne arbeidsøkten er selve GeoPackage-filen ikke tilgjengelig i det lokale arbeidsområdet og finnes ikke i den kontrollerte filtrestrukturen på `main`. Laginnhold, koordinatsystem og geometrivaliditet er derfor ikke kontrollert her, og importen er ikke utført.
 
-Før import: finn riktig fil, kontroller alle relevante lag og avklar hvilket lag som representerer det komplette sluttresultatet. Et lagnavn fra tidligere veiledning er ikke bevis for filens faktiske struktur. Definer også en sikker avgrensning av gamle Hvaler-segmenter; ikke slett en hel rute som også fortsetter utenfor Hvaler.
+**Brukerbeslutning 2026-10-08:** Bare laget `hvaler_tillegg` skal brukes som ny kilde for Hvaler. Det skal erstatte **alle andre stier på Hvaler**. Lagene `hvaler_original` og `hvaler_redigering` skal ikke importeres. Bevar stier utenfor Hvaler, også deler av ruter som krysser kommunegrensen. Kontroller og håndter ugyldige eller dupliserte linjer før import. Definer også en sikker avgrensning av gamle Hvaler-segmenter; ikke slett en hel rute som også fortsetter utenfor Hvaler.
 
 Importerens oppdatering må bevare det manuelle tillegget. Det er ikke tilstrekkelig å endre bare en generert geometri-JSON som senere kan bli overskrevet.
 
