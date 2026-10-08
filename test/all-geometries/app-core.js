@@ -1026,8 +1026,10 @@ async function focusOfficialGeometry(link,p){
     st.innerHTML=`Valgt område: <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?(r.sourceLabel||'Miljødirektoratets offisielle Naturbase-data'):'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
     if(isKyststienPark(p)&&isTrailLink(link))st.innerHTML+=`<br><span class="small">Kyststien vises som et ${TRAIL_CORRIDOR_WIDTH_M} meter bredt belte (${TRAIL_BUFFER_M} meter på hver side av midtlinjen).</span>`;
     if(r.geometryNote)st.innerHTML+=`<br><span class="small">${esc(r.geometryNote)}</span>`;
+    document.dispatchEvent(new CustomEvent('pota:geometry',{detail:{reference:p.reference,available:true}}));
     return r;
   }catch(e){
+    document.dispatchEvent(new CustomEvent('pota:geometry',{detail:{reference:p.reference,available:false}}));
     st.innerHTML=`Kunne ikke hente en verifisert enkeltgeometri for <b>${esc(link.officialName)}</b>: ${esc(e.message)}. Ingen andre områder vises som en falsk match.`;
     return null;
   }

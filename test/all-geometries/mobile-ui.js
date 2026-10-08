@@ -30,6 +30,7 @@
       <a id="mobilePotaLink" target="_blank" rel="noopener noreferrer">pota.app ↗</a>
       <div class="mobile-sheet-actions"><button id="mobileSelectionToggle" hidden></button></div>
     </div>`;panel.prepend(header);
+  const geometryResults=new Map(),geometryNote=document.createElement('p');geometryNote.id='mobileGeometryNote';geometryNote.className='mobile-geometry-note';geometryNote.dataset.mobileSection='details';geometryNote.textContent='Geometri mangler – parken vises som punkt';geometryNote.hidden=true;content.prepend(geometryNote);
   const choices=document.createElement('div');choices.id='mobileOverlapChoices';choices.className='mobile-overlap-list';choices.dataset.mobileSection='overlap';choices.hidden=true;content.appendChild(choices);
   const single=document.createElement('div');single.id='mobileSingleSelection';single.dataset.mobileSection='selected';content.appendChild(single);
   const empty=document.createElement('p');empty.id='mobileEmptySelection';empty.textContent='Ingen parker er valgt. Trykk på et POTA-punkt eller bruk søket.';empty.dataset.mobileSection='selected';content.appendChild(empty);
@@ -69,6 +70,7 @@
     $('mobileHandle').setAttribute('aria-label',expanded?'Minimer parkboksen':'Utvid parkboksen');
     for(const [id,active] of [['mobileMapTab',isPark||view==='overlap'],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
     if(enabled)for(const child of content.children){const visible=expanded&&(child.dataset.mobileSection||'').split(' ').includes(isPark?'details':view);child.hidden=!visible;}
+    geometryNote.hidden=!(enabled&&isPark&&expanded&&current&&geometryResults.get(current.p.reference)===false);
     empty.hidden=!enabled||view!=='selected'||count>0;
     if(enabled&&expanded&&(view==='selected'||view==='park')){content.querySelector('.info-more').open=true;}
   }
@@ -118,6 +120,7 @@
     }
     openView('overlap');
   });
+  document.addEventListener('pota:geometry',e=>{geometryResults.set(e.detail.reference,e.detail.available);update();});
   document.addEventListener('pota:park',e=>{current=e.detail;if(enabled)openView('park',false);else update();});
   document.addEventListener('pota:selection',update);
   $('multiMode').addEventListener('change',update);
@@ -125,7 +128,8 @@
     if(!enabled)return;
     const text=$('status').textContent;
     // Keep search failures and loading errors visible even with a collapsed sheet.
-    const show=/^(Fant ikke|POTA-listen kunne ikke|Oppstartsfeil|Kunne ikke hente)/.test(text);
+    const geometryFailure=/^Kunne ikke hente en verifisert enkeltgeometri/.test(text);
+    const show=!geometryFailure&&/^(Fant ikke|POTA-listen kunne ikke|Oppstartsfeil|Kunne ikke hente)/.test(text);
     $('mobileNotice').hidden=!show;$('mobileNotice').textContent=show?text:'';
     update();
   }).observe($('status'),{childList:true,subtree:true});
