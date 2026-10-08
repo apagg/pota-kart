@@ -38,7 +38,6 @@ setBaseMap(initialBase);
 baseMapSelect.addEventListener('change',e=>setBaseMap(e.target.value));
 let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0,gpsFollowing=false;
 function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-marker" aria-label="Min posisjon"></div>',iconSize:[18,18],iconAnchor:[9,9]})}
-function featuresOfGeoJson(gj){if(!gj)return[];if(gj.type==='FeatureCollection')return gj.features||[];if(gj.type==='Feature')return[gj];return[{type:'Feature',properties:{},geometry:gj}]}
 function gpsInsideSelected(lat,lon){
   if(typeof turf==='undefined')return[];const pt=turf.point([lon,lat]),hits=[];
   const entries=[...selectedParks];
