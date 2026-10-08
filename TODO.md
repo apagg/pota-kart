@@ -100,3 +100,8 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Flytt `norm`, `esc` og `getJSON` til `app-text-utils.js` uten logikkendringer.
 - [x] Oppdater modulinnlasting og CI.
 - [ ] Kontroller endelig Actions-status og nettlesertester for [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771); status var `pending` ved dokumentasjon.
+
+## Obligatorisk kontroll før avslutning av enhver kodeoppgave
+- [x] Bekreftet at den nyere kjøringen [37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605) er `completed/success`, med bestått geometri/JS og desktop-/mobiltester, for `f6c46cc24da0365c0148898573357a210d12f559`.
+- [ ] For **hver fremtidige kodeendring**: vent på og kontroller endelig GitHub Actions-status selv. Ikke avslutt ved `pending`, `in_progress` eller `cancelled`; følg erstatningskjøring eller rett feil til endelig resultat foreligger.
+- [ ] Etter grønn CI: dokumenter test-ID, testet commit og resultater i prosjektfilene før ferdigmelding.
