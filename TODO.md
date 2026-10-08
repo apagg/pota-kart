@@ -71,3 +71,7 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 
 ## Fast kvalitetsregel
 - [ ] Kontroller faktisk GitHub Actions-resultat og relevante nettlesertester etter hver fremtidige kodeendring. Ikke marker oppgaver som ferdige før testene er bestått; dokumenter eventuelle blokkeringer.
+
+- [x] Undersøk feil i Actions-kjøring 37831758037; identifisert cross-realm `Error`-håndtering i diagnostikktesten.
+- [x] Rett `diagnostics.js` i testgrenen, utvid testen med VM-Error.
+- [ ] Verifiser ny Actions-kjøring inklusive nettlesertester før PR #2 kan slås sammen med `main`.
