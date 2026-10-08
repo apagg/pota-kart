@@ -108,3 +108,7 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - Siste moduluttrekk (`app-text-utils.js`) er bekreftet gjennom [GitHub Actions 37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605): `completed/success`, commit `f6c46cc24da0365c0148898573357a210d12f559`; geometri/JavaScript og desktop/mobil bestod.
 - Kjøring 37834519771 ble avbrutt fordi nyere commits utløste erstatningskjøring; en avbrutt kjøring er ikke en bestått test.
 - Fast prosessregel: assistenten skal **ikke stoppe før endelig testresultat er kontrollert direkte i GitHub Actions**. Følg nyeste relevante kjøring ved kansellering, og rett eventuelle feil før ferdigmelding.
+
+## Refaktorering av parkvalg og oppstart 2026-10-08
+- Fem moduler skilt ut fra app-core.js. Actions 37837436277: completed/success for kodecommit eb87927df0a3bedece0479bffa844bc5575311c2, inkludert geometri/JS og desktop/mobil.
+- Stier er uendret. PR #2 er fortsatt testgren.
