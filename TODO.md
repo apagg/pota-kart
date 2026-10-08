@@ -12,9 +12,10 @@ Sist oppdatert: 2026-10-08. Les [PROJECT.md](PROJECT.md) først.
 ## Neste hovedoppgave: erstatte Hvaler-stiene
 
 - [ ] Finn eller innhent `Hvaler-redigering.gpkg`. Filen er omtalt som levert i tidligere samtale, men ble ikke funnet i arbeidsområdet eller filtrestrukturen på `main` i denne økten.
-- [ ] Kontroller lag, antall objekter, geometri, koordinatsystem og hvilket lag som er brukerens komplette sluttresultat. Sjekk særlig Spjærøy.
+- [x] Brukeren har bekreftet at **kun `hvaler_tillegg`** er sluttresultatet; `hvaler_original` og `hvaler_redigering` skal ikke importeres. Sjekk særlig Spjærøy.
+- [ ] Kontroller og rens `hvaler_tillegg` for tom geometri og reelle duplikater uten å fjerne gyldige stier.
 - [ ] Sammenlign mot dagens Kyststien Østfold (NO-2542). Skill komplett Fotrute-datasett fra stiene som faktisk skal inngå i POTA-kartet.
-- [ ] Beskriv en presis regel for å fjerne gamle Hvaler-stier og bevare alle segmenter utenfor Hvaler, inkludert ruter som krysser avgrensningen.
+- [ ] Fjern **alle andre stier innenfor Hvaler** og erstatt dem kun med `hvaler_tillegg`; bevar segmenter utenfor Hvaler, inkludert deler av grensekryssende ruter.
 - [ ] Avtal konkret endringsplan før ny appversjon og gjennomfør i egen testgren.
 - [ ] Lagre den redigerte kilden med metadata og en reproducerbar import. Konverter til GeoJSON med lengdegrad/breddegrad og bevar alle gyldige linjedeler.
 - [ ] Tilpass `scripts/update-geometries.py` slik at regenerering ikke overskriver Hvaler-redigeringen. Kontroller også runtime-reserven i `app-core.js`.
