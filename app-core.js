@@ -1,4 +1,4 @@
-const map=L.map('map',{zoomControl:false}).setView([62.0,13.0],5);L.control.zoom({position:'bottomright'}).addTo(map);
+const map=L.map('map',{zoomControl:false,preferCanvas:false}).setView([62.0,13.0],5);L.control.zoom({position:'bottomright'}).addTo(map);
 // POTA-punkter ligger i en egen pane over områdepolygonene, men under popup-vinduene.
 map.createPane('potaPane');
 map.getPane('potaPane').style.zIndex='650';
@@ -35,12 +35,14 @@ for(const layer of Object.values(baseLayers))layer.on('tileerror',()=>{st.innerH
 let initialBase='osm';try{initialBase=localStorage.getItem('potaBaseMap')||'osm'}catch(e){}
 setBaseMap(initialBase);
 baseMapSelect.addEventListener('change',e=>setBaseMap(e.target.value));
-let gpsMarker=null,gpsAccuracy=null,lastGps=null;
+let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0,gpsFollowing=false;
 function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-marker" aria-label="Min posisjon"></div>',iconSize:[18,18],iconAnchor:[9,9]})}
 function featuresOfGeoJson(gj){if(!gj)return[];if(gj.type==='FeatureCollection')return gj.features||[];if(gj.type==='Feature')return[gj];return[{type:'Feature',properties:{},geometry:gj}]}
 function gpsInsideSelected(lat,lon){
   if(typeof turf==='undefined')return[];const pt=turf.point([lon,lat]),hits=[];
-  for(const [ref,x] of selectedParks){if(!x.geo)continue;let hit=false;
+  const entries=[...selectedParks];
+  if(!multiMode.checked&&lastSelectedRef&&selectedGeo)entries.push([lastSelectedRef,{geo:selectedGeo,link:linkTable[lastSelectedRef]}]);
+  for(const [ref,x] of entries){if(!x.geo)continue;let hit=false;
     for(const f of featuresOfGeoJson(x.geo.toGeoJSON())){const g=f.geometry;if(!g)continue;try{
       if(g.type==='Polygon'||g.type==='MultiPolygon')hit=turf.booleanPointInPolygon(pt,f);
       else if(isTrailLink(x.link)&&(g.type==='LineString'||g.type==='MultiLineString')){const b=turf.buffer(f,TRAIL_BUFFER_M/1000,{units:'kilometers',steps:12});hit=!!b&&turf.booleanPointInPolygon(pt,b)}
@@ -52,18 +54,56 @@ function updateGpsStatus(lat,lon,accuracy){
   const hits=gpsInsideSelected(lat,lon);gpsStatus.classList.add('visible');
   gpsStatus.innerHTML=`<b>GPS:</b> ${lat.toFixed(5)}, ${lon.toFixed(5)}${Number.isFinite(accuracy)?` · nøyaktighet ca. ${Math.round(accuracy)} m`:''}${hits.length?`<br><b>Innenfor valgt POTA:</b> ${hits.map(esc).join(', ')}`:'<br>Ikke innenfor noen valgt POTA-geometri.'}`;
 }
-function locateUser(){
-  if(!navigator.geolocation){gpsStatus.classList.add('visible');gpsStatus.textContent='GPS/geolokasjon støttes ikke av denne nettleseren.';return}
-  locateBtn.classList.add('locating');locateBtn.disabled=true;gpsStatus.classList.add('visible');gpsStatus.textContent='Henter posisjon…';
-  navigator.geolocation.getCurrentPosition(pos=>{
-    locateBtn.classList.remove('locating');locateBtn.disabled=false;const {latitude:lat,longitude:lon,accuracy}=pos.coords;lastGps={lat,lon,accuracy};
-    if(gpsMarker)map.removeLayer(gpsMarker);if(gpsAccuracy)map.removeLayer(gpsAccuracy);
-    gpsAccuracy=L.circle([lat,lon],{pane:'overlapPane',radius:Number.isFinite(accuracy)?accuracy:0,color:'#2563eb',weight:1,fillColor:'#60a5fa',fillOpacity:.08,interactive:false}).addTo(map);
-    gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
-    const z=map.getZoom()<12?14:map.getZoom();map.setView([lat,lon],z);updateGpsStatus(lat,lon,accuracy);
-  },err=>{locateBtn.classList.remove('locating');locateBtn.disabled=false;gpsStatus.classList.add('visible');gpsStatus.textContent='Kunne ikke hente posisjon: '+(err.message||'ukjent feil')+'. Sjekk at nettleseren har fått posisjonstilgang.'},{enableHighAccuracy:true,timeout:15000,maximumAge:10000});
+function syncGpsControl(waiting=false){
+  const active=gpsWatchId!==null;
+  locateBtn.disabled=false;locateBtn.classList.toggle('locating',active&&waiting);locateBtn.classList.toggle('gps-active',active);
+  const state=active?(gpsFollowing?'following':'paused'):'off';
+  locateBtn.dataset.gpsState=state;
+  locateBtn.textContent=active?(gpsFollowing?'Stopp GPS':'Følg posisjon'):'Min posisjon';locateBtn.setAttribute('aria-pressed',String(active));
+  locateBtn.title=active?(gpsFollowing?'GPS følger posisjonen – trykk for å slå av GPS':'GPS er på, følging er pauset – trykk for å følge igjen'):'Slå på GPS og følg posisjonen';
+  document.dispatchEvent(new CustomEvent('pota:gps',{detail:{active,following:active&&gpsFollowing,waiting:active&&waiting}}));
 }
-locateBtn.addEventListener('click',locateUser);
+function stopGps(){
+  gpsGeneration++;
+  if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);
+  gpsWatchId=null;lastGps=null;gpsFollowing=false;
+  if(gpsMarker)map.removeLayer(gpsMarker);if(gpsAccuracy)map.removeLayer(gpsAccuracy);
+  gpsMarker=null;gpsAccuracy=null;syncGpsControl();updateGpsParkColors();
+}
+function locateUser(){
+  if(gpsWatchId!==null){
+    if(!gpsFollowing){gpsFollowing=true;if(lastGps)map.panTo([lastGps.lat,lastGps.lon],{animate:false});syncGpsControl(!lastGps);return}
+    stopGps();gpsStatus.textContent='GPS er slått av.';return;
+  }
+  gpsStatus.classList.add('visible');
+  if(!navigator.geolocation){gpsStatus.textContent='GPS/geolokasjon støttes ikke av denne nettleseren.';return}
+  const generation=++gpsGeneration;let firstPosition=true;gpsFollowing=true;
+  gpsStatus.textContent='Henter posisjon…';
+  const fail=err=>{
+    if(generation!==gpsGeneration)return;
+    if(err.code===1){stopGps();gpsStatus.textContent='Posisjonstilgang er avslått. Tillat posisjon i nettleseren og trykk Min posisjon igjen.';return}
+    syncGpsControl();gpsStatus.textContent='Venter på GPS-posisjon. '+(lastGps?'Siste posisjon vises i kartet. ':'')+'Oppfølgingen fortsetter.';
+  };
+  try{
+    gpsWatchId=navigator.geolocation.watchPosition(pos=>{
+      if(generation!==gpsGeneration)return;
+      const {latitude:lat,longitude:lon,accuracy}=pos.coords;lastGps={lat,lon,accuracy};
+      const radius=Number.isFinite(accuracy)?Math.max(0,accuracy):0;
+      if(gpsAccuracy)gpsAccuracy.setLatLng([lat,lon]).setRadius(radius);
+      else gpsAccuracy=L.circle([lat,lon],{pane:'overlapPane',radius,color:'#2563eb',weight:1,fillColor:'#60a5fa',fillOpacity:.08,interactive:false}).addTo(map);
+      if(gpsMarker)gpsMarker.setLatLng([lat,lon]);
+      else gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
+      if(gpsFollowing){if(firstPosition&&map.getZoom()<12)map.setView([lat,lon],14);else map.panTo([lat,lon],{animate:false})}
+      firstPosition=false;
+      syncGpsControl();updateGpsStatus(lat,lon,accuracy);updateGpsParkColors();
+    },fail,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    syncGpsControl(true);
+  }catch(err){stopGps();gpsStatus.textContent='Kunne ikke starte GPS. Sjekk nettleserens posisjonstilgang.'}
+}
+map.on('dragstart',()=>{if(gpsWatchId!==null&&gpsFollowing){gpsFollowing=false;syncGpsControl(!lastGps)}});
+locateBtn.addEventListener('click',locateUser);syncGpsControl();
+// Refresh membership when the user changes the selection without moving.
+document.addEventListener('pota:selection',()=>{if(lastGps)updateGpsStatus(lastGps.lat,lastGps.lon,lastGps.accuracy);updateGpsParkColors()});
 const NV='https://geodata.naturvardsverket.se/naturvardsregistret/wms';
 const N2='https://geodata.naturvardsverket.se/n2000/wms';
 function wms(url,layer,opacity=.55,extra={}){return L.tileLayer.wms(url,Object.assign({layers:layer,format:'image/png',transparent:true,version:'1.3.0',opacity,attribution:'Kilde: Naturvårdsverket'},extra));}
@@ -94,52 +134,6 @@ function rawPolygonClippingInputFromLayer(layer){
   }
   add(gj);return polys;
 }
-function ringFeature(ring){
-  return {type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[ring]}};
-}
-function ringAbsArea(ring){
-  if(typeof turf==='undefined')return 0;
-  try{return Math.abs(turf.area(ringFeature(ring))||0)}catch(e){return 0}
-}
-function ringProbePoint(ring){
-  // Use a vertex from the ring for containment tests against *other* rings.
-  // ignoreBoundary=true prevents touching rings from being treated as contained.
-  const c=ring&&ring[0];
-  return c&&c.length>=2?{type:'Feature',properties:{},geometry:{type:'Point',coordinates:[c[0],c[1]]}}:null;
-}
-function reconstructPolygonRings(coords){
-  // Some source geometries encode several exterior rings inside one Polygon.
-  // Reconstruct topology by containment depth instead of assuming ring 0 is
-  // the only exterior and every later ring is a hole.
-  const rings=(coords||[]).filter(r=>Array.isArray(r)&&r.length>=4);
-  if(!rings.length)return [];
-  const nodes=rings.map((ring,i)=>({i,ring,area:ringAbsArea(ring),parent:-1,depth:0,children:[]}));
-  for(const n of nodes){
-    const probe=ringProbePoint(n.ring); if(!probe)continue;
-    let best=-1,bestArea=Infinity;
-    for(const c of nodes){
-      if(c.i===n.i || c.area<=n.area)continue;
-      try{
-        if(turf.booleanPointInPolygon(probe,ringFeature(c.ring),{ignoreBoundary:true}) && c.area<bestArea){best=c.i;bestArea=c.area}
-      }catch(e){}
-    }
-    n.parent=best;
-  }
-  function depthOf(n,seen=new Set()){
-    if(n.parent<0)return 0;
-    if(seen.has(n.i))return 0;
-    seen.add(n.i);return 1+depthOf(nodes[n.parent],seen);
-  }
-  for(const n of nodes)n.depth=depthOf(n);
-  for(const n of nodes)if(n.parent>=0)nodes[n.parent].children.push(n.i);
-  const polygons=[];
-  for(const n of nodes){
-    if(n.depth%2!==0)continue; // holes are attached to their immediate exterior parent
-    const holes=n.children.map(i=>nodes[i]).filter(ch=>ch.depth===n.depth+1 && ch.depth%2===1).map(ch=>ch.ring);
-    polygons.push([n.ring,...holes]);
-  }
-  return polygons;
-}
 function topologicalPolygonsFromLayer(layer){
   const encoded=rawPolygonClippingInputFromLayer(layer), polygons=[];
   let sourceRings=0;
@@ -166,8 +160,6 @@ function polygonFeaturesFromLayer(layer){
   const r=rawLayerGeometryInfo(layer);
   return r.polygons.map(coords=>({type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:coords}}));
 }
-const TRAIL_CORRIDOR_WIDTH_M=61;
-const TRAIL_BUFFER_M=TRAIL_CORRIDOR_WIDTH_M/2;
 function isSelectedTrail(x){return !!(x&&x.link&&isTrailLink(x.link));}
 function lineFeaturesFromLayer(layer){
   const out=[];
@@ -177,6 +169,7 @@ function lineFeaturesFromLayer(layer){
     if(!o)return;
     if(o.type==='FeatureCollection'){for(const f of o.features||[])walk(f);return;}
     if(o.type==='Feature'){walk(o.geometry);return;}
+    if(o.type==='GeometryCollection'){for(const g of o.geometries||[])walk(g);return;}
     if(o.type==='LineString'&&Array.isArray(o.coordinates)&&o.coordinates.length>1){out.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:o.coordinates}});return;}
     if(o.type==='MultiLineString'){for(const c of o.coordinates||[])if(c&&c.length>1)out.push({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:c}});}
   }
@@ -206,7 +199,7 @@ function addKyststienCorridor(layer){
   if(!polygons.length)throw Error('Kunne ikke beregne Kyststiens 61 meter brede belte');
   const corridor=L.geoJSON({type:'Feature',properties:{corridorWidthM:TRAIL_CORRIDOR_WIDTH_M},geometry:{type:'MultiPolygon',coordinates:polygons}},{
     pane:'trailCorridorPane',interactive:false,
-    style:{color:'#15803d',weight:1,opacity:.65,fillColor:'#22c55e',fillOpacity:.28}
+    style:{color:'#1d4ed8',weight:1,opacity:.65,fillColor:'#1d4ed8',fillOpacity:.28}
   });
   // Beltet følger stiens livsløp ved flervalg, fjerning og bytte av park.
   layer.addLayer(corridor);
@@ -291,15 +284,40 @@ function updateSelectionDiagnostics(){
   el.innerHTML=h;
 }
 
+const potaActivationCache=new Map();
+function getPotaActivationCount(ref){
+  const cached=potaActivationCache.get(ref);
+  if(cached&&cached.expires>Date.now())return cached.promise;
+  const entry={expires:Date.now()+300000,promise:null};
+  entry.promise=(async()=>{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+    try{
+      const response=await fetch(`https://api.pota.app/park/stats/${encodeURIComponent(ref)}`,{signal:controller.signal});
+      if(!response.ok)throw Error('POTA-statistikk kunne ikke hentes');
+      const stats=await response.json(),raw=stats.activations;
+      const count=(typeof raw==='number'||(typeof raw==='string'&&raw.trim()!==''))?Number(raw):NaN;
+      if((stats.reference&&stats.reference!==ref)||!Number.isSafeInteger(count)||count<0)throw Error('Ugyldig aktiveringstall');
+      return count;
+    }catch(e){entry.expires=Date.now()+60000;return null}
+    finally{clearTimeout(timer)}
+  })();
+  potaActivationCache.set(ref,entry);return entry.promise;
+}
 function openParkInfo(p,link,latlng=null){
-  const quality=link.confidence==='bekreftet overstyring'?'bekreftet':'automatisk';
-  document.dispatchEvent(new CustomEvent('pota:park',{detail:{p,link}}));
-  linkbox.style.display='block';
-  const sourceNote=link.layer==='nokultur'?'Appen bruker Kulturminnesøk-ID-en fra POTA-kildelenken til å vise lagret, verifisert registergeometri fra Riksantikvaren. Denne avgrensningen dekker ikke nødvendigvis hele POTA-området.':link.layer==='auto'?'Appen verifiserer navnet mot Naturvårdsverket og bruker den faktiske svenske objekttypen som registeret returnerer.':link.layer==='historic'?'Appen matcher registerbetegnelse/navn og POTA-koordinat mot Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data.':link.layer==='notrail'?'Appen bruker POTA sine kildelenker som ekstra rutealiaser og matcher disse mot Kartverkets Turrutebase.':(link.layer?'Appen henter det konkrete objektets geometri fra den offisielle datakilden.':(link.recognized?(link.geometryNote||'Kjent POTA-type, men geometri krever en annen eller verifisert datakilde.'):'Vernetypen kunne ikke bestemmes automatisk.'));
-  linkbox.innerHTML=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br>Valgt POTA-park: <b>${esc(link.officialName)}</b> <span class="badge">${esc(link.type)}</span><br><span class="small">Matchmetode: ${esc(link.confidence)}. ${sourceNote}</span>`;
+  const potaLink=`<a href="https://pota.app/#/park/${encodeURIComponent(p.reference)}" target="_blank" rel="noopener noreferrer">Åpne parken på pota.app</a>`;
+  const content=`<b>${esc(p.reference)} – ${esc(p.name)}</b><br><b>Antall aktiveringer:</b> <span data-pota-activation-count aria-live="polite">Henter …</span><br>${potaLink}`;
+  linkbox.style.display='block';linkbox.innerHTML=content;
+  const countNodes=[linkbox.querySelector('[data-pota-activation-count]')];
   if(latlng&&!matchMedia('(max-width:700px)').matches){
-    L.popup({autoPan:false}).setLatLng(latlng).setContent(`<b>${esc(p.reference)}</b><br>${esc(p.name)}<hr style="border:0;border-top:1px solid #ddd"><b>Valgt POTA-park:</b> ${esc(link.officialName)}<br><b>Type:</b> ${esc(link.type)}<br><span class="small">${quality==='bekreftet'?'Denne koblingen er eksplisitt lagt inn.':'Denne koblingen er laget fra POTA-navn/type og kontrolleres mot registerdata når geometrien hentes.'}</span>`).openOn(map);
+    const popupContent=document.createElement('div');popupContent.innerHTML=content;
+    countNodes.push(popupContent.querySelector('[data-pota-activation-count]'));
+    L.popup({autoPan:false}).setLatLng(latlng).setContent(popupContent).openOn(map);
   }
+  getPotaActivationCount(p.reference).then(count=>{
+    const text=count===null?'ikke tilgjengelig':count.toLocaleString('nb-NO');
+    for(const node of countNodes)node.textContent=text;
+  });
+  document.dispatchEvent(new CustomEvent('pota:park',{detail:{p,link}}));
 }
 function reopenSelectedPark(ref,latlng=null){
   const x=selectedParks.get(ref);if(!x)return;
@@ -307,7 +325,8 @@ function reopenSelectedPark(ref,latlng=null){
 }
 function bindSelectedGeometry(layer,p,link){
   if(!layer||!layer.on)return;
-  layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,e.latlng||null)});
+  bindParkGeometryHover(layer,p);
+  layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,p.reference)});
 }
 function openOverlapChooser(refs,latlng){
   const uniq=[...new Set(refs)].filter(r=>selectedParks.has(r));if(!uniq.length)return;
@@ -318,17 +337,7 @@ function openOverlapChooser(refs,latlng){
   L.popup({autoPan:false}).setLatLng(latlng).setContent(box).openOn(map);
 }
 function updateOverlaps(){
-  overlapLayer.clearLayers();
   updateSelectionDiagnostics();
-  if(!multiMode.checked||selectedParks.size<2||typeof polygonClipping==='undefined')return;
-  const parks=[...selectedParks.values()].filter(x=>overlapPolygonsForSelected(x).length);
-  for(let i=0;i<parks.length;i++)for(let j=i+1;j<parks.length;j++){
-    const o=pairOverlapInfo(parks[i],parks[j]);
-    if(!o.geometry||o.invalid)continue;
-    const refs=[parks[i].p.reference,parks[j].p.reference];
-    const lyr=L.geoJSON(o.geometry,{pane:'overlapPane',interactive:true,style:{color:'#7e22ce',weight:2,fillColor:'#a855f7',fillOpacity:.48}}).addTo(overlapLayer);
-    lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openOverlapChooser(refs,e.latlng)});
-  }
 }
 const NVREST='https://geodata.naturvardsverket.se/naturvardsregistret/rest/v3';
 const N2REST='https://geodata.naturvardsverket.se/n2000/rest/v3';
@@ -734,6 +743,7 @@ function buildLinkTable(){linkTable={};for(const p of pota)linkTable[p.reference
 function clearSelection(){
   if(selectedMarker){map.removeLayer(selectedMarker);selectedMarker=null}
   if(selectedGeo){map.removeLayer(selectedGeo);selectedGeo=null}
+  document.dispatchEvent(new CustomEvent('pota:selection'));
 }
 function removeSelectedPark(ref){
   const x=selectedParks.get(ref);if(!x)return;
@@ -1007,42 +1017,55 @@ async function focusOfficialGeometry(link,p){
   hideOfficialWms();
   st.innerHTML=`Henter offisiell geometri for <b>${esc(link.officialName)}</b>…`;
   try{
-    const r=await (link.layer==='nokultur'?resolveNorwayKulturminne(link,p):link.layer==='nofriluft'?resolveNorwayFriluft(link,p):link.layer==='notrail'?resolveNorwayTrail(link,p):link.layer==='novern'?resolveNorwayOfficial(link,p):link.layer==='auto'?resolveOfficialAuto(link,p):link.layer==='trail'?resolveStateTrail(link,p):link.layer==='world'?resolveWorldHeritage(link,p):link.layer==='historic'?resolveHistoricSite(link,p):resolveOfficial(link,p));
+    const r=await atlasRecord(p.reference);
+    if(!r)throw Error('Ingen verifisert geometri er lagret. Parken vises som punkt.');
+
     const raw=(r.source==='trail'||r.source==='world')?normalizeSpecialGeometry(r.geometry):r.source==='notrail'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:r.source==='historic'?{type:'Feature',properties:{name:r.name,id:r.id,url:r.url||''},geometry:r.geometry}:r.source==='norway'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:{type:'Feature',properties:{name:r.name,id:r.id},geometry:transformGeo(r.geometry)};
-    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:'#15803d',weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}return {weight:4,fillOpacity:.18};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
+    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:gpsParkColor(p.reference,true),weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}return {color:gpsParkColor(p.reference,true),weight:3,fillColor:gpsParkColor(p.reference,true),fillOpacity:.22};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})}).addTo(map);
     if(isKyststienPark(p)&&isTrailLink(link))addKyststienCorridor(selectedGeo);
-    st.innerHTML=`Viser kun <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?(r.sourceLabel||'Miljødirektoratets offisielle Naturbase-data'):'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
+    st.innerHTML=`Valgt område: <b>${esc(r.name)}</b> fra ${r.source==='trail'?'Naturvårdsverkets offisielle Statliga leder-data':r.source==='world'?'Naturvårdsverkets offisielle World Heritage-data':r.source==='historic'?'Riksantikvarieämbetets offisielle Kulturhistoriska lämningar-data':r.source==='notrail'?'Kartverkets offisielle Turrutebase':r.source==='norway'?(r.sourceLabel||'Miljødirektoratets offisielle Naturbase-data'):'Naturvårdsverkets offisielle REST-data'}${r.officialType?` – offisiell type: <b>${esc(r.officialType)}</b>`:''}${r.id!=null?` (register-ID ${esc(r.id)})`:''}${r.source==='notrail'&&r.segmentCount?` · <b>${r.segmentCount}</b> linjesegmenter`:''}${r.source==='notrail'&&r.directSourceUrls?.length?` · <b>${r.directSourceUrls.length}</b> direkte POTA-geometrikilder`:r.source==='notrail'&&r.potaSourceUrls?.length?` · <b>${r.potaSourceUrls.length}</b> POTA-kildelenker brukt som rutetips`:''}.`;
     if(isKyststienPark(p)&&isTrailLink(link))st.innerHTML+=`<br><span class="small">Kyststien vises som et ${TRAIL_CORRIDOR_WIDTH_M} meter bredt belte (${TRAIL_BUFFER_M} meter på hver side av midtlinjen).</span>`;
     if(r.geometryNote)st.innerHTML+=`<br><span class="small">${esc(r.geometryNote)}</span>`;
+    document.dispatchEvent(new CustomEvent('pota:geometry',{detail:{reference:p.reference,available:true}}));
     return r;
   }catch(e){
+    document.dispatchEvent(new CustomEvent('pota:geometry',{detail:{reference:p.reference,available:false}}));
     st.innerHTML=`Kunne ikke hente en verifisert enkeltgeometri for <b>${esc(link.officialName)}</b>: ${esc(e.message)}. Ingen andre områder vises som en falsk match.`;
     return null;
   }
 }
 function isTrailLink(link){return !!(link&&(link.layer==='trail'||link.layer==='notrail'||link.type==='State Trail'||link.type==='National Recreation Trail'))}
 function makeTrailIcon(selected=false){const svg=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;return L.divIcon({className:'',html:`<div class="trail-pota-icon${selected?' selected':''}" aria-label="Tursti">${svg}</div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-11]})}
-function bindParkHover(marker,p,link){if(!marker)return marker;marker.bindTooltip(`<b>${esc(p.reference)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',direction:'top',offset:[0,-7],opacity:.96,className:'pota-hover-tooltip',sticky:false});return marker}
-async function showLink(p,openPopup=true,centerOnSearch=false){
+function bindParkHover(marker,p,link){if(!marker)return marker;marker.bindTooltip(`<b>${esc(p.reference)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',direction:'top',offset:[0,-7],opacity:.96,className:'pota-hover-tooltip pota-point-tooltip',sticky:false});return marker}
+function bindParkGeometryHover(layer,p){if(!layer)return layer;layer.bindTooltip(`<b>${esc(p.reference)}</b><br>${esc(p.name)}`,{pane:'topTooltipPane',sticky:true,opacity:.96,className:'pota-hover-tooltip'});return layer}
+let parkSelectionQueue=Promise.resolve();
+function showLink(p,openPopup=true,centerOnSearch=false,popupLatLng=null){
+ const task=parkSelectionQueue.then(()=>showParkLink(p,openPopup,centerOnSearch,popupLatLng));
+ parkSelectionQueue=task.catch(e=>console.error(e));return task;
+}
+async function showParkLink(p,openPopup=true,centerOnSearch=false,popupLatLng=null){
   const multi=multiMode.checked;
   if(multi&&selectedParks.has(p.reference)){
     lastSelectedRef=p.reference;
     const existing=selectedParks.get(p.reference);
-    if(centerOnSearch&&existing.marker)map.setView(existing.marker.getLatLng(),map.getZoom());
-    openParkInfo(existing.p,existing.link,openPopup?(existing.marker?.getLatLng()||null):null);
+    if(centerOnSearch)map.setView(existing.marker?.getLatLng()||[+p.latitude,+p.longitude],Math.max(11,map.getZoom()));
+    openParkInfo(existing.p,existing.link,openPopup?(popupLatLng||existing.marker?.getLatLng()||L.latLng(+p.latitude,+p.longitude)):null);
     renderSelectedList();return;
   }
   if(!multi){clearSelectedParks();clearSelection()}
   else {selectedMarker=null;selectedGeo=null}
   const lat=+p.latitude,lon=+p.longitude,link=linkTable[p.reference]||inferLink(p);
-  if(Number.isFinite(lat)&&Number.isFinite(lon)){
+  if(centerOnSearch&&Number.isFinite(lat)&&Number.isFinite(lon))map.setView([lat,lon],Math.max(11,map.getZoom()));
+  if(!atlasHasGeometry(p.reference)&&Number.isFinite(lat)&&Number.isFinite(lon)){
     if(centerOnSearch)map.setView([lat,lon],map.getZoom());
     selectedMarker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(true)}).addTo(map):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:'#b45309',fillColor:'#d97706',fillOpacity:.95}).addTo(map);
     bindParkHover(selectedMarker,p,link);
     selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,e.latlng||selectedMarker.getLatLng())});
   }
-  openParkInfo(p,link,(openPopup&&Number.isFinite(lat)&&Number.isFinite(lon))?L.latLng(lat,lon):null);
-  if(link.layer)await focusOfficialGeometry(link,p);
+  openParkInfo(p,link,openPopup?(popupLatLng||(Number.isFinite(lat)&&Number.isFinite(lon)?L.latLng(lat,lon):null)):null);
+  const result=await focusOfficialGeometry(link,p);
+  if(result&&selectedGeo&&selectedMarker){map.removeLayer(selectedMarker);selectedMarker=null}
+  if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:'#b45309',fillColor:'#d97706',fillOpacity:.95}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,L.latLng(lat,lon))});}
   if(selectedGeo)bindSelectedGeometry(selectedGeo,p,link);
   if(multi){
     selectedParks.set(p.reference,{p,link,marker:selectedMarker,geo:selectedGeo});
@@ -1090,6 +1113,7 @@ function diagnosticHtml(stats){
  return h;
 }
 function applyCountryFilter(){
+ if(geometryAtlas.ready){atlasRefresh();return}
  const c=countryFilter.value;
  for(const x of potaMarkers){const show=c==='ALL'||x.country===c;if(show){if(!layers.pts.hasLayer(x.marker))layers.pts.addLayer(x.marker)}else if(layers.pts.hasLayer(x.marker))layers.pts.removeLayer(x.marker)}
 }
@@ -1105,14 +1129,14 @@ async function loadPota(){
  for(const p of pota){const lat=+p.latitude,lon=+p.longitude;if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;shown++;const cc=countryOf(p);byCountry[cc]=(byCountry[cc]||0)+1;const link=linkTable[p.reference];if(link&&link.layer)linked++;else if(link&&link.recognized)unsupported.push({reference:p.reference,name:p.name,type:link.type});else unknown.push({reference:p.reference,name:p.name});
    const marker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(false)}):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:1,color:'#e67e22',fillColor:'#f39c12',fillOpacity:.8});
    bindParkHover(marker,p,link);
-   marker.on('click',()=>showLink(p,true,false));
-   marker.bindPopup(()=>`<b>${esc(p.reference)}</b><br>${esc(p.name)}<br><b>Valgt POTA-park:</b> ${esc(link?.officialName||'ukjent')}<br><b>Type:</b> ${esc(link?.type||'ukjent')}<br><a target="_blank" href="https://pota.app/#/park/${encodeURIComponent(p.reference)}">Åpne i POTA</a>`);
-   layers.pts.addLayer(marker);potaMarkers.push({marker,country:cc});
+   marker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);showLink(p,true,false)});
+   layers.pts.addLayer(marker);potaMarkers.push({marker,country:cc,reference:p.reference});
  }
  applyCountryFilter();return {shown,linked,unknown,unsupported,byCountry};
 }
 async function init(){st.textContent='Laster POTA-referanser for Norge og Sverige…';let x={shown:0,linked:0,unknown:[],unsupported:[],byCountry:{}};try{x=await loadPota()}catch(e){st.innerHTML='POTA-listen kunne ikke lastes: '+esc(e.message);return}
- st.innerHTML=`Lastet <b>${x.shown}</b> POTA-posisjoner: <b>${x.byCountry.NO||0}</b> norske og <b>${x.byCountry.SE||0}</b> svenske.<br><span class="small">Sverige bruker de eksisterende resolverne. Norske verneområder, statlig sikrede og kartlagte friluftslivsområder verifiseres mot sine egne datasett i Miljødirektoratets Naturbase. Kulturminner med Kulturminnesøk-ID hentes fra Riksantikvaren. Norske National Recreation Trail-ruter prøver først direkte geometri fra POTA-parkens egne kildelenker (GPX/KML/GeoJSON/ArcGIS), deretter Kartverkets Turrutebase; Kyststien Østfold har i tillegg en verifisert fallback. Ved usikkert treff vises ingen geometri.</span>`;
+ await initializeGeometryAtlas();
+ st.innerHTML='Kartet viser lagret geometri for valgt land. Parker uten verifisert geometri vises som punkt. Oversiktsgrenser er forenklet; zoom inn for detaljer.';
  document.getElementById('diag').innerHTML=`<b>Diagnostikk</b><br>${x.shown} POTA-referanser totalt · Norge: ${x.byCountry.NO||0} · Sverige: ${x.byCountry.SE||0}.<br><span class="small">Norsk støtte: verneområder, statlig sikrede og kartlagte friluftslivsområder i Naturbase, samt verifisert kulturminnegeometri fra Riksantikvaren. Kyststien Østfold er den eneste norske National Recreation Trail med verifisert geometri. Eksperimentelle WMS/WFS-Hvaler-lag er fjernet for stabilitet.</span>`;
 }
 function toggle(k){document.getElementById(k).addEventListener('change',e=>e.target.checked?layers[k].addTo(map):map.removeLayer(layers[k]));}
