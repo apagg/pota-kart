@@ -45,3 +45,9 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 
 ## Klar startmelding
 «Fortsett POTA-kartet fra GitHub. Les PROJECT.md, TODO.md og STATUS.md. Fortsett neste uferdige Hvaler-oppgave, og lagre arbeidet fortløpende på GitHub. Hold chatten kort.»
+
+## Implementering startet på main (2026-10-08)
+- `scripts/export-hvaler.py` og `.github/workflows/export-hvaler.yml` er lagt til. GitHub Actions skal konvertere **kun** `hvaler_tillegg` fra sikkerhetskopien til `data/hvaler/hvaler-tillegg.geojson`, fjerne tomme/identiske linjer og lagre resultatet på `main`.
+- `app-core.js` sin NO-2542 fallback er endret til å erstatte kildesegmenter merket `Kommune=Hvaler` med det genererte laget. Dersom generert GeoJSON ennå ikke finnes, beholdes eksisterende kilde som reserve.
+- Siste trigger-commit: `ffa4afe`. **GitHub Actions-resultat, generert fil, nettlesertest og visning på Pages er ikke bekreftet.**
+- **Gjenstående kritisk:** `scripts/update-geometries.py` bruker fremdeles ekstern NO-2542-kilde og kan reintrodusere gamle Hvaler-stier ved regenerering. Endre den før oppgaven markeres ferdig. Kontroller dessuten om kildegeometrien har Hvaler-deler i grensekryssende linjer, og at den statiske atlas-geometrien ikke overstyrer fallback.
