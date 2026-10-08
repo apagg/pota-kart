@@ -82,3 +82,8 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Bekreft at geometri-/JavaScript-kontroller og desktop-/mobilnettlesertester er bestått i denne kjøringen.
 - [ ] Avgjør om PR #2 skal slås sammen med `main`; ingen automatisk sammenslåing.
 - Merk: Eldre avkrysningspunkter om uverifisert CI ovenfor er historiske; denne nyere bekreftelsen gjelder PR #2.
+
+## Neste moduluttrekk – POTA-statistikk
+- [x] Flytt POTA-aktiveringscache og nettverksforespørsel til `pota-activation.js` uten logikkendringer.
+- [x] Oppdater `app.js` og CI for den nye filen.
+- [ ] Bekreft endelig CI-resultat for [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316), inkludert nettlesertestene, før ferdigmelding.
