@@ -66,3 +66,10 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - Geografisk utstrekning av tillegg i EPSG:25832: 604985,75 / 6542390,70 til 620909,28 / 6552983,13. Nytt og gammelt nett er ikke identisk; ca. 31,13 km av gammelt nett ligger innen 30,5 m av nytt nett.
 - **Bestått:** dataintegritet og identisk-duplikat-kontroll av lokal GeoPackage.
 - **Ikke testet:** kommunegrenseklipping, GPS/61-meterskorridor i nettleser, GitHub Actions og Pages-publisering. Git-kloning fra container var blokkert av DNS/nettverk. Disse må fortsatt verifiseres før full godkjenning.
+
+## Kodekvalitet – ny fase 2026-10-08
+- Brukeren har satt all videre endring av Hvaler og øvrig stisystem på vent; ønsket er senere samlet redesign.
+- På `main` er `diagnostics.js` lagt til som egen modul med begrenset feilbuffer (50 hendelser). `app.js` laster den før kartmodulene, og oppstartsfeil samt feil ved atlasinnlasting rapporteres gjennom den.
+- `scripts/test-diagnostics.cjs` er lagt til, og `.github/workflows/geometry-preview.yml` kjører testen og syntakssjekk ved push.
+- Ingen stidata, stioppslag eller korridorlogikk er endret i denne fasen.
+- Teststatus: GitHub Actions-test er konfigurert, men kjøreresultat er ennå ikke bekreftet her.
