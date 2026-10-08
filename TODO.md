@@ -75,3 +75,10 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Undersøk feil i Actions-kjøring 37831758037; identifisert cross-realm `Error`-håndtering i diagnostikktesten.
 - [x] Rett `diagnostics.js` i testgrenen, utvid testen med VM-Error.
 - [ ] Verifiser ny Actions-kjøring inklusive nettlesertester før PR #2 kan slås sammen med `main`.
+
+## Bekreftet CI for PR #2 (2026-10-08)
+- [x] Rett feil forventet antall diagnostikkoppføringer etter utvidet VM-test.
+- [x] Kontroller GitHub Actions-kjøring [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178): `completed/success` for commit `2b8dc840120dd85b582b796010a42c90f647416e`.
+- [x] Bekreft at geometri-/JavaScript-kontroller og desktop-/mobilnettlesertester er bestått i denne kjøringen.
+- [ ] Avgjør om PR #2 skal slås sammen med `main`; ingen automatisk sammenslåing.
+- Merk: Eldre avkrysningspunkter om uverifisert CI ovenfor er historiske; denne nyere bekreftelsen gjelder PR #2.
