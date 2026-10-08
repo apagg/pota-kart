@@ -4,6 +4,14 @@ const geometryAtlas={indexes:{},overviews:{},records:new Map(),shards:new Map(),
 function atlasMeta(ref){return geometryAtlas.indexes[ref.split('-')[0]]?.parks?.[ref]||null}
 function atlasHasGeometry(ref){return !!atlasMeta(ref)&&geometryAtlas.byRef.has(ref)}
 async function atlasRecord(ref){
+ // The editable Hvaler replacement must override old cached NO-2542 atlas geometry.
+ if(ref==='NO-2542'||ref==='LA-2542'){
+   if(!geometryAtlas.hvalerTrailPromise){
+     geometryAtlas.hvalerTrailPromise=resolveKyststienFallback(null,{reference:'NO-2542'})
+       .catch(e=>{geometryAtlas.hvalerTrailPromise=null;throw e});
+   }
+   try{return await geometryAtlas.hvalerTrailPromise}catch(e){console.warn('Edited Hvaler trail unavailable:',e)}
+ }
  const meta=atlasMeta(ref);if(!meta)return null;
  const key=ref.split('-')[0]+'/'+meta.shard;
  if(!geometryAtlas.shards.has(key))geometryAtlas.shards.set(key,getJSON('data/geometries/'+meta.shard).catch(e=>{geometryAtlas.shards.delete(key);throw e}));
