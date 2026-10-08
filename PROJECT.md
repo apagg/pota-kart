@@ -183,3 +183,7 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - `openParkInfo`, `reopenSelectedPark`, `bindSelectedGeometry` og `openOverlapChooser` er flyttet uten tilsiktet oppførselsendring fra `app-core.js` til `park-info-ui.js`; `app.js` og CI-pakking er oppdatert.
 - GitHub Actions [37833958638](https://github.com/apagg/pota-kart/actions/runs/37833958638) fullførte med `success` for kodecommit `ccf5bc59f221dd47c830c5d9c0c5fd9b416d2420`, inkludert geometri/JS-kontroller og desktop-/mobilnettlesertester.
 - Endringen er fortsatt i PR #2; `main` og stidata er ikke endret.
+
+## Felles teksthjelpere skilt ut (2026-10-08)
+- `norm`, `esc` og `getJSON` er flyttet uendret fra `app-core.js` til `app-text-utils.js`, med oppdatert oppstartsrekkefølge og CI-syntakskontroll/testkopiering.
+- Ingen endring i stisystemet. GitHub Actions [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771) for kodecommit `bee9492f55ad17ada6fb865547dfe03ae1ee1248` var fortsatt `pending` ved dokumentasjon; endelig resultat må verifiseres.
