@@ -143,3 +143,8 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - `geojson-utils.js` er skilt ut fra `app-core.js` og lastes før kartmotoren. `featuresOfGeoJson` beholder samme signatur og semantikk, men kan nå testes uten Leaflet eller Turf.
 - `scripts/test-geojson-utils.cjs` er lagt til i CI. Preview-publiseringen kopierer både `geojson-utils.js` og `diagnostics.js`, slik at testkartet ikke mangler oppstartsavhengigheter.
 - Ingen stidata eller stifunksjoner ble endret. GitHub Actions-resultat og nettleserregresjon gjenstår å bekrefte.
+
+## Videre moduluttrekk 2026-10-08
+- `map-setup.js` inneholder nå kartinitialisering, panes, UI-referanser, bakgrunnskart og lagringsvalg for bakgrunnskart. `app.js` laster den etter `geometry-atlas.js` og før `app-core.js`.
+- Uttrekket flyttet opprinnelige linjer uten tilsiktet oppførselsendring. Ingen stidata eller GPS-/stiberegninger er endret.
+- GitHub Actions har syntakssjekk av ny modul og inkluderer den i isolert testpublisering. CI-resultat er ikke bekreftet.
