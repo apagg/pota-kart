@@ -14,7 +14,7 @@ api.report('vm/error',vm.runInContext("new Error('inside vm')",context));
 assert.equal(api.recent()[1].message,'inside vm');
 const snapshot=api.recent();
 snapshot.pop();
-assert.equal(api.recent().length,1,'snapshot must not expose the internal array');
+assert.equal(api.recent().length,2,'snapshot must not expose the internal array');
 for(let i=0;i<60;i++)api.report('test',String(i));
 assert.equal(api.recent().length,50,'diagnostics must remain bounded');
 assert.equal(logged.length,62);
