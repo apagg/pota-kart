@@ -2,6 +2,12 @@
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
 
+## Prosjektdokumentasjon
+
+Les [PROJECT.md](PROJECT.md) for prosjektkunnskap, beslutninger og datakilder, og
+[TODO.md](TODO.md) for dagens status og neste oppgaver. Start nye arbeidsøkter med
+å lese begge filene, og oppdater dem når arbeid eller beslutninger endres.
+
 ## 0.9.0
 
 - Bygger på den stabile POTA Kart v8.19-koden.
