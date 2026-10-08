@@ -187,3 +187,9 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 ## Felles teksthjelpere skilt ut (2026-10-08)
 - `norm`, `esc` og `getJSON` er flyttet uendret fra `app-core.js` til `app-text-utils.js`, med oppdatert oppstartsrekkefølge og CI-syntakskontroll/testkopiering.
 - Ingen endring i stisystemet. GitHub Actions [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771) for kodecommit `bee9492f55ad17ada6fb865547dfe03ae1ee1248` var fortsatt `pending` ved dokumentasjon; endelig resultat må verifiseres.
+
+## Ufravikelig avslutningsregel for kodearbeid (2026-10-08)
+- **IKKE AVSLUTT SVARET ELLER KODEARBEIDET MED EN TEST SOM `pending`, `queued`, `in_progress` ELLER `cancelled`.** Etter siste kodecommit skal assistenten selv følge GitHub Actions frem til en endelig `completed`-status er kontrollert direkte på GitHub. Ved kansellering på grunn av nyere commits: finn og følg den nyeste relevante kjøringen.
+- Kontroller både samlet `conclusion` og at relevante geometri-/JavaScript-, desktop- og mobiltester har `success`. Ved `failure`: les jobbloggene, rett årsaken, push endring og følg ny kjøring til endelig resultat. Ved vedvarende infrastrukturblokkering: dokumenter eksplisitt blokkeringen, ikke påstå at arbeidet er ferdig.
+- Først etter bekreftet grønn CI oppdateres `PROJECT.md`, `TODO.md` og `STATUS.md` med kjørings-ID, testet commit og resultat. Dokumentasjonscommits kan utløse ny kjøring; kontroller da også siste relevante kjøring før endelig svar. Ikke be brukeren om å følge testen på våre vegne.
+- Eksempel: kjøring 37834519771 ble `cancelled`, men etterfølgende [37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605) ble `completed/success` for commit `f6c46cc24da0365c0148898573357a210d12f559`, inkludert geometri-/JavaScript- og desktop-/mobiltester.
