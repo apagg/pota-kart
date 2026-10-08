@@ -55,3 +55,7 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [ ] Del opp `app-core.js` gradvis i uavhengige moduler med regresjonstester, uten å endre sti- eller kartoppførsel.
 - [ ] Forbedre feilhåndtering og meldinger ved øvrige nettverksfeil.
 - [ ] Utvid mobil-, GPS- og ytelsestester uten å endre stisystemet.
+
+- [x] Flytt `featuresOfGeoJson` fra `app-core.js` til `geojson-utils.js`, og legg til en isolert regresjonstest.
+- [x] Rett testkartets filkopiering så nye moduler (`diagnostics.js`, `geojson-utils.js`) følger med.
+- [ ] Bekreft CI og nettlesertester etter moduluttrekket før større refaktorering.
