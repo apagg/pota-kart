@@ -23,6 +23,7 @@
     await load('norway-park-registry.js?v=011-release');
     await load('sweden-park-registry.js?v=011-release');
     await load('geometry-format-utils.js?v=011-release');
+    await load('sweden-heritage-registry.js?v=011-release');
     await load('app-core.js?v=011-release');
     await load('mobile-ui.js?v=011-release');
   }catch(e){
