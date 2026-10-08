@@ -154,3 +154,10 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - `gps-controller.js` overtar GPS-tilstand, posisjonsoppdatering, GPS-kontroller, følg/pause, valgte områders GPS-status og hendelseslyttere. Den eksisterende logikken er flyttet uendret, inkludert stibuffer; stisystemet er fortsatt utsatt.
 - `app.js` laster nå `geometry-atlas.js`, `map-setup.js`, `map-layers.js`, `gps-controller.js` og deretter `app-core.js` i denne rekkefølgen. `scripts/test-module-wiring.cjs` sikrer innlastingsrekkefølgen og at funksjonene er flyttet.
 - CI er utvidet med syntakssjekk, modul-koblingstest og kopi av nye filer til isolert testkart. Kjøreresultater og nettlesertest er ikke bekreftet.
+
+## Obligatorisk testing etter hver kodeendring (besluttet 2026-10-08)
+- Etter hver kodeendring skal relevante automatiske tester kjøres og resultatene kontrolleres, inkludert GitHub Actions. For funksjoner som kan påvirke brukergrensesnittet skal relevante nettlesertester utføres, også mobil og GPS når det er aktuelt.
+- Ved feil skal årsaken undersøkes, koden rettes og testene kjøres på nytt før oppgaven kan meldes ferdig.
+- Dokumenter faktisk utførte tester, resultat, eventuelle begrensninger og commit i STATUS.md og oppdater TODO.md.
+- En commit eller konfigurert CI-test er ikke bevis for at testene er bestått. Oppgaven er ikke ferdig før testresultatene er bekreftet. Dersom tilgang eller testmiljø hindrer verifisering, oppgi tydelig at arbeidet er uverifisert og avvent videre risikofylt refaktorering.
+- Stisystemet, inkludert Hvaler, skal fortsatt ikke endres før brukeren ber om samlet omarbeiding.
