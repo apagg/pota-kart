@@ -22,11 +22,18 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - `scripts/update-geometries.py` og `app-core.js` henter NO-2542 fra eksternt rutelag; importen må også bevare manuelt tillegg ved regenerering og fallback.
 - Ingen eksisterende kartdata er erstattet, ingen karttester er kjørt.
 
+## Oppdatert kontroll av Hvaler (2026-10-08)
+- Brukerkrav: bare `hvaler_tillegg` skal vises på Hvaler; alle tidligere Hvaler-stier skal erstattes. Arbeid direkte på `main` er godkjent.
+- Lokal GeoPackage: 448 ikke-tomme linjegeometrier i `hvaler_tillegg` (449 rader totalt), 392 unike WKB-geometrier; samlet lengde før deduplisering ca. 63,41 km. Bounds i EPSG:25832: 604985,75 / 6542390,70 til 620909,28 / 6552983,13.
+- Original Hvaler-lag: 35 linjer, ca. 34,82 km. Bare tilleggslaget skal brukes i resultatet.
+- Eksisterende app og regenereringsskript har ekstern NO-2542 fallback; disse må oppdateres samlet slik at gamle stier ikke dukker opp igjen.
+- Kartendring ikke utført eller testet ennå. Må ha sikker avgrensning av Hvaler før sammenslåing med øvrig Østfold.
+
 ## Neste konkrete handling
 1. Sammenlign lokal GeoPackage med GitHub-kopien, kontroller geografisk utstrekning, topologi og duplikater i `hvaler_tillegg`.
 2. Sammenlign med eksisterende Hvaler-stier og avgrens sikker utskifting.
-3. Lag endring i testgren, test, commit og oppdater alle tre dokumentene.
-4. Del testresultat med brukeren før eventuell publisering til `main`.
+3. Gjør endring direkte på `main` etter brukerens godkjenning; ta vare på tidligere commit for revert, test og oppdater dokumentasjon.
+4. Kontroller kartet etter publisering.
 
 ## Regler for korte samtaler
 - Les bare nødvendige filer og vis korte oppsummeringer i chatten.
