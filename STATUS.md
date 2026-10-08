@@ -90,3 +90,7 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - `scripts/test-module-wiring.cjs` er lagt til CI for å kontrollere modulrekkefølge og flyttede funksjoner.
 - Ingen stidata eller endringer i sti- eller GPS-regler; kun omorganisering av eksisterende kode.
 - GitHub Actions-status og visuell kontroll er fortsatt ikke bekreftet.
+
+## Beslutning om testing (2026-10-08)
+- Brukeren krever automatisk test og kontroll av GitHub Actions etter hver kodeendring, med nettleser-, mobil- og GPS-test når relevant.
+- Dette er nå en fast regel i PROJECT.md. Tidligere moduluttrekk har fortsatt ikke bekreftet bestått CI/nettlesertest og er derfor uverifisert.
