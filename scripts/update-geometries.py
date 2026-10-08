@@ -249,9 +249,15 @@ def main():
       if str(f.get('properties',{}).get('kulturminneId') or f.get('id'))!=sid:raise ValueError('Heritage ID mismatch')
       r=dict(source='norway',sourceLabel='Riksantikvarens kulturminneregister',id=sid,name=f['properties']['navn'],geometry=f['geometry'],verifiedDate=f.get('cacheMetadata',{}).get('verifiedDate',DATE),geometryNote='Registergeometrien dekker ikke nødvendigvis hele POTA-området.')
      elif ref=='NO-2542':
-      d=request('https://kart.analyseabo.no/arcgis/rest/services/Turkart/RegFriluft_innsyn/MapServer/15/query',dict(f='geojson',where='1=1',outFields='OBJECTID,Navn',returnGeometry='true',outSR=4326,resultRecordCount=2000))
+      d=request('https://kart.analyseabo.no/arcgis/rest/services/Turkart/RegFriluft_innsyn/MapServer/15/query',dict(f='geojson',where='1=1',outFields='OBJECTID,Navn,Kommune',returnGeometry='true',outSR=4326,resultRecordCount=2000))
       if d.get('exceededTransferLimit'):raise ValueError('Truncated trail')
-      r=dict(source='notrail',sourceLabel='Kyststien Østfold – offisielt rutelag',id='NO-2542 fallback',name='Kyststien Østfold',geometry=merge(d['features']),verifiedDate=DATE)
+      # The edited Hvaler layer is authoritative. Never regenerate old Hvaler routes.
+      hvaler_path=ROOT/'data/hvaler/hvaler-tillegg.geojson'
+      hvaler=json.loads(hvaler_path.read_text())
+      additions=[f for f in hvaler.get('features',[]) if f.get('geometry',{}).get('type') in ('LineString','MultiLineString')]
+      if not additions:raise ValueError('Hvaler additions are missing; refusing to restore old routes')
+      outside=[f for f in d['features'] if 'hvaler' not in str(f.get('properties',{}).get('Kommune','')).lower()]
+      r=dict(source='notrail',sourceLabel='Kyststien Østfold + redigert Hvaler',id='NO-2542 edited Hvaler',name='Kyststien Østfold',geometry=merge(outside+additions),verifiedDate=DATE)
      else:raise ValueError('No verified source ID')
     else:
      kind='n2000' if 'natura 2000' in p['name'].lower() else 'national';r=se_match(p,catalogs[kind]);r['source']=kind
