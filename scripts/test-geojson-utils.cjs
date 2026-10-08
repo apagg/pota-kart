@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const path=require('node:path');
+const src=fs.readFileSync(path.join(__dirname,'../geojson-utils.js'),'utf8');
+const ctx=vm.createContext({});
+vm.runInContext(src,ctx);
+const normalize=vm.runInContext('featuresOfGeoJson',ctx);
+const point={type:'Point',coordinates:[10,60]};
+const feature={type:'Feature',properties:{id:1},geometry:point};
+assert.equal(normalize(null).length,0);
+assert.equal(normalize(feature)[0],feature);
+assert.equal(normalize({type:'FeatureCollection',features:[feature]}).length,1);
+assert.equal(normalize({type:'FeatureCollection',features:[]}).length,0);
+assert.equal(normalize(point)[0].geometry,point);
+assert.equal(normalize(point)[0].type,'Feature');
+console.log('GeoJSON utility tests passed');
