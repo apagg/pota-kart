@@ -25,12 +25,12 @@
     await load('geometry-format-utils.js?v=011-release');
     await load('sweden-heritage-registry.js?v=011-release');
     await load('app-core.js?v=011-release');
-    await load('mobile-ui.js?v=011-release');
     await load('park-diagnostics.js?v=011-release');
     await load('park-selection-state.js?v=011-release');
     await load('pota-park-loader.js?v=011-release');
     await load('park-selection-controller.js?v=011-release');
     await load('pota-startup.js?v=011-release');
+    await load('mobile-ui.js?v=011-release');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
