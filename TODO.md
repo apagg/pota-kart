@@ -89,3 +89,9 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [ ] Bekreft endelig CI-resultat for [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316), inkludert nettlesertestene, før ferdigmelding.
 
 - [x] Bekreftet `completed/success` for Actions [37833435310](https://github.com/apagg/pota-kart/actions/runs/37833435310), inkludert desktop-/mobiltester, på commit `5e8d52dd839d223667af24cb8d846aeaeadb6e13`. Dette erstatter den tidligere ventende statusen for samme kodeuttrekk.
+
+## Parkinformasjon og overlappsvelger
+- [x] Flytt parkinformasjon, popup, geometri-klikkbinding og overlappsvelger til `park-info-ui.js`.
+- [x] Oppdater innlasting og CI-kontroller for modulen.
+- [x] Verifiser GitHub Actions [37833958638](https://github.com/apagg/pota-kart/actions/runs/37833958638): `completed/success`, inkludert nettlesertester for PC og mobil.
+- [ ] Vurder videre moduluttrekk i `app-core.js`, fortsatt uten endringer i stisystemet.
