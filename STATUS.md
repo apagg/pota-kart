@@ -94,3 +94,21 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 ## Beslutning om testing (2026-10-08)
 - Brukeren krever automatisk test og kontroll av GitHub Actions etter hver kodeendring, med nettleser-, mobil- og GPS-test når relevant.
 - Dette er nå en fast regel i PROJECT.md. Tidligere moduluttrekk har fortsatt ikke bekreftet bestått CI/nettlesertest og er derfor uverifisert.
+
+## Feilsøking av PR #2 / Actions 37831758037
+- Kjøringen feilet under `node scripts/test-diagnostics.cjs` med `actual: Error: offline`, `expected: offline`. Årsak: `instanceof Error` gjenkjenner ikke Error fra et annet JavaScript-realm.
+- Rettet diagnostikkens normalisering og utvidet testen i `refactor/core-geometry-helpers`. Ikke testbekreftet ennå. `main` er urørt.
+
+## Bekreftet testresultat for PR #2 (2026-10-08)
+- Den korrigerte kjøringen [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178) er `completed` med `conclusion: success`.
+- GitHub Actions viste bestått «Validate cached geometry and JavaScript» og «Test desktop and mobile map», inklusive øvrige teststeg.
+- Testet programkode er commit `2b8dc840120dd85b582b796010a42c90f647416e`. Dokumentasjonsoppdateringer etterpå påvirker ikke programkoden. PR #2 er fortsatt åpen; `main` er urørt.
+
+## CI verifisert og fast regel skjerpet (2026-10-08)
+- Siste moduluttrekk (`app-text-utils.js`) er bekreftet gjennom [GitHub Actions 37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605): `completed/success`, commit `f6c46cc24da0365c0148898573357a210d12f559`; geometri/JavaScript og desktop/mobil bestod.
+- Kjøring 37834519771 ble avbrutt fordi nyere commits utløste erstatningskjøring; en avbrutt kjøring er ikke en bestått test.
+- Fast prosessregel: assistenten skal **ikke stoppe før endelig testresultat er kontrollert direkte i GitHub Actions**. Følg nyeste relevante kjøring ved kansellering, og rett eventuelle feil før ferdigmelding.
+
+## Refaktorering av parkvalg og oppstart 2026-10-08
+- Fem moduler skilt ut fra app-core.js. Actions 37837436277: completed/success for kodecommit eb87927df0a3bedece0479bffa844bc5575311c2, inkludert geometri/JS og desktop/mobil.
+- Stier er uendret. PR #2 er fortsatt testgren.

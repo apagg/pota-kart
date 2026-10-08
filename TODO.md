@@ -71,3 +71,47 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 
 ## Fast kvalitetsregel
 - [ ] Kontroller faktisk GitHub Actions-resultat og relevante nettlesertester etter hver fremtidige kodeendring. Ikke marker oppgaver som ferdige før testene er bestått; dokumenter eventuelle blokkeringer.
+
+- [x] Undersøk feil i Actions-kjøring 37831758037; identifisert cross-realm `Error`-håndtering i diagnostikktesten.
+- [x] Rett `diagnostics.js` i testgrenen, utvid testen med VM-Error.
+- [ ] Verifiser ny Actions-kjøring inklusive nettlesertester før PR #2 kan slås sammen med `main`.
+
+## Bekreftet CI for PR #2 (2026-10-08)
+- [x] Rett feil forventet antall diagnostikkoppføringer etter utvidet VM-test.
+- [x] Kontroller GitHub Actions-kjøring [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178): `completed/success` for commit `2b8dc840120dd85b582b796010a42c90f647416e`.
+- [x] Bekreft at geometri-/JavaScript-kontroller og desktop-/mobilnettlesertester er bestått i denne kjøringen.
+- [ ] Avgjør om PR #2 skal slås sammen med `main`; ingen automatisk sammenslåing.
+- Merk: Eldre avkrysningspunkter om uverifisert CI ovenfor er historiske; denne nyere bekreftelsen gjelder PR #2.
+
+## Neste moduluttrekk – POTA-statistikk
+- [x] Flytt POTA-aktiveringscache og nettverksforespørsel til `pota-activation.js` uten logikkendringer.
+- [x] Oppdater `app.js` og CI for den nye filen.
+- [ ] Bekreft endelig CI-resultat for [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316), inkludert nettlesertestene, før ferdigmelding.
+
+- [x] Bekreftet `completed/success` for Actions [37833435310](https://github.com/apagg/pota-kart/actions/runs/37833435310), inkludert desktop-/mobiltester, på commit `5e8d52dd839d223667af24cb8d846aeaeadb6e13`. Dette erstatter den tidligere ventende statusen for samme kodeuttrekk.
+
+## Parkinformasjon og overlappsvelger
+- [x] Flytt parkinformasjon, popup, geometri-klikkbinding og overlappsvelger til `park-info-ui.js`.
+- [x] Oppdater innlasting og CI-kontroller for modulen.
+- [x] Verifiser GitHub Actions [37833958638](https://github.com/apagg/pota-kart/actions/runs/37833958638): `completed/success`, inkludert nettlesertester for PC og mobil.
+- [ ] Vurder videre moduluttrekk i `app-core.js`, fortsatt uten endringer i stisystemet.
+
+## Felles teksthjelpere
+- [x] Flytt `norm`, `esc` og `getJSON` til `app-text-utils.js` uten logikkendringer.
+- [x] Oppdater modulinnlasting og CI.
+- [ ] Kontroller endelig Actions-status og nettlesertester for [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771); status var `pending` ved dokumentasjon.
+
+## Obligatorisk kontroll før avslutning av enhver kodeoppgave
+- [x] Bekreftet at den nyere kjøringen [37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605) er `completed/success`, med bestått geometri/JS og desktop-/mobiltester, for `f6c46cc24da0365c0148898573357a210d12f559`.
+- [ ] For **hver fremtidige kodeendring**: vent på og kontroller endelig GitHub Actions-status selv. Ikke avslutt ved `pending`, `in_progress` eller `cancelled`; følg erstatningskjøring eller rett feil til endelig resultat foreligger.
+- [ ] Etter grønn CI: dokumenter test-ID, testet commit og resultater i prosjektfilene før ferdigmelding.
+
+## Registermoduler (2026-10-08)
+- [x] Flyttet norske og svenske parkregisterfunksjoner, svensk kulturminneoppslag og geometri-formatfunksjoner til fire egne moduler.
+- [x] GitHub Actions 37835863095 og 37836430342: fullfort med success, inkludert desktop- og mobiltester.
+- [ ] Fortsett med parkvalg og oppstart. Stisystemet skal ikke endres.
+
+## Parkvalg og oppstart - ferdig moduluttrekk
+- [x] Flytt parkdiagnostikk, parkutvalgsstatus, parkinnlasting, parkvalg og oppstart til egne moduler.
+- [x] Oppdater bootstrap og CI; GitHub Actions 37837436277: completed/success med desktop-/mobiltester.
+- [ ] Behold sti- og overlappslogikk uendret til separat godkjent arbeid. PR #2 er fortsatt ikke merget.

@@ -161,3 +161,40 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - Dokumenter faktisk utførte tester, resultat, eventuelle begrensninger og commit i STATUS.md og oppdater TODO.md.
 - En commit eller konfigurert CI-test er ikke bevis for at testene er bestått. Oppgaven er ikke ferdig før testresultatene er bekreftet. Dersom tilgang eller testmiljø hindrer verifisering, oppgi tydelig at arbeidet er uverifisert og avvent videre risikofylt refaktorering.
 - Stisystemet, inkludert Hvaler, skal fortsatt ikke endres før brukeren ber om samlet omarbeiding.
+
+## CI-feil og retting 2026-10-08
+- GitHub Actions-kjøring 37831758037 feilet i `scripts/test-diagnostics.cjs`: Error-instans opprettet utenfor `node:vm` ble ikke gjenkjent med `instanceof Error` inne i VM. Testen forventet `offline`, men fikk `Error: offline`.
+- `diagnostics.js` bruker nå en streng `error.message` når tilgjengelig på tvers av JavaScript-realm, og fallback til `String(error)`. Testen dekker både host-Error og VM-Error.
+- Rettelsen ligger i testgrenen `refactor/core-geometry-helpers`; grønn GitHub Actions og nettlesertester må bekreftes før sammenslåing.
+
+## Verifisert refaktorering 2026-10-08
+- PR #2 (`refactor/core-geometry-helpers`) trekker polygonhjelpefunksjoner ut av `app-core.js` til `polygon-layer-utils.js`, uten tilsiktet endring i kartlogikk eller stidata.
+- Etter retting av diagnostikktestene er GitHub Actions-kjøring [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178) **fullført med `success`** for commit `2b8dc840120dd85b582b796010a42c90f647416e`. Geometri-/JavaScript-validering og nettlesertester for desktop og mobil bestod.
+- PR #2 er fortsatt en separat testgren; `main` er ikke oppdatert med denne refaktoreringen. Senere dokumentasjonscommits endrer ikke programkoden, men endelig sammenslåing krever fortsatt egen beslutning.
+
+## Videre kodeopprydding 2026-10-08
+- `getPotaActivationCount` og den tilhørende femminutters statistikk-cachen er flyttet uendret fra `app-core.js` til `pota-activation.js`. Oppstartsrekkefølgen i `app.js` og CI-syntakskontroll / testpublisering er oppdatert.
+- Ingen endringer i stier, GPS-logikk, parkgeometri eller beregningsregler. Endringen ligger kun i testgrenen `refactor/core-geometry-helpers`.
+- GitHub Actions-kjøring [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316) gjelder den nye kodeendringen. Kontroller endelig resultat før den regnes som ferdig.
+
+- **Verifisert:** GitHub Actions-kjøring [37833435310](https://github.com/apagg/pota-kart/actions/runs/37833435310) fullførte med `success` etter POTA-aktiveringsuttrekket. Geometri/JS-kontroller og desktop-/mobilnettlesertester bestod. Testet commit: `5e8d52dd839d223667af24cb8d846aeaeadb6e13`.
+
+## Parkinformasjon skilt ut (2026-10-08)
+- `openParkInfo`, `reopenSelectedPark`, `bindSelectedGeometry` og `openOverlapChooser` er flyttet uten tilsiktet oppførselsendring fra `app-core.js` til `park-info-ui.js`; `app.js` og CI-pakking er oppdatert.
+- GitHub Actions [37833958638](https://github.com/apagg/pota-kart/actions/runs/37833958638) fullførte med `success` for kodecommit `ccf5bc59f221dd47c830c5d9c0c5fd9b416d2420`, inkludert geometri/JS-kontroller og desktop-/mobilnettlesertester.
+- Endringen er fortsatt i PR #2; `main` og stidata er ikke endret.
+
+## Felles teksthjelpere skilt ut (2026-10-08)
+- `norm`, `esc` og `getJSON` er flyttet uendret fra `app-core.js` til `app-text-utils.js`, med oppdatert oppstartsrekkefølge og CI-syntakskontroll/testkopiering.
+- Ingen endring i stisystemet. GitHub Actions [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771) for kodecommit `bee9492f55ad17ada6fb865547dfe03ae1ee1248` var fortsatt `pending` ved dokumentasjon; endelig resultat må verifiseres.
+
+## Ufravikelig avslutningsregel for kodearbeid (2026-10-08)
+- **IKKE AVSLUTT SVARET ELLER KODEARBEIDET MED EN TEST SOM `pending`, `queued`, `in_progress` ELLER `cancelled`.** Etter siste kodecommit skal assistenten selv følge GitHub Actions frem til en endelig `completed`-status er kontrollert direkte på GitHub. Ved kansellering på grunn av nyere commits: finn og følg den nyeste relevante kjøringen.
+- Kontroller både samlet `conclusion` og at relevante geometri-/JavaScript-, desktop- og mobiltester har `success`. Ved `failure`: les jobbloggene, rett årsaken, push endring og følg ny kjøring til endelig resultat. Ved vedvarende infrastrukturblokkering: dokumenter eksplisitt blokkeringen, ikke påstå at arbeidet er ferdig.
+- Først etter bekreftet grønn CI oppdateres `PROJECT.md`, `TODO.md` og `STATUS.md` med kjørings-ID, testet commit og resultat. Dokumentasjonscommits kan utløse ny kjøring; kontroller da også siste relevante kjøring før endelig svar. Ikke be brukeren om å følge testen på våre vegne.
+- Eksempel: kjøring 37834519771 ble `cancelled`, men etterfølgende [37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605) ble `completed/success` for commit `f6c46cc24da0365c0148898573357a210d12f559`, inkludert geometri-/JavaScript- og desktop-/mobiltester.
+
+## Ferdig moduluttrekk for parkvalg og oppstart (2026-10-08)
+- `park-diagnostics.js`, `park-selection-state.js`, `pota-park-loader.js`, `park-selection-controller.js` og `pota-startup.js` er skilt ut fra `app-core.js` uten tilsiktet funksjonsendring. `app.js` og CI er oppdatert.
+- [GitHub Actions 37837436277](https://github.com/apagg/pota-kart/actions/runs/37837436277) fullfort med `success` for kodecommit `eb87927df0a3bedece0479bffa844bc5575311c2`; geometri/JS og desktop-/mobiltester bestod.
+- Hvaler og stisystemet er ikke endret. Gjenværende `app-core.js` inneholder fortsatt sti-/overlappsfunksjoner og geometri-/kartintegrasjon, som holdes utenfor denne oppryddingen.
