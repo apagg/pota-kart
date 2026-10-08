@@ -59,3 +59,7 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Flytt `featuresOfGeoJson` fra `app-core.js` til `geojson-utils.js`, og legg til en isolert regresjonstest.
 - [x] Rett testkartets filkopiering så nye moduler (`diagnostics.js`, `geojson-utils.js`) følger med.
 - [ ] Bekreft CI og nettlesertester etter moduluttrekket før større refaktorering.
+
+- [x] Flytt kartinitialisering og bakgrunnskart fra `app-core.js` til `map-setup.js`.
+- [x] Ta med `map-setup.js` i CI-syntakssjekk og isolert testkart.
+- [ ] Verifiser at GitHub Actions og nettlesertestene består etter moduluttrekket; ingen grønn status er bekreftet ennå.
