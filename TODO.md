@@ -47,3 +47,11 @@ Dette er tidligere rapporter eller mulige avvik; dagens feilstatus er ikke bekre
 Oppdater begge dokumentene når noe endres. Oppgi hva som ble gjort, hva som faktisk ble testet, hvor endringen ligger og hva neste økt trenger. Merk utestede forhold eksplisitt. Flytt bare oppgaver til ferdig når det finnes bekreftet resultat.
 
 Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtaler. Nye samtaler bør starte med: «Vi fortsetter med POTA-kartet. Les PROJECT.md og TODO.md på GitHub først.»
+
+## Ny prioritet (2026-10-08): kvalitet uten stiendringer
+- [x] Avklar at hele stisystemet, inkludert Hvaler, settes på vent til en senere samlet omarbeiding.
+- [x] Start trinnvis kodeopprydding: felles diagnostikkmodul, integrasjon i atlas/oppstart, automatisert regresjonstest.
+- [ ] Bekreft grønn GitHub Actions-kjøring for diagnostikkendringen.
+- [ ] Del opp `app-core.js` gradvis i uavhengige moduler med regresjonstester, uten å endre sti- eller kartoppførsel.
+- [ ] Forbedre feilhåndtering og meldinger ved øvrige nettverksfeil.
+- [ ] Utvid mobil-, GPS- og ytelsestester uten å endre stisystemet.
