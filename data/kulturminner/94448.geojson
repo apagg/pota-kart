@@ -1,299 +1,357 @@
 {
   "type": "Feature",
   "id": "94448",
-  "properties": {
-    "kulturminneId": "94448",
-    "navn": "Ravneberget",
-    "sourceFeatureIds": [
-      "lokalitet.286034",
-      "lokalitet.286035",
-      "lokalitet.286036"
-    ],
-    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/94448"
-  },
   "geometry": {
     "type": "MultiPolygon",
     "coordinates": [
       [
         [
           [
-            11.127695,
-            59.302497
+            11.127694855726162,
+            59.302497294561896
           ],
           [
-            11.127693,
-            59.302499
+            11.1276934269654,
+            59.302499499551004
           ],
           [
-            11.127688,
-            59.302503
+            11.127688435780469,
+            59.302503380335004
           ],
           [
-            11.127685,
-            59.302505
+            11.127685043030915,
+            59.302504924531206
           ],
           [
-            11.127677,
-            59.302507
+            11.12767692670812,
+            59.30250700957613
           ],
           [
-            11.127672,
-            59.302507
+            11.127672478411094,
+            59.30250747950585
           ],
           [
-            11.127663,
-            59.302507
+            11.127663406604647,
+            59.30250720948075
           ],
           [
-            11.127659,
-            59.302506
+            11.127659094949824,
+            59.302506478808425
           ],
           [
-            11.127652,
-            59.302504
+            11.127651508082952,
+            59.30250392725233
           ],
           [
-            11.127648,
-            59.302502
+            11.12764848854998,
+            59.302502192192605
           ],
           [
-            11.127644,
-            59.302498
+            11.127644408241325,
+            59.30249803869588
           ],
           [
-            11.127643,
-            59.302496
+            11.127643491090849,
+            59.30249576388006
           ],
           [
-            11.127644,
-            59.302491
+            11.127644018695447,
+            59.302491128124565
           ],
           [
-            11.127645,
-            59.302489
+            11.127645445707026,
+            59.30248892308388
           ],
           [
-            11.12765,
-            59.302485
+            11.127650440704517,
+            59.30248503971794
           ],
           [
-            11.127654,
-            59.302483
+            11.127653833453586,
+            59.302483495522615
           ],
           [
-            11.127662,
-            59.302481
+            11.127661947918098,
+            59.30248141132292
           ],
           [
-            11.127666,
-            59.302481
+            11.127666396211831,
+            59.30248094139355
           ],
           [
-            11.127675,
-            59.302481
+            11.127675468011319,
+            59.30248121141835
           ],
           [
-            11.12768,
-            59.302482
+            11.127679779663335,
+            59.302481942090104
           ],
           [
-            11.127687,
-            59.302484
+            11.12768736817759,
+            59.30248449459264
           ],
           [
-            11.12769,
-            59.302486
+            11.127690387711045,
+            59.30248622965148
           ],
           [
-            11.127694,
-            59.30249
+            11.127694464825934,
+            59.30249038035457
           ],
           [
-            11.127695,
-            59.302493
+            11.127695383731687,
+            59.302492655222224
           ],
           [
-            11.127695,
-            59.302497
+            11.127694855726162,
+            59.302497294561896
           ]
         ]
       ],
       [
         [
           [
-            11.127378,
-            59.305351
+            11.127705759762582,
+            59.30561669756927
           ],
           [
-            11.127431,
-            59.305339
+            11.127736473417157,
+            59.30565006133482
           ],
           [
-            11.127481,
-            59.305327
+            11.127738084053174,
+            59.305654631273676
           ],
           [
-            11.12749,
-            59.305326
+            11.127735012863962,
+            59.30565900073501
           ],
           [
-            11.127499,
-            59.305328
+            11.127728082022994,
+            59.305662001207644
           ],
           [
-            11.127505,
-            59.305331
+            11.127700908315521,
+            59.305668556193034
           ],
           [
-            11.127578,
-            59.305413
+            11.127672527546943,
+            59.3056753979899
           ],
           [
-            11.127689,
-            59.305536
+            11.127663583295755,
+            59.30567622407036
           ],
           [
-            11.12769,
-            59.30554
+            11.127655031612038,
+            59.3056746515985
           ],
           [
-            11.127687,
-            59.305545
+            11.127649164329165,
+            59.30567110389524
           ],
           [
-            11.12768,
-            59.305547
+            11.127618441982106,
+            59.305637739849104
           ],
           [
-            11.127627,
-            59.30556
+            11.127616830018702,
+            59.305633166272905
           ],
           [
-            11.127577,
-            59.305572
+            11.12761990678293,
+            59.305628794283
           ],
           [
-            11.127568,
-            59.305573
+            11.127626848037242,
+            59.30562579502504
           ],
           [
-            11.127559,
-            59.305571
+            11.12765488022379,
+            59.30561904984542
           ],
           [
-            11.127553,
-            59.305567
+            11.127682382257232,
+            59.30561240575162
           ],
           [
-            11.127444,
-            59.305445
+            11.127691330403424,
+            59.30561157619014
           ],
           [
-            11.12737,
-            59.305363
+            11.127699887431607,
+            59.30561314791992
           ],
           [
-            11.127368,
-            59.305358
-          ],
-          [
-            11.127371,
-            59.305354
-          ],
-          [
-            11.127378,
-            59.305351
+            11.127705759762582,
+            59.30561669756927
           ]
         ]
       ],
       [
         [
           [
-            11.127706,
-            59.305617
+            11.127378124356182,
+            59.3053511648389
           ],
           [
-            11.127736,
-            59.30565
+            11.127431097090161,
+            59.30533871441253
           ],
           [
-            11.127738,
-            59.305655
+            11.127481463397759,
+            59.30532684355843
           ],
           [
-            11.127735,
-            59.305659
+            11.127490420594592,
+            59.30532605743379
           ],
           [
-            11.127728,
-            59.305662
+            11.127498945122074,
+            59.305327666868294
           ],
           [
-            11.127701,
-            59.305669
+            11.127504753101295,
+            59.30533124068392
           ],
           [
-            11.127673,
-            59.305675
+            11.127578001638188,
+            59.30541260358555
           ],
           [
-            11.127664,
-            59.305676
+            11.127688626094567,
+            59.30553557192189
           ],
           [
-            11.127655,
-            59.305675
+            11.127690156852914,
+            59.30554014847422
           ],
           [
-            11.127649,
-            59.305671
+            11.127687011753972,
+            59.3055445031485
           ],
           [
-            11.127618,
-            59.305638
+            11.12768003173366,
+            59.3055474724873
           ],
           [
-            11.127617,
-            59.305633
+            11.127627221606414,
+            59.305559928758186
           ],
           [
-            11.12762,
-            59.305629
+            11.127576647021915,
+            59.305571804263074
           ],
           [
-            11.127627,
-            59.305626
+            11.127567695732266,
+            59.30557258427765
           ],
           [
-            11.127655,
-            59.305619
+            11.127559178455023,
+            59.30557097236772
           ],
           [
-            11.127682,
-            59.305612
+            11.127553379190823,
+            59.30556739881488
           ],
           [
-            11.127691,
-            59.305612
+            11.127443697784285,
+            59.30544549318296
           ],
           [
-            11.1277,
-            59.305613
+            11.127369509847233,
+            59.305363071977474
           ],
           [
-            11.127706,
-            59.305617
+            11.127367977896995,
+            59.30535849088979
+          ],
+          [
+            11.127371130434824,
+            59.30535413284811
+          ],
+          [
+            11.127378124356182,
+            59.3053511648389
           ]
         ]
       ]
     ]
   },
+  "properties": {
+    "navn": "Ravneberget",
+    "opphav": "Riksantikvaren, Hovedkontor",
+    "informasjon": "Etter Karlstadforhandlingene i 1905 ble Norge tvunget til å ødelegge flere sterke forsvarsverk på østsiden av Glomma. Skytset fra de demolerte fortene ble brukt i nye befestninger i Østfold og Trøndelag. Ravneberget fort var ett av hovedfortene i den nye forsvarslinjen og behersket store deler av østsiden av Glomma ved Sarpsborg inkludert jernbanen og veien fra Sverige.\rRavneberget fort ligger på vestsiden av Glomma litt nord for Sarpsborg. Fra toppen av berget skråner det på østsiden rett ned i Glomma, mens terrenget på vestsiden skråner bratt ned mot veien nordover til Tunøya. Etablissementet består foruten lager, forlegning- og administrasjonsdel av batteriveien, stridsanlegget med fjellanlegg, kanonstillinger i brønn, piggtrådsperringer, rester etter trallebane, ammunisjonsnisjer og stillinger for feltkanoner.\rBatteriveien fra forlegningsdelen opp mot kanonstillingene har brystvern mot øst. Flere steder finnes det rester etter den opprinnelige piggtrådsperringen. På toppen av berget er det bevart et slusesystem i piggtrådsperringen med tre påfølgende porter. Tilsvarende finnes på Håøya ved Oscarsborg og Vardåsen ved Kongsvinger, men i dårligere forfatning. På området ses også rester etter løpegraver. Fortet hadde kanoner både på lavetter og traller. Trallebanen som løper parallelt med Vannverksveien er tatt opp og ligger samlet i forlegningsområdet. Svillene og traseen er imidlertid godt synlig på områdets vestside. Langs banen ligger det ammunisjonsnisjer der noen av dørene fremdeles er bevart. Restene etter et kommunalt vanntårn, anlagt i etterkrigstiden, og nedlagt noen år etter, er fremdeles synlig på området. \r\rRavneberget fort er et tilnærmet komplett stridsanlegg fra etableringen av en ny forsvarslinje etter unionsoppløsningen, som erstatning for fortene som ble demolert i henhold til Karlstadoverenskomsten.\rRavneberget omfatter spor etter betydelige deler av det opprinnelige anlegget. De bevarte dørene i ammunisjonsnisjene og piggtrådsperringen med sluser er sjeldne i nasjonal sammenheng. Traseen med sviller som tydelig forteller om kanonene på traller er også unik. Fortet har også bevarte ammunisjonsmagasin.\r",
+    "førsteDigitaliseringsdato": "2005-10-05T14:15:48Z",
+    "kommune": "3105",
+    "kulturminneId": "94448",
+    "antallEnkeltminner": 3,
+    "linkAskeladden": "https://askeladden.ra.no/askeladden/?kid=94448",
+    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/94448",
+    "lokalId": "94448",
+    "lokalitetsart": "20102",
+    "lokalitetskategori": "L-BVF",
+    "målemetode": 99,
+    "navnerom": "http://skjema.geonorge.no/SOSI/produktspesifikasjon/LokaliteterEnkeltminnerOgSikringssoner/20210217",
+    "versjonId": "20210217",
+    "nøyaktighet": null,
+    "nåværendeFunksjon": null,
+    "områdefredning": null,
+    "synlig": true,
+    "vernetype": "FOR",
+    "vernedato": "2004-05-06T00:00:00Z",
+    "vernelov": "KML",
+    "verneparagraf": "22a (Fredning av byggverk og anlegg i statens eie)",
+    "opprinneligFunksjon": null,
+    "datafangstdato": "2005-09-05T00:00:00Z",
+    "opprettet": "2005-10-05T14:15:48Z",
+    "oppdateringsdato": "2026-08-21T12:47:54Z",
+    "senterpunkt": {
+      "type": "Point",
+      "coordinates": [
+        11.127550718019728,
+        59.30539739870985
+      ]
+    }
+  },
+  "links": [
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=json",
+      "rel": "self",
+      "type": "application/geo+json",
+      "title": "Dieses Dokument"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=csv",
+      "rel": "alternate",
+      "type": "text/csv",
+      "title": "Dieses Dokument als CSV"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=fgb",
+      "rel": "alternate",
+      "type": "application/flatgeobuf",
+      "title": "Dieses Dokument als FlatGeobuf"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=html",
+      "rel": "alternate",
+      "type": "text/html",
+      "title": "Dieses Dokument als HTML"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter?f=json",
+      "rel": "collection",
+      "type": "application/json",
+      "title": "Die Datensammlung, zu der das Objekt gehört"
+    }
+  ],
   "cacheMetadata": {
-    "verifiedDate": "2026-10-07",
-    "sourceUrl": "https://wfs.geonorge.no/skwms1/wfs.kulturminner?service=WFS&version=2.0.0&request=GetFeature&typeNames=app%3ALokalitet&srsName=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A4326&count=1000&startIndex=0&filter=%3Cfes%3AFilter+xmlns%3Afes%3D%22http%3A%2F%2Fwww.opengis.net%2Ffes%2F2.0%22+xmlns%3Aapp%3D%22http%3A%2F%2Fskjema.geonorge.no%2FSOSI%2Fproduktspesifikasjon%2FLokaliteterEnkeltminnerOgSikringssoner%2F20210217%22%3E%3Cfes%3AOr%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AkulturminneId%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3E94448%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AlinkKulturminnes%C3%B8k%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3Ehttps%3A%2F%2Fkulturminnesok.no%2Fra%2Flokalitet%2F94448%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3C%2Ffes%3AOr%3E%3C%2Ffes%3AFilter%3E",
+    "verifiedDate": "2026-10-08",
+    "sourceUrl": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=json",
     "sourceUrls": [
-      "https://wfs.geonorge.no/skwms1/wfs.kulturminner?service=WFS&version=2.0.0&request=GetFeature&typeNames=app%3ALokalitet&srsName=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A4326&count=1000&startIndex=0&filter=%3Cfes%3AFilter+xmlns%3Afes%3D%22http%3A%2F%2Fwww.opengis.net%2Ffes%2F2.0%22+xmlns%3Aapp%3D%22http%3A%2F%2Fskjema.geonorge.no%2FSOSI%2Fproduktspesifikasjon%2FLokaliteterEnkeltminnerOgSikringssoner%2F20210217%22%3E%3Cfes%3AOr%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AkulturminneId%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3E94448%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3Cfes%3APropertyIsEqualTo%3E%3Cfes%3AValueReference%3Eapp%3AlinkKulturminnes%C3%B8k%3C%2Ffes%3AValueReference%3E%3Cfes%3ALiteral%3Ehttps%3A%2F%2Fkulturminnesok.no%2Fra%2Flokalitet%2F94448%3C%2Ffes%3ALiteral%3E%3C%2Ffes%3APropertyIsEqualTo%3E%3C%2Ffes%3AOr%3E%3C%2Ffes%3AFilter%3E"
+      "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=json"
     ],
-    "service": "wfs"
+    "service": "api"
   }
 }
