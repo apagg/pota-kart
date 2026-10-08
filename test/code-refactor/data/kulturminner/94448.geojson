@@ -1,0 +1,357 @@
+{
+  "type": "Feature",
+  "id": "94448",
+  "geometry": {
+    "type": "MultiPolygon",
+    "coordinates": [
+      [
+        [
+          [
+            11.127694855726162,
+            59.302497294561896
+          ],
+          [
+            11.1276934269654,
+            59.302499499551004
+          ],
+          [
+            11.127688435780469,
+            59.302503380335004
+          ],
+          [
+            11.127685043030915,
+            59.302504924531206
+          ],
+          [
+            11.12767692670812,
+            59.30250700957613
+          ],
+          [
+            11.127672478411094,
+            59.30250747950585
+          ],
+          [
+            11.127663406604647,
+            59.30250720948075
+          ],
+          [
+            11.127659094949824,
+            59.302506478808425
+          ],
+          [
+            11.127651508082952,
+            59.30250392725233
+          ],
+          [
+            11.12764848854998,
+            59.302502192192605
+          ],
+          [
+            11.127644408241325,
+            59.30249803869588
+          ],
+          [
+            11.127643491090849,
+            59.30249576388006
+          ],
+          [
+            11.127644018695447,
+            59.302491128124565
+          ],
+          [
+            11.127645445707026,
+            59.30248892308388
+          ],
+          [
+            11.127650440704517,
+            59.30248503971794
+          ],
+          [
+            11.127653833453586,
+            59.302483495522615
+          ],
+          [
+            11.127661947918098,
+            59.30248141132292
+          ],
+          [
+            11.127666396211831,
+            59.30248094139355
+          ],
+          [
+            11.127675468011319,
+            59.30248121141835
+          ],
+          [
+            11.127679779663335,
+            59.302481942090104
+          ],
+          [
+            11.12768736817759,
+            59.30248449459264
+          ],
+          [
+            11.127690387711045,
+            59.30248622965148
+          ],
+          [
+            11.127694464825934,
+            59.30249038035457
+          ],
+          [
+            11.127695383731687,
+            59.302492655222224
+          ],
+          [
+            11.127694855726162,
+            59.302497294561896
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            11.127705759762582,
+            59.30561669756927
+          ],
+          [
+            11.127736473417157,
+            59.30565006133482
+          ],
+          [
+            11.127738084053174,
+            59.305654631273676
+          ],
+          [
+            11.127735012863962,
+            59.30565900073501
+          ],
+          [
+            11.127728082022994,
+            59.305662001207644
+          ],
+          [
+            11.127700908315521,
+            59.305668556193034
+          ],
+          [
+            11.127672527546943,
+            59.3056753979899
+          ],
+          [
+            11.127663583295755,
+            59.30567622407036
+          ],
+          [
+            11.127655031612038,
+            59.3056746515985
+          ],
+          [
+            11.127649164329165,
+            59.30567110389524
+          ],
+          [
+            11.127618441982106,
+            59.305637739849104
+          ],
+          [
+            11.127616830018702,
+            59.305633166272905
+          ],
+          [
+            11.12761990678293,
+            59.305628794283
+          ],
+          [
+            11.127626848037242,
+            59.30562579502504
+          ],
+          [
+            11.12765488022379,
+            59.30561904984542
+          ],
+          [
+            11.127682382257232,
+            59.30561240575162
+          ],
+          [
+            11.127691330403424,
+            59.30561157619014
+          ],
+          [
+            11.127699887431607,
+            59.30561314791992
+          ],
+          [
+            11.127705759762582,
+            59.30561669756927
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            11.127378124356182,
+            59.3053511648389
+          ],
+          [
+            11.127431097090161,
+            59.30533871441253
+          ],
+          [
+            11.127481463397759,
+            59.30532684355843
+          ],
+          [
+            11.127490420594592,
+            59.30532605743379
+          ],
+          [
+            11.127498945122074,
+            59.305327666868294
+          ],
+          [
+            11.127504753101295,
+            59.30533124068392
+          ],
+          [
+            11.127578001638188,
+            59.30541260358555
+          ],
+          [
+            11.127688626094567,
+            59.30553557192189
+          ],
+          [
+            11.127690156852914,
+            59.30554014847422
+          ],
+          [
+            11.127687011753972,
+            59.3055445031485
+          ],
+          [
+            11.12768003173366,
+            59.3055474724873
+          ],
+          [
+            11.127627221606414,
+            59.305559928758186
+          ],
+          [
+            11.127576647021915,
+            59.305571804263074
+          ],
+          [
+            11.127567695732266,
+            59.30557258427765
+          ],
+          [
+            11.127559178455023,
+            59.30557097236772
+          ],
+          [
+            11.127553379190823,
+            59.30556739881488
+          ],
+          [
+            11.127443697784285,
+            59.30544549318296
+          ],
+          [
+            11.127369509847233,
+            59.305363071977474
+          ],
+          [
+            11.127367977896995,
+            59.30535849088979
+          ],
+          [
+            11.127371130434824,
+            59.30535413284811
+          ],
+          [
+            11.127378124356182,
+            59.3053511648389
+          ]
+        ]
+      ]
+    ]
+  },
+  "properties": {
+    "navn": "Ravneberget",
+    "opphav": "Riksantikvaren, Hovedkontor",
+    "informasjon": "Etter Karlstadforhandlingene i 1905 ble Norge tvunget til å ødelegge flere sterke forsvarsverk på østsiden av Glomma. Skytset fra de demolerte fortene ble brukt i nye befestninger i Østfold og Trøndelag. Ravneberget fort var ett av hovedfortene i den nye forsvarslinjen og behersket store deler av østsiden av Glomma ved Sarpsborg inkludert jernbanen og veien fra Sverige.\rRavneberget fort ligger på vestsiden av Glomma litt nord for Sarpsborg. Fra toppen av berget skråner det på østsiden rett ned i Glomma, mens terrenget på vestsiden skråner bratt ned mot veien nordover til Tunøya. Etablissementet består foruten lager, forlegning- og administrasjonsdel av batteriveien, stridsanlegget med fjellanlegg, kanonstillinger i brønn, piggtrådsperringer, rester etter trallebane, ammunisjonsnisjer og stillinger for feltkanoner.\rBatteriveien fra forlegningsdelen opp mot kanonstillingene har brystvern mot øst. Flere steder finnes det rester etter den opprinnelige piggtrådsperringen. På toppen av berget er det bevart et slusesystem i piggtrådsperringen med tre påfølgende porter. Tilsvarende finnes på Håøya ved Oscarsborg og Vardåsen ved Kongsvinger, men i dårligere forfatning. På området ses også rester etter løpegraver. Fortet hadde kanoner både på lavetter og traller. Trallebanen som løper parallelt med Vannverksveien er tatt opp og ligger samlet i forlegningsområdet. Svillene og traseen er imidlertid godt synlig på områdets vestside. Langs banen ligger det ammunisjonsnisjer der noen av dørene fremdeles er bevart. Restene etter et kommunalt vanntårn, anlagt i etterkrigstiden, og nedlagt noen år etter, er fremdeles synlig på området. \r\rRavneberget fort er et tilnærmet komplett stridsanlegg fra etableringen av en ny forsvarslinje etter unionsoppløsningen, som erstatning for fortene som ble demolert i henhold til Karlstadoverenskomsten.\rRavneberget omfatter spor etter betydelige deler av det opprinnelige anlegget. De bevarte dørene i ammunisjonsnisjene og piggtrådsperringen med sluser er sjeldne i nasjonal sammenheng. Traseen med sviller som tydelig forteller om kanonene på traller er også unik. Fortet har også bevarte ammunisjonsmagasin.\r",
+    "førsteDigitaliseringsdato": "2005-10-05T14:15:48Z",
+    "kommune": "3105",
+    "kulturminneId": "94448",
+    "antallEnkeltminner": 3,
+    "linkAskeladden": "https://askeladden.ra.no/askeladden/?kid=94448",
+    "linkKulturminnesøk": "https://kulturminnesok.no/ra/lokalitet/94448",
+    "lokalId": "94448",
+    "lokalitetsart": "20102",
+    "lokalitetskategori": "L-BVF",
+    "målemetode": 99,
+    "navnerom": "http://skjema.geonorge.no/SOSI/produktspesifikasjon/LokaliteterEnkeltminnerOgSikringssoner/20210217",
+    "versjonId": "20210217",
+    "nøyaktighet": null,
+    "nåværendeFunksjon": null,
+    "områdefredning": null,
+    "synlig": true,
+    "vernetype": "FOR",
+    "vernedato": "2004-05-06T00:00:00Z",
+    "vernelov": "KML",
+    "verneparagraf": "22a (Fredning av byggverk og anlegg i statens eie)",
+    "opprinneligFunksjon": null,
+    "datafangstdato": "2005-09-05T00:00:00Z",
+    "opprettet": "2005-10-05T14:15:48Z",
+    "oppdateringsdato": "2026-08-21T12:47:54Z",
+    "senterpunkt": {
+      "type": "Point",
+      "coordinates": [
+        11.127550718019728,
+        59.30539739870985
+      ]
+    }
+  },
+  "links": [
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=json",
+      "rel": "self",
+      "type": "application/geo+json",
+      "title": "Dieses Dokument"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=csv",
+      "rel": "alternate",
+      "type": "text/csv",
+      "title": "Dieses Dokument als CSV"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=fgb",
+      "rel": "alternate",
+      "type": "application/flatgeobuf",
+      "title": "Dieses Dokument als FlatGeobuf"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=html",
+      "rel": "alternate",
+      "type": "text/html",
+      "title": "Dieses Dokument als HTML"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter?f=json",
+      "rel": "collection",
+      "type": "application/json",
+      "title": "Die Datensammlung, zu der das Objekt gehört"
+    }
+  ],
+  "cacheMetadata": {
+    "verifiedDate": "2026-10-08",
+    "sourceUrl": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=json",
+    "sourceUrls": [
+      "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/94448?f=json"
+    ],
+    "service": "api"
+  }
+}

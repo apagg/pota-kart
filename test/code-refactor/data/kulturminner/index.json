@@ -1,0 +1,90 @@
+{
+  "generatedDate": "2026-10-08",
+  "entries": [
+    {
+      "id": "215058",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3378",
+          "name": "Trøgstad fort National Military Park"
+        }
+      ]
+    },
+    {
+      "id": "226593",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3203",
+          "name": "Stavneset National Historic Site"
+        }
+      ]
+    },
+    {
+      "id": "86063",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3375",
+          "name": "Høytorp fort National Military Park"
+        }
+      ]
+    },
+    {
+      "id": "94415",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3372",
+          "name": "Greåker fort National Military Park"
+        }
+      ]
+    },
+    {
+      "id": "94425",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3379",
+          "name": "Ørjekollen fort National Military Park"
+        }
+      ]
+    },
+    {
+      "id": "94448",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3374",
+          "name": "Ravneberget National Military Park"
+        }
+      ]
+    },
+    {
+      "id": "94449",
+      "available": true,
+      "refreshStatus": "updated",
+      "verifiedDate": "2026-10-08",
+      "parks": [
+        {
+          "reference": "NO-3373",
+          "name": "Hjelmkollen National Military Park"
+        }
+      ]
+    }
+  ],
+  "parksWithoutId": []
+}
