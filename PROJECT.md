@@ -133,3 +133,8 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - Ta vare på commit-SHA før hver endring, gjør små commits, test og oppdater `STATUS.md` og `TODO.md` fortløpende.
 - Ved feil kan vi reversere endringscommits; ikke overskriv historikk eller bruk force-push.
 - Originalfilen `Hvaler-redigering.gpkg` beholdes uendret som sikkerhetskopi.
+
+## Beslutning 2026-10-08: stisystemet utsettes
+- Brukeren ønsker å omarbeide **hele stisystemet senere**. Ikke endre Hvaler-stier, øvrige stier, korridorberegning eller datakilder nå uten ny avtale.
+- Nåværende forbedringsfase prioriterer modulstruktur, diagnostikk, feilhåndtering og tester uten funksjonelle endringer i kartet.
+- Ny modul `diagnostics.js` lastes før kartmotoren og holder de 50 siste feilmeldingene i minnet. `scripts/test-diagnostics.cjs` tester dette og kjøres i GitHub Actions.
