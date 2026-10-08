@@ -127,3 +127,9 @@ node scripts/test-atlas.cjs
 ```
 
 Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geometry-preview.yml`; kommandoene alene er ikke et komplett oppsett. Kjør relevante kontroller for endringen og test på både mobil og større skjerm. Dokumentasjonsopprettelsen 2026-10-08 innebar kildeinspeksjon, ikke en ny full kjøretidstest av kartet.
+
+## Arbeidsgren og tilbakeføring (beslutning 2026-10-08)
+- Brukeren har godkjent å gjøre Hvaler-endringene direkte på `main`, fremfor å opprette testgren.
+- Ta vare på commit-SHA før hver endring, gjør små commits, test og oppdater `STATUS.md` og `TODO.md` fortløpende.
+- Ved feil kan vi reversere endringscommits; ikke overskriv historikk eller bruk force-push.
+- Originalfilen `Hvaler-redigering.gpkg` beholdes uendret som sikkerhetskopi.
