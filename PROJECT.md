@@ -171,3 +171,8 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - PR #2 (`refactor/core-geometry-helpers`) trekker polygonhjelpefunksjoner ut av `app-core.js` til `polygon-layer-utils.js`, uten tilsiktet endring i kartlogikk eller stidata.
 - Etter retting av diagnostikktestene er GitHub Actions-kjøring [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178) **fullført med `success`** for commit `2b8dc840120dd85b582b796010a42c90f647416e`. Geometri-/JavaScript-validering og nettlesertester for desktop og mobil bestod.
 - PR #2 er fortsatt en separat testgren; `main` er ikke oppdatert med denne refaktoreringen. Senere dokumentasjonscommits endrer ikke programkoden, men endelig sammenslåing krever fortsatt egen beslutning.
+
+## Videre kodeopprydding 2026-10-08
+- `getPotaActivationCount` og den tilhørende femminutters statistikk-cachen er flyttet uendret fra `app-core.js` til `pota-activation.js`. Oppstartsrekkefølgen i `app.js` og CI-syntakskontroll / testpublisering er oppdatert.
+- Ingen endringer i stier, GPS-logikk, parkgeometri eller beregningsregler. Endringen ligger kun i testgrenen `refactor/core-geometry-helpers`.
+- GitHub Actions-kjøring [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316) gjelder den nye kodeendringen. Kontroller endelig resultat før den regnes som ferdig.
