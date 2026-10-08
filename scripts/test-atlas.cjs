@@ -17,7 +17,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   else if(ref==='NO-3374'){await new Promise(r=>setTimeout(r,200));await route.fulfill({headers:{"Access-Control-Allow-Origin":"*"},json:{reference:ref,activations:17}})}
   else await route.fulfill({headers:{'Access-Control-Allow-Origin':'*'},status:503,body:'Unavailable'});
  });
- console.log('Opening test map');await page.goto('http://127.0.0.1:8765');await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
+ console.log('Opening POTA map');await page.goto('http://127.0.0.1:8765');await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('Kartet viser'),null,{timeout:120000});
  await page.evaluate(()=>{window.overlapHeartbeats=0;window.overlapHeartbeatTimer=setInterval(()=>window.overlapHeartbeats++,10)});
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
@@ -120,7 +120,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>document.querySelector('#linkbox [data-pota-activation-count]')?.textContent==='ikke tilgjengelig');
  const reserveLink=page.locator('#linkbox a');assert.equal(await reserveLink.getAttribute('href'),'https://pota.app/#/park/'+missing);
  await page.evaluate(ref=>{selectedParks.get(ref).marker.openTooltip()},missing);assert.equal(await page.locator('.pota-point-tooltip:visible').count()>0,true,'desktop keeps point labels');
- console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/0\.11\.0 test/);
+ console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/POTA Kart 0\.11\.0$/);
  await page.getByRole('button',{name:'Innstillinger',exact:true}).click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.getByRole('button',{name:'Kart',exact:true}).click();await page.screenshot({path:'atlas-mobile.png'});
  console.log('Mobile geometry warnings stay inside the expanded sheet; point labels are restored');

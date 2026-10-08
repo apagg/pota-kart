@@ -1,4 +1,4 @@
-// POTA Kart 0.10.0 bootstrap loader
+// POTA Kart 0.11.0 bootstrap loader
 (async()=>{
   const load=src=>new Promise((resolve,reject)=>{
     const s=document.createElement('script');
@@ -9,10 +9,10 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('geometry-topology.js?v=011-11');
-    await load('geometry-atlas.js?v=011-19');
-    await load('app-core.js?v=011-21');
-    await load('mobile-ui.js?v=011-21');
+    await load('geometry-topology.js?v=011-release');
+    await load('geometry-atlas.js?v=011-release');
+    await load('app-core.js?v=011-release');
+    await load('mobile-ui.js?v=011-release');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;

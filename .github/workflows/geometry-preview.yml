@@ -1,7 +1,7 @@
-name: Build geometry test map
+name: Verify POTA map
 on:
   push:
-    branches: ['feature/all-park-geometries']
+    branches: ['main', 'feature/all-park-geometries']
     paths:
       - '*.js'
       - '*.html'
@@ -16,7 +16,7 @@ permissions:
   contents: write
   pages: write
 concurrency:
-  group: geometry-test-map
+  group: pota-map-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/all-park-geometries
+          ref: ${{ github.sha }}
           path: candidate
       - uses: actions/cache@v4
         with:
@@ -33,9 +33,13 @@ jobs:
           key: geometry-sources-${{ github.run_id }}
           restore-keys: geometry-sources-
       - name: Refresh geometry datasets
+        if: github.ref == 'refs/heads/feature/all-park-geometries'
         working-directory: candidate
         run: |
           python3 scripts/update-geometries.py
+      - name: Validate cached geometry and JavaScript
+        working-directory: candidate
+        run: |
           python3 scripts/test-geometries.py
           node --check app-core.js
           node --check geometry-atlas.js
@@ -44,6 +48,7 @@ jobs:
           node --check overlap-worker.js
           node --check mobile-ui.js
       - name: Save verified geometry on the feature branch
+        if: github.ref == 'refs/heads/feature/all-park-geometries'
         working-directory: candidate
         run: |
           git config user.name 'github-actions[bot]'
@@ -79,10 +84,12 @@ jobs:
           name: geometry-browser-checks
           path: candidate/atlas-*.png
       - uses: actions/checkout@v4
+        if: github.ref == 'refs/heads/feature/all-park-geometries'
         with:
           ref: main
           path: stable
       - name: Publish isolated test directory
+        if: github.ref == 'refs/heads/feature/all-park-geometries'
         run: |
           mkdir -p stable/test/all-geometries
           for file in index.html app.js app-core.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
@@ -97,6 +104,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Request GitHub Pages publication
+        if: github.ref == 'refs/heads/feature/all-park-geometries'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
