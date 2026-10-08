@@ -11,7 +11,7 @@
     await load('pota-cache-bootstrap.js');
     await load('geometry-topology.js?v=011-11');
     await load('geometry-atlas.js?v=011-19');
-    await load('app-core.js?v=011-19');
+    await load('app-core.js?v=011-20');
     await load('mobile-ui.js?v=011-18');
   }catch(e){
     const el=document.getElementById('status');
