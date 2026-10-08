@@ -8,6 +8,15 @@ Les denne filen og [TODO.md](TODO.md) før nye endringer. Kontroller deretter ak
 
 Skill mellom brukerens beslutninger, verifisert kode, tidligere rapporter og utestede forslag. En tidligere samtale eller et versjonsnummer alene beviser ikke dagens oppførsel. Oppdater dokumentasjonen ved avslutning av en arbeidsøkt med endringer, validering, gren/commit, gjenstående arbeid og nødvendige kildefiler.
 
+## Fast arbeidsmetode: GitHub som fasit
+
+- GitHub-repositoryet er prosjektets kilde til sannhet. ChatGPT-samtalen brukes til diskusjon, beslutninger og korte statusrapporter, ikke som varig lagringssted for kode eller prosjektstatus.
+- Diskuter foreslåtte endringer og avtal omfang før implementering. Les deretter bare relevante filer og datadeler fra GitHub; unngå å lime inn store filer eller lange kodeblokker i chatten.
+- Gjennomfør endringer i repositoryet, test relevante funksjoner og lagre med tydelige commits. Bruk testgren for app- og dataendringer og avtal overgang til `main`.
+- Oppdater `PROJECT.md` ved varige beslutninger og tekniske endringer, `TODO.md` ved oppgavestatus og neste steg, og `CHANGELOG.md` når denne finnes og versjonsendringer tilsier det.
+- En oppgave regnes ikke som ferdig før endringene er committet på GitHub og relevant prosjektdokumentasjon er oppdatert. Hvis testing, commit eller dokumentasjon mangler, rapporter dette eksplisitt som uferdig.
+- Oppsummer kort i chatten hva som ble endret, hvilke tester som ble kjørt, gren og commit, og eventuelle gjenstående punkter. Ved ny samtale les `PROJECT.md` og `TODO.md` og kontroller faktisk repository-status før videre arbeid.
+
 ## Formål og publisering
 
 Interaktivt, mobilvennlig kart over POTA-referanser i Norge og Sverige, med registergrenser, stier, overlapp og egen GPS-posisjon.
