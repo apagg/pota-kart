@@ -68,3 +68,6 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Skill ut GPS-kontrolleren i `gps-controller.js` uten tilsiktet oppførselsendring.
 - [x] Legg til modulrekkefølge-test (`scripts/test-module-wiring.cjs`) og oppdater testkartkopiering.
 - [ ] Bekreft at GitHub Actions og nettlesertestene består etter GPS-uttrekket.
+
+## Fast kvalitetsregel
+- [ ] Kontroller faktisk GitHub Actions-resultat og relevante nettlesertester etter hver fremtidige kodeendring. Ikke marker oppgaver som ferdige før testene er bestått; dokumenter eventuelle blokkeringer.
