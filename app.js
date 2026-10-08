@@ -19,6 +19,7 @@
     await load('polygon-layer-utils.js?v=011-release');
     await load('pota-activation.js?v=011-release');
     await load('park-info-ui.js?v=011-release');
+    await load('app-text-utils.js?v=011-release');
     await load('app-core.js?v=011-release');
     await load('mobile-ui.js?v=011-release');
   }catch(e){
