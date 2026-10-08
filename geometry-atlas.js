@@ -10,7 +10,7 @@ async function atlasRecord(ref){
      geometryAtlas.hvalerTrailPromise=resolveKyststienFallback(null,{reference:'NO-2542'})
        .catch(e=>{geometryAtlas.hvalerTrailPromise=null;throw e});
    }
-   try{return await geometryAtlas.hvalerTrailPromise}catch(e){console.warn('Edited Hvaler trail unavailable:',e)}
+   try{return await geometryAtlas.hvalerTrailPromise}catch(e){potaDiagnostics.report('atlas/trail',e)}
  }
  const meta=atlasMeta(ref);if(!meta)return null;
  const key=ref.split('-')[0]+'/'+meta.shard;
@@ -110,7 +110,7 @@ async function atlasRefresh(){
  // Four concurrent shard fetches, with shared promises and a stale-view guard.
  let cursor=0;
  await Promise.all(Array.from({length:Math.min(4,jobs.length)},async()=>{
-  while(cursor<jobs.length){const ref=jobs[cursor++];try{const r=await atlasRecord(ref);if(epoch!==geometryAtlas.epoch)return;geometryAtlas.records.set(ref,r);if(geometryAtlas.byRef.get(ref)!==r.geometry)atlasShow(ref,r.geometry)}catch(e){console.warn('Geometri:',ref,e.message)}}
+  while(cursor<jobs.length){const ref=jobs[cursor++];try{const r=await atlasRecord(ref);if(epoch!==geometryAtlas.epoch)return;geometryAtlas.records.set(ref,r);if(geometryAtlas.byRef.get(ref)!==r.geometry)atlasShow(ref,r.geometry)}catch(e){potaDiagnostics.report('atlas/'+ref,e)}}
  }));
  if(epoch===geometryAtlas.epoch){atlasReport();scheduleAtlasOverlaps();updateGpsParkColors()}
 }
