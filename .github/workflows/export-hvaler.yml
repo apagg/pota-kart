@@ -5,6 +5,7 @@ on:
     paths:
       - 'Hvaler-redigering.gpkg'
       - 'scripts/export-hvaler.py'
+      - 'app-core.js'
   workflow_dispatch:
 permissions:
   contents: write
