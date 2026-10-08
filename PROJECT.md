@@ -138,3 +138,8 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - Brukeren ønsker å omarbeide **hele stisystemet senere**. Ikke endre Hvaler-stier, øvrige stier, korridorberegning eller datakilder nå uten ny avtale.
 - Nåværende forbedringsfase prioriterer modulstruktur, diagnostikk, feilhåndtering og tester uten funksjonelle endringer i kartet.
 - Ny modul `diagnostics.js` lastes før kartmotoren og holder de 50 siste feilmeldingene i minnet. `scripts/test-diagnostics.cjs` tester dette og kjøres i GitHub Actions.
+
+## Kodeopprydding uten stiendringer (2026-10-08)
+- `geojson-utils.js` er skilt ut fra `app-core.js` og lastes før kartmotoren. `featuresOfGeoJson` beholder samme signatur og semantikk, men kan nå testes uten Leaflet eller Turf.
+- `scripts/test-geojson-utils.cjs` er lagt til i CI. Preview-publiseringen kopierer både `geojson-utils.js` og `diagnostics.js`, slik at testkartet ikke mangler oppstartsavhengigheter.
+- Ingen stidata eller stifunksjoner ble endret. GitHub Actions-resultat og nettleserregresjon gjenstår å bekrefte.
