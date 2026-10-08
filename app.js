@@ -10,6 +10,7 @@
   try{
     await load('pota-cache-bootstrap.js');
     await load('diagnostics.js?v=011-release');
+    await load('geojson-utils.js?v=011-release');
     await load('geometry-topology.js?v=011-release');
     await load('geometry-atlas.js?v=011-release');
     await load('app-core.js?v=011-release');
