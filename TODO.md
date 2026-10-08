@@ -87,3 +87,5 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Flytt POTA-aktiveringscache og nettverksforespørsel til `pota-activation.js` uten logikkendringer.
 - [x] Oppdater `app.js` og CI for den nye filen.
 - [ ] Bekreft endelig CI-resultat for [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316), inkludert nettlesertestene, før ferdigmelding.
+
+- [x] Bekreftet `completed/success` for Actions [37833435310](https://github.com/apagg/pota-kart/actions/runs/37833435310), inkludert desktop-/mobiltester, på commit `5e8d52dd839d223667af24cb8d846aeaeadb6e13`. Dette erstatter den tidligere ventende statusen for samme kodeuttrekk.
