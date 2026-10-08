@@ -1,117 +1,23 @@
-# POTA-kart – oppgaver og overlevering
+# POTA-kart – åpne oppgaver
 
-Sist oppdatert: 2026-10-08. Les [PROJECT.md](PROJECT.md) først.
+Sist gjennomgått: 2026-10-08. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## Dagens status
+## Neste oppgaver – avtal prioritet før implementering
+- [ ] Vurder forbedring av nettverksfeilhåndtering og brukervennlige feilmeldinger uten å endre kartets funksjon.
+- [ ] Utvid målrettede mobil-, GPS- og ytelsestester; avtal hvilke scenarier som skal prioriteres.
+- [ ] Vurder videre opprydding i gjenværende `app-core.js` **uten** å berøre stisystemet eller endre oppførsel.
 
-- Verifisert kodegrunnlag: `main`, versjon 0.11.0, commit `337952562462f98f5d47162a22b48f700f0777c8` før dokumentasjonsendringen.
-- Brukeren godkjente opprettelse av varig prosjektdokumentasjon på GitHub før videre Hvaler-arbeid.
-- Appkode og kartdata endres ikke i denne dokumentasjonsøkten.
-- Hvaler-importen er fortsatt neste hovedoppgave.
+## Kontroller ved senere relevant arbeid
+- [ ] Undersøk mulig avvik mellom ønsket søk (sentrering uten zoom) og kode som kan sette minst zoomnivå 11.
+- [ ] Kontroller SE-0016 Kosterhavet, SE-0468 Tofta og SE-0334 Marstrand mot `archive/v0.10.0` ved geometriarbeid.
+- [ ] Kontroller Ramsvikslandet SE-2071/SE-2073: ringtopologi, hull og overlapp mot historiske regresjonstall.
+- [ ] Mål respons ved mange synlige geometrier og overlapp; verifiser GPS-følging og satellittkart når relevant.
 
-## Neste hovedoppgave: erstatte Hvaler-stiene
+## Utsatt etter brukerbeslutning – hele stisystemet
+- [ ] Planlegg senere **samlet redesign av stier** med brukeren. Ikke begynn nå.
+- [ ] Ved gjenopptakelse: vurder Hvaler-datasettet `Hvaler-redigering.gpkg` / `hvaler_tillegg`, eksisterende `data/hvaler/`, import, runtime-reserve, kommunegrenseklipping, kryssende segmenter og beskyttelse ved regenerering.
+- [ ] Kontroller at stier utenfor Hvaler bevares og at ingen gamle eller dupliserte Hvaler-segmenter gjeninnføres. Bevar 61 m korridor og avtalt GPS-/fargeoppførsel.
+- [ ] Avtal testgren, validering og eventuell publisering når stioppgaven gjenopptas. Tidligere godkjenning for direkte arbeid på `main` er ikke en ny bestilling om stiendringer.
 
-- [ ] Finn eller innhent `Hvaler-redigering.gpkg`. Filen er omtalt som levert i tidligere samtale, men ble ikke funnet i arbeidsområdet eller filtrestrukturen på `main` i denne økten.
-- [x] Brukeren har bekreftet at **kun `hvaler_tillegg`** er sluttresultatet; `hvaler_original` og `hvaler_redigering` skal ikke importeres. Sjekk særlig Spjærøy.
-- [ ] Kontroller og rens `hvaler_tillegg` for tom geometri og reelle duplikater uten å fjerne gyldige stier.
-- [ ] Sammenlign mot dagens Kyststien Østfold (NO-2542). Skill komplett Fotrute-datasett fra stiene som faktisk skal inngå i POTA-kartet.
-- [ ] Fjern **alle andre stier innenfor Hvaler** og erstatt dem kun med `hvaler_tillegg`; bevar segmenter utenfor Hvaler, inkludert deler av grensekryssende ruter.
-- [ ] Avtal konkret endringsplan før ny appversjon og gjennomfør i egen testgren.
-- [ ] Lagre den redigerte kilden med metadata og en reproducerbar import. Konverter til GeoJSON med lengdegrad/breddegrad og bevar alle gyldige linjedeler.
-- [ ] Tilpass `scripts/update-geometries.py` slik at regenerering ikke overskriver Hvaler-redigeringen. Kontroller også runtime-reserven i `app-core.js`.
-- [ ] Oppdater full geometri, oversiktslag, indeks og avgrensninger samlet.
-- [ ] Kontroller at stier utenfor Hvaler er uendret, at gamle Hvaler-segmenter er erstattet og at duplikater ikke gjenstår.
-- [ ] Bevar 61 m total stikorridor, blå grunnfarge og grønn GPS-farge, parkvalg, tooltip og mobilfunksjoner.
-- [ ] Kjør relevante eksisterende tester og kontroller kartet visuelt på mobil og større skjerm, inkludert overlapp med flere enn to parker og GPS-følging.
-- [ ] Oppgi test-URL, gren/commit, kildefil, segmentantall og validering. Avtal overføring til `main` etter at brukeren har vurdert prøveversjonen.
-
-## Kontrollpunkter etter hovedoppgaven
-
-Dette er tidligere rapporter eller mulige avvik; dagens feilstatus er ikke bekreftet.
-
-- [ ] Kontroller SE-0016 Kosterhavet, SE-0468 Tofta og SE-0334 Marstrand mot dagens geometri og eventuelt `archive/v0.10.0`.
-- [ ] Kontroller søk mot ønsket sentrering uten zoom. Dagens kode bruker minst zoomnivå 11 ved søk.
-- [ ] Kontroller Ramsvikslandet SE-2071/SE-2073: ringtopologi, hull og overlapp mot historiske tall i PROJECT.
-- [ ] Mål respons ved mange synlige geometrier og overlapp etter innlegging av nye stier.
-- [ ] Bekreft satellittkart og GPS-følging i nettleseren ved neste karttest. Satellittvalg og GPS-logikk finnes i kontrollerte kildefiler.
-
-## Ferdig i denne økten
-
-- [x] Undersøkt GitHub-tilgang, filtruktur, gjeldende versjon, eksisterende grener og oppdateringsarbeidsflyter.
-- [x] Dokumentert prosjektmål, brukerkrav, arkitektur, datakilder og historiske kontrollpunkter i PROJECT.md.
-- [x] Dokumentert Hvaler-import som gjenstående arbeid, med presise kontroller før og etter import.
-- [x] Lagt lenker til prosjektdokumentasjonen i README.md.
-
-## Fast avslutning av arbeidsøkter
-
-Oppdater begge dokumentene når noe endres. Oppgi hva som ble gjort, hva som faktisk ble testet, hvor endringen ligger og hva neste økt trenger. Merk utestede forhold eksplisitt. Flytt bare oppgaver til ferdig når det finnes bekreftet resultat.
-
-Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtaler. Nye samtaler bør starte med: «Vi fortsetter med POTA-kartet. Les PROJECT.md og TODO.md på GitHub først.»
-
-## Ny prioritet (2026-10-08): kvalitet uten stiendringer
-- [x] Avklar at hele stisystemet, inkludert Hvaler, settes på vent til en senere samlet omarbeiding.
-- [x] Start trinnvis kodeopprydding: felles diagnostikkmodul, integrasjon i atlas/oppstart, automatisert regresjonstest.
-- [ ] Bekreft grønn GitHub Actions-kjøring for diagnostikkendringen.
-- [ ] Del opp `app-core.js` gradvis i uavhengige moduler med regresjonstester, uten å endre sti- eller kartoppførsel.
-- [ ] Forbedre feilhåndtering og meldinger ved øvrige nettverksfeil.
-- [ ] Utvid mobil-, GPS- og ytelsestester uten å endre stisystemet.
-
-- [x] Flytt `featuresOfGeoJson` fra `app-core.js` til `geojson-utils.js`, og legg til en isolert regresjonstest.
-- [x] Rett testkartets filkopiering så nye moduler (`diagnostics.js`, `geojson-utils.js`) følger med.
-- [ ] Bekreft CI og nettlesertester etter moduluttrekket før større refaktorering.
-
-- [x] Flytt kartinitialisering og bakgrunnskart fra `app-core.js` til `map-setup.js`.
-- [x] Ta med `map-setup.js` i CI-syntakssjekk og isolert testkart.
-- [ ] Verifiser at GitHub Actions og nettlesertestene består etter moduluttrekket; ingen grønn status er bekreftet ennå.
-
-- [x] Skill ut WMS-kartlag og utvalgstilstand i `map-layers.js`.
-- [x] Skill ut GPS-kontrolleren i `gps-controller.js` uten tilsiktet oppførselsendring.
-- [x] Legg til modulrekkefølge-test (`scripts/test-module-wiring.cjs`) og oppdater testkartkopiering.
-- [ ] Bekreft at GitHub Actions og nettlesertestene består etter GPS-uttrekket.
-
-## Fast kvalitetsregel
-- [ ] Kontroller faktisk GitHub Actions-resultat og relevante nettlesertester etter hver fremtidige kodeendring. Ikke marker oppgaver som ferdige før testene er bestått; dokumenter eventuelle blokkeringer.
-
-- [x] Undersøk feil i Actions-kjøring 37831758037; identifisert cross-realm `Error`-håndtering i diagnostikktesten.
-- [x] Rett `diagnostics.js` i testgrenen, utvid testen med VM-Error.
-- [ ] Verifiser ny Actions-kjøring inklusive nettlesertester før PR #2 kan slås sammen med `main`.
-
-## Bekreftet CI for PR #2 (2026-10-08)
-- [x] Rett feil forventet antall diagnostikkoppføringer etter utvidet VM-test.
-- [x] Kontroller GitHub Actions-kjøring [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178): `completed/success` for commit `2b8dc840120dd85b582b796010a42c90f647416e`.
-- [x] Bekreft at geometri-/JavaScript-kontroller og desktop-/mobilnettlesertester er bestått i denne kjøringen.
-- [ ] Avgjør om PR #2 skal slås sammen med `main`; ingen automatisk sammenslåing.
-- Merk: Eldre avkrysningspunkter om uverifisert CI ovenfor er historiske; denne nyere bekreftelsen gjelder PR #2.
-
-## Neste moduluttrekk – POTA-statistikk
-- [x] Flytt POTA-aktiveringscache og nettverksforespørsel til `pota-activation.js` uten logikkendringer.
-- [x] Oppdater `app.js` og CI for den nye filen.
-- [ ] Bekreft endelig CI-resultat for [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316), inkludert nettlesertestene, før ferdigmelding.
-
-- [x] Bekreftet `completed/success` for Actions [37833435310](https://github.com/apagg/pota-kart/actions/runs/37833435310), inkludert desktop-/mobiltester, på commit `5e8d52dd839d223667af24cb8d846aeaeadb6e13`. Dette erstatter den tidligere ventende statusen for samme kodeuttrekk.
-
-## Parkinformasjon og overlappsvelger
-- [x] Flytt parkinformasjon, popup, geometri-klikkbinding og overlappsvelger til `park-info-ui.js`.
-- [x] Oppdater innlasting og CI-kontroller for modulen.
-- [x] Verifiser GitHub Actions [37833958638](https://github.com/apagg/pota-kart/actions/runs/37833958638): `completed/success`, inkludert nettlesertester for PC og mobil.
-- [ ] Vurder videre moduluttrekk i `app-core.js`, fortsatt uten endringer i stisystemet.
-
-## Felles teksthjelpere
-- [x] Flytt `norm`, `esc` og `getJSON` til `app-text-utils.js` uten logikkendringer.
-- [x] Oppdater modulinnlasting og CI.
-- [ ] Kontroller endelig Actions-status og nettlesertester for [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771); status var `pending` ved dokumentasjon.
-
-## Obligatorisk kontroll før avslutning av enhver kodeoppgave
-- [x] Bekreftet at den nyere kjøringen [37834623605](https://github.com/apagg/pota-kart/actions/runs/37834623605) er `completed/success`, med bestått geometri/JS og desktop-/mobiltester, for `f6c46cc24da0365c0148898573357a210d12f559`.
-- [ ] For **hver fremtidige kodeendring**: vent på og kontroller endelig GitHub Actions-status selv. Ikke avslutt ved `pending`, `in_progress` eller `cancelled`; følg erstatningskjøring eller rett feil til endelig resultat foreligger.
-- [ ] Etter grønn CI: dokumenter test-ID, testet commit og resultater i prosjektfilene før ferdigmelding.
-
-## Registermoduler (2026-10-08)
-- [x] Flyttet norske og svenske parkregisterfunksjoner, svensk kulturminneoppslag og geometri-formatfunksjoner til fire egne moduler.
-- [x] GitHub Actions 37835863095 og 37836430342: fullfort med success, inkludert desktop- og mobiltester.
-- [ ] Fortsett med parkvalg og oppstart. Stisystemet skal ikke endres.
-
-## Parkvalg og oppstart - ferdig moduluttrekk
-- [x] Flytt parkdiagnostikk, parkutvalgsstatus, parkinnlasting, parkvalg og oppstart til egne moduler.
-- [x] Oppdater bootstrap og CI; GitHub Actions 37837436277: completed/success med desktop-/mobiltester.
-- [ ] Behold sti- og overlappslogikk uendret til separat godkjent arbeid. PR #2 er fortsatt ikke merget.
+## Fast arbeidsregel (ikke en uferdig engangsoppgave)
+Kodeendringer skal committes og testes med endelig grønn GitHub Actions-status, inkludert relevante PC-/mobiltester, før ferdigmelding. Dokumentasjonsendringer alene krever ikke kodetest etter særskilt avtale. Se [PROJECT.md](PROJECT.md).
