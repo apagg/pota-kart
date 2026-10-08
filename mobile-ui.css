@@ -19,3 +19,6 @@
 @media(max-width:700px){
   #diag,#overlapDiag,.panel[data-mobile-view=selected] .info-more{display:none!important}
 }
+
+/* Touch selection uses the park sheet instead of a persistent point label. */
+@media(max-width:700px){.pota-point-tooltip{display:none!important}}
