@@ -9,6 +9,7 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
+    await load('diagnostics.js?v=011-release');
     await load('geometry-topology.js?v=011-release');
     await load('geometry-atlas.js?v=011-release');
     await load('app-core.js?v=011-release');
@@ -16,6 +17,7 @@
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
-    console.error(e);
+    if(typeof potaDiagnostics!=='undefined')potaDiagnostics.report('startup',e,'error');
+    else console.error(e);
   }
 })();
