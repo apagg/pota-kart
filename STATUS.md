@@ -73,3 +73,9 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - `scripts/test-diagnostics.cjs` er lagt til, og `.github/workflows/geometry-preview.yml` kjører testen og syntakssjekk ved push.
 - Ingen stidata, stioppslag eller korridorlogikk er endret i denne fasen.
 - Teststatus: GitHub Actions-test er konfigurert, men kjøreresultat er ennå ikke bekreftet her.
+
+## Moduluttrekk (2026-10-08)
+- `featuresOfGeoJson` flyttet fra `app-core.js` til `geojson-utils.js`, lastet av `app.js` før kartkjernen.
+- `scripts/test-geojson-utils.cjs` dekker null, FeatureCollection, Feature og ren geometri. CI kjører testen.
+- Isolert testpublisering inkluderer nå både `diagnostics.js` og `geojson-utils.js`.
+- Stisystemet er urørt. Automatiserte tester er konfigurert, men ikke verifisert kjørt i denne arbeidsøkten.
