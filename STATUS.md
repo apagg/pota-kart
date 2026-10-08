@@ -15,8 +15,15 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - Spjærøy er særlig viktig. Bevar alle stier utenfor Hvaler.
 - Endre ikke genererte data alene: oppdater varig datakilde/import og runtime-reserve slik at neste regenerering ikke fjerner redigeringen.
 
+## GeoPackage-kontroll 2026-10-08
+- Lokal kopi `Hvaler-redigering(2).gpkg` kontrollert som SQLite/GeoPackage EPSG:25832. GitHub-kopien `Hvaler-redigering.gpkg` finnes, men binær likhet er ennå ikke kontrollert.
+- `hvaler_original`: 35 linjer; `hvaler_redigering`: 35 linjer og **identiske segment-ID-er og geometrier** som originalen.
+- `hvaler_tillegg`: 449 rader, 1 uten geometri, 392 distinkte ikke-tomme geometri-BLOB-er; mangler segment-ID og kommune. Deduplisering og geografisk kontroll gjenstår.
+- `scripts/update-geometries.py` og `app-core.js` henter NO-2542 fra eksternt rutelag; importen må også bevare manuelt tillegg ved regenerering og fallback.
+- Ingen eksisterende kartdata er erstattet, ingen karttester er kjørt.
+
 ## Neste konkrete handling
-1. Les `Hvaler-redigering.gpkg` fra GitHub og inspiser lag, CRS, geometri og objekter.
+1. Sammenlign lokal GeoPackage med GitHub-kopien, kontroller geografisk utstrekning, topologi og duplikater i `hvaler_tillegg`.
 2. Sammenlign med eksisterende Hvaler-stier og avgrens sikker utskifting.
 3. Lag endring i testgren, test, commit og oppdater alle tre dokumentene.
 4. Del testresultat med brukeren før eventuell publisering til `main`.
