@@ -715,7 +715,19 @@ async function resolveKyststienFallback(link,p){
   const params=new URLSearchParams({f:'geojson',where:'1=1',outFields:'OBJECTID,Kommune,Navn,Navn_pa_turrute,Rutebeskrivelse',returnGeometry:'true',outSR:'4326',resultRecordCount:'2000'});
   const d=await getJSON(`${NO_KYSTSTI}?${params}`), fs=(d&&d.features)||[];
   if(!fs.length)throw Error('Kyststien-laget returnerte ingen linjegeometri');
-  const lines=[];for(const f of fs){const g=f&&f.geometry;if(!g)continue;if(g.type==='LineString'&&g.coordinates?.length>1)lines.push(g.coordinates);else if(g.type==='MultiLineString')for(const a of g.coordinates||[])if(a?.length>1)lines.push(a)}
+  const lines=[];for(const f of fs){
+    // Hvaler is entirely replaced by the locally edited layer.
+    if(/hvaler/i.test(String(f?.properties?.Kommune||'')))continue;
+    const g=f&&f.geometry;if(!g)continue;
+    if(g.type==='LineString'&&g.coordinates?.length>1)lines.push(g.coordinates);
+    else if(g.type==='MultiLineString')for(const a of g.coordinates||[])if(a?.length>1)lines.push(a)
+  }
+  const hvaler=await getJSON('data/hvaler/hvaler-tillegg.geojson');
+  for(const f of hvaler.features||[]){
+    const g=f.geometry;if(!g)continue;
+    if(g.type==='LineString'&&g.coordinates?.length>1)lines.push(g.coordinates);
+    else if(g.type==='MultiLineString')for(const a of g.coordinates||[])if(a?.length>1)lines.push(a);
+  }
   if(!lines.length)throw Error('Kyststien-laget inneholdt ingen gyldige linjesegmenter');
   return {source:'notrail',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 fallback',officialType:'National Recreation Trail'};
 }
