@@ -95,3 +95,8 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Oppdater innlasting og CI-kontroller for modulen.
 - [x] Verifiser GitHub Actions [37833958638](https://github.com/apagg/pota-kart/actions/runs/37833958638): `completed/success`, inkludert nettlesertester for PC og mobil.
 - [ ] Vurder videre moduluttrekk i `app-core.js`, fortsatt uten endringer i stisystemet.
+
+## Felles teksthjelpere
+- [x] Flytt `norm`, `esc` og `getJSON` til `app-text-utils.js` uten logikkendringer.
+- [x] Oppdater modulinnlasting og CI.
+- [ ] Kontroller endelig Actions-status og nettlesertester for [37834519771](https://github.com/apagg/pota-kart/actions/runs/37834519771); status var `pending` ved dokumentasjon.
