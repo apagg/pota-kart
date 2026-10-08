@@ -14,6 +14,8 @@
     await load('geometry-topology.js?v=011-release');
     await load('geometry-atlas.js?v=011-release');
     await load('map-setup.js?v=011-release');
+    await load('map-layers.js?v=011-release');
+    await load('gps-controller.js?v=011-release');
     await load('app-core.js?v=011-release');
     await load('mobile-ui.js?v=011-release');
   }catch(e){
