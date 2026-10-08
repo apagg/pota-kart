@@ -4,6 +4,7 @@ on:
     branches: ['main', 'feature/all-park-geometries']
     paths:
       - '*.js'
+      - 'scripts/test-diagnostics.cjs'
       - '*.html'
       - '*.css'
       - 'scripts/update-geometries.py'
@@ -41,7 +42,9 @@ jobs:
         working-directory: candidate
         run: |
           python3 scripts/test-geometries.py
+          node --check diagnostics.js
           node --check app-core.js
+          node scripts/test-diagnostics.cjs
           node --check geometry-atlas.js
           node --check geometry-topology.js
           node --check overlap-engine.js
