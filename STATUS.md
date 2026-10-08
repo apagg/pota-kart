@@ -1,6 +1,6 @@
 # POTA-kart – aktiv arbeidsstatus
 
-Sist oppdatert: 2026-10-08.
+Sist oppdatert: 2026-10-08 (Hvaler-kilde funnet på GitHub).
 
 ## Start en ny samtale
 Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren og siste commit før arbeid. GitHub er fasiten; ikke rekonstruer status fra chatminne.
@@ -10,13 +10,13 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 
 - Brukeren har godkjent fortløpende GitHub-arbeid i samtalen.
 - Sist dokumenterte appversjon: **0.11.0** på `main`. Bekreft aktuell commit før endringer.
-- `Hvaler-redigering.gpkg` (og en senere fil omtalt som `Hvaler-redigering(1).gpkg`) er levert i tidligere samtaler, men filinnholdet er **ikke verifisert i denne arbeidsøkten**.
+- **Bekreftet:** `Hvaler-redigering.gpkg` er lastet opp i roten på `main` (Git blob SHA `c23430177d628e6cc0e00d9506a601963fe01b28`). Binærinnholdet og lagene er ennå ikke analysert i denne arbeidsøkten.
 - Ingen Hvaler-import er bekreftet fullført.
 - Spjærøy er særlig viktig. Bevar alle stier utenfor Hvaler.
 - Endre ikke genererte data alene: oppdater varig datakilde/import og runtime-reserve slik at neste regenerering ikke fjerner redigeringen.
 
 ## Neste konkrete handling
-1. Skaff tilgang til den nyeste GeoPackage-filen og inspiser lag, CRS, geometri og objekter.
+1. Les `Hvaler-redigering.gpkg` fra GitHub og inspiser lag, CRS, geometri og objekter.
 2. Sammenlign med eksisterende Hvaler-stier og avgrens sikker utskifting.
 3. Lag endring i testgren, test, commit og oppdater alle tre dokumentene.
 4. Del testresultat med brukeren før eventuell publisering til `main`.
