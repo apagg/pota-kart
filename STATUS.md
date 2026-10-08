@@ -51,3 +51,11 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - `app-core.js` sin NO-2542 fallback er endret til å erstatte kildesegmenter merket `Kommune=Hvaler` med det genererte laget. Dersom generert GeoJSON ennå ikke finnes, beholdes eksisterende kilde som reserve.
 - Siste trigger-commit: `ffa4afe`. **GitHub Actions-resultat, generert fil, nettlesertest og visning på Pages er ikke bekreftet.**
 - **Gjenstående kritisk:** `scripts/update-geometries.py` bruker fremdeles ekstern NO-2542-kilde og kan reintrodusere gamle Hvaler-stier ved regenerering. Endre den før oppgaven markeres ferdig. Kontroller dessuten om kildegeometrien har Hvaler-deler i grensekryssende linjer, og at den statiske atlas-geometrien ikke overstyrer fallback.
+
+## Neste implementering (2026-10-08)
+- Generert `data/hvaler/hvaler-tillegg.geojson` er bekreftet til stede på GitHub (382749 tegn via connector).
+- `scripts/update-geometries.py` er endret til å slå sammen Østfold-segmenter uten `Kommune=Hvaler` med bare redigerte Hvaler-linjer, slik at regenerering ikke gjeninnfører de gamle Hvaler-segmentene.
+- `geometry-atlas.js` er endret til å prioritere redigert NO-2542-geometri fremfor lagret atlas-geometri.
+- Runtime fallback i `app-core.js` bruker redigert Hvaler-fil dersom tilgjengelig.
+- **Uverifisert:** full nettlesertest, geografisk klipping av eventuelle grensekryssende segmenter, og deploy på Pages. Segmenter som krysser Hvaler-grensen og mangler `Kommune=Hvaler` kan fortsatt måtte klippes; dette er ikke ferdig validert.
+- Siste kodecommit for atlas: `86c5f3d`. Arbeid på `main` etter brukerens beslutning.
