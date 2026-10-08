@@ -110,3 +110,8 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Flyttet norske og svenske parkregisterfunksjoner, svensk kulturminneoppslag og geometri-formatfunksjoner til fire egne moduler.
 - [x] GitHub Actions 37835863095 og 37836430342: fullfort med success, inkludert desktop- og mobiltester.
 - [ ] Fortsett med parkvalg og oppstart. Stisystemet skal ikke endres.
+
+## Parkvalg og oppstart - ferdig moduluttrekk
+- [x] Flytt parkdiagnostikk, parkutvalgsstatus, parkinnlasting, parkvalg og oppstart til egne moduler.
+- [x] Oppdater bootstrap og CI; GitHub Actions 37837436277: completed/success med desktop-/mobiltester.
+- [ ] Behold sti- og overlappslogikk uendret til separat godkjent arbeid. PR #2 er fortsatt ikke merget.
