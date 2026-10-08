@@ -148,3 +148,9 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - `map-setup.js` inneholder nå kartinitialisering, panes, UI-referanser, bakgrunnskart og lagringsvalg for bakgrunnskart. `app.js` laster den etter `geometry-atlas.js` og før `app-core.js`.
 - Uttrekket flyttet opprinnelige linjer uten tilsiktet oppførselsendring. Ingen stidata eller GPS-/stiberegninger er endret.
 - GitHub Actions har syntakssjekk av ny modul og inkluderer den i isolert testpublisering. CI-resultat er ikke bekreftet.
+
+## Moduluttrekk: GPS og kartlag (2026-10-08)
+- `map-layers.js` overtar WMS-kildelag, utvalgsvariabler og overlappslaget fra `app-core.js`.
+- `gps-controller.js` overtar GPS-tilstand, posisjonsoppdatering, GPS-kontroller, følg/pause, valgte områders GPS-status og hendelseslyttere. Den eksisterende logikken er flyttet uendret, inkludert stibuffer; stisystemet er fortsatt utsatt.
+- `app.js` laster nå `geometry-atlas.js`, `map-setup.js`, `map-layers.js`, `gps-controller.js` og deretter `app-core.js` i denne rekkefølgen. `scripts/test-module-wiring.cjs` sikrer innlastingsrekkefølgen og at funksjonene er flyttet.
+- CI er utvidet med syntakssjekk, modul-koblingstest og kopi av nye filer til isolert testkart. Kjøreresultater og nettlesertest er ikke bekreftet.
