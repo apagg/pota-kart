@@ -63,3 +63,8 @@ Dokumentasjonen er en overlevering, ikke en automatisk synkronisering av samtale
 - [x] Flytt kartinitialisering og bakgrunnskart fra `app-core.js` til `map-setup.js`.
 - [x] Ta med `map-setup.js` i CI-syntakssjekk og isolert testkart.
 - [ ] Verifiser at GitHub Actions og nettlesertestene består etter moduluttrekket; ingen grønn status er bekreftet ennå.
+
+- [x] Skill ut WMS-kartlag og utvalgstilstand i `map-layers.js`.
+- [x] Skill ut GPS-kontrolleren i `gps-controller.js` uten tilsiktet oppførselsendring.
+- [x] Legg til modulrekkefølge-test (`scripts/test-module-wiring.cjs`) og oppdater testkartkopiering.
+- [ ] Bekreft at GitHub Actions og nettlesertestene består etter GPS-uttrekket.
