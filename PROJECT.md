@@ -166,3 +166,8 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - GitHub Actions-kjøring 37831758037 feilet i `scripts/test-diagnostics.cjs`: Error-instans opprettet utenfor `node:vm` ble ikke gjenkjent med `instanceof Error` inne i VM. Testen forventet `offline`, men fikk `Error: offline`.
 - `diagnostics.js` bruker nå en streng `error.message` når tilgjengelig på tvers av JavaScript-realm, og fallback til `String(error)`. Testen dekker både host-Error og VM-Error.
 - Rettelsen ligger i testgrenen `refactor/core-geometry-helpers`; grønn GitHub Actions og nettlesertester må bekreftes før sammenslåing.
+
+## Verifisert refaktorering 2026-10-08
+- PR #2 (`refactor/core-geometry-helpers`) trekker polygonhjelpefunksjoner ut av `app-core.js` til `polygon-layer-utils.js`, uten tilsiktet endring i kartlogikk eller stidata.
+- Etter retting av diagnostikktestene er GitHub Actions-kjøring [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178) **fullført med `success`** for commit `2b8dc840120dd85b582b796010a42c90f647416e`. Geometri-/JavaScript-validering og nettlesertester for desktop og mobil bestod.
+- PR #2 er fortsatt en separat testgren; `main` er ikke oppdatert med denne refaktoreringen. Senere dokumentasjonscommits endrer ikke programkoden, men endelig sammenslåing krever fortsatt egen beslutning.
