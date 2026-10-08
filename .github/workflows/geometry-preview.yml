@@ -5,6 +5,7 @@ on:
     paths:
       - '*.js'
       - 'scripts/test-diagnostics.cjs'
+      - 'scripts/test-geojson-utils.cjs'
       - '*.html'
       - '*.css'
       - 'scripts/update-geometries.py'
@@ -43,6 +44,8 @@ jobs:
         run: |
           python3 scripts/test-geometries.py
           node --check diagnostics.js
+          node --check geojson-utils.js
+          node scripts/test-geojson-utils.cjs
           node --check app-core.js
           node scripts/test-diagnostics.cjs
           node --check geometry-atlas.js
@@ -95,7 +98,7 @@ jobs:
         if: github.ref == 'refs/heads/feature/all-park-geometries'
         run: |
           mkdir -p stable/test/all-geometries
-          for file in index.html app.js app-core.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
+          for file in index.html app.js app-core.js diagnostics.js geojson-utils.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
             cp "candidate/$file" "stable/test/all-geometries/$file"
           done
           cp -R candidate/data stable/test/all-geometries/
