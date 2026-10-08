@@ -3,7 +3,7 @@ const potaDiagnostics=(()=>{
   const recent=[];
   const limit=50;
   function report(area,error,level='warn'){
-    const message=error instanceof Error?error.message:String(error);
+    const message=error&&typeof error.message==='string'?error.message:String(error);
     const entry={area:String(area),message,level,time:new Date().toISOString()};
     recent.push(entry);
     if(recent.length>limit)recent.shift();
