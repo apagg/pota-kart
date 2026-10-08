@@ -98,3 +98,8 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 ## Feilsøking av PR #2 / Actions 37831758037
 - Kjøringen feilet under `node scripts/test-diagnostics.cjs` med `actual: Error: offline`, `expected: offline`. Årsak: `instanceof Error` gjenkjenner ikke Error fra et annet JavaScript-realm.
 - Rettet diagnostikkens normalisering og utvidet testen i `refactor/core-geometry-helpers`. Ikke testbekreftet ennå. `main` er urørt.
+
+## Bekreftet testresultat for PR #2 (2026-10-08)
+- Den korrigerte kjøringen [37832833178](https://github.com/apagg/pota-kart/actions/runs/37832833178) er `completed` med `conclusion: success`.
+- GitHub Actions viste bestått «Validate cached geometry and JavaScript» og «Test desktop and mobile map», inklusive øvrige teststeg.
+- Testet programkode er commit `2b8dc840120dd85b582b796010a42c90f647416e`. Dokumentasjonsoppdateringer etterpå påvirker ikke programkoden. PR #2 er fortsatt åpen; `main` er urørt.
