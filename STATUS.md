@@ -84,3 +84,9 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 - Kartinitialisering, Leaflet-panes, UI-referanser og bakgrunnskart flyttet fra `app-core.js` til `map-setup.js` uten tilsiktet funksjonsendring.
 - `app.js` laster ny modul før kartkjernen. GitHub Actions sjekker JavaScript-syntaks og inkluderer modulen i testpublisering.
 - Ingen endringer i stier, stidata eller GPS-beregning. CI-status er foreløpig ikke bekreftet.
+
+## Siste kodeendring: GPS-modul
+- `gps-controller.js` og `map-layers.js` er skilt ut fra `app-core.js`; `app.js` laster dem i riktig rekkefølge.
+- `scripts/test-module-wiring.cjs` er lagt til CI for å kontrollere modulrekkefølge og flyttede funksjoner.
+- Ingen stidata eller endringer i sti- eller GPS-regler; kun omorganisering av eksisterende kode.
+- GitHub Actions-status og visuell kontroll er fortsatt ikke bekreftet.
