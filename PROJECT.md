@@ -176,3 +176,5 @@ Nettlesertesten trenger HTTP-server og testavhengigheter som beskrevet i `geomet
 - `getPotaActivationCount` og den tilhørende femminutters statistikk-cachen er flyttet uendret fra `app-core.js` til `pota-activation.js`. Oppstartsrekkefølgen i `app.js` og CI-syntakskontroll / testpublisering er oppdatert.
 - Ingen endringer i stier, GPS-logikk, parkgeometri eller beregningsregler. Endringen ligger kun i testgrenen `refactor/core-geometry-helpers`.
 - GitHub Actions-kjøring [37833370316](https://github.com/apagg/pota-kart/actions/runs/37833370316) gjelder den nye kodeendringen. Kontroller endelig resultat før den regnes som ferdig.
+
+- **Verifisert:** GitHub Actions-kjøring [37833435310](https://github.com/apagg/pota-kart/actions/runs/37833435310) fullførte med `success` etter POTA-aktiveringsuttrekket. Geometri/JS-kontroller og desktop-/mobilnettlesertester bestod. Testet commit: `5e8d52dd839d223667af24cb8d846aeaeadb6e13`.
