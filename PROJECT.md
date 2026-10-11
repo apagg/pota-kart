@@ -81,3 +81,8 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Første trinn endrer ikke GPS-/zoomplassering, park-/stidata, geometri-, GPS- eller overlappsfunksjoner. PC-oppsettet skal bevares. Testvisning og eventuell sammenslåing følger avtalt gjennomgang.
 
 - Mobilens kartlag-knapp åpner kun karttypevalg (OpenStreetMap/Esri/satellitt). Innstillinger viser land, flervalg, tegnforklaring og hjelp. Avtalt 2026-10-11 etter brukerens tilbakemelding om to like menyer.
+
+## Avtalt mobil-GPS (2026-10-11)
+- Brukeren har bestilt GPS-delen på `test/mobile-ui`: GPS-knapp under zoom til høyre, minst 44 px zoomknapper og synlig tekst for GPS av, søking, følging og pauset følging.
+- Knappen bruker eksisterende GPS-kontroller. Dra pauser følging, nytt trykk gjenopptar samme GPS-watch, og trykk under følging slår av. Ingen separat GPS-informasjonsboks.
+- PC-oppsettet og GPS-/geometri-/overlappsberegningene bevares. Markering av valgte parker i mobilens overlappsliste er fortsatt utsatt.
