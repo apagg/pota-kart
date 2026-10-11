@@ -66,6 +66,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>!parkActivations.has('NO-3374'));
  assert.equal(await page.locator('#activationCalls .activation-call').count(),0);
  await page.setViewportSize({width:1280,height:900});
+ await page.waitForFunction(()=>document.body.classList.contains('desktop-layout')&&document.getElementById('activationSettings').parentNode.id==='desktopActivationSlot');
  assert.equal(await page.locator('#desktopActivationSlot #activationSettings').count(),1,'Unique settings restored to PC');
  assert.equal(maxPending,1,'Only one history request at a time');
  // Viewport scheduling checks old parks, caps each area and never scans at low zoom.
