@@ -109,7 +109,7 @@ const parkActivations=(()=>{
  async function refreshProfiles(force=false){
   const generation=++epoch;profileBusy=true;render();
   for(const call of [...calls]){
-   if(!force&&profiles[call]&&Date.now()-profiles[call].at<TTL)continue;
+   if(!force&&!errors.has(call)&&profiles[call]&&Date.now()-profiles[call].at<TTL)continue;
    if(!force&&errors.has(call)&&Date.now()-errors.get(call)<RETRY)continue;
    try{const data=await fetchJson('profile/'+encodeURIComponent(call));if(generation!==epoch)return;profiles[call]=parseProfile(data,call);errors.delete(call);save();paint();}
    catch(e){if(generation!==epoch)return;errors.set(call,Date.now());}
@@ -164,6 +164,7 @@ const parkActivations=(()=>{
    if(message.textContent)return;input.value='';setCalls([...calls,...next]);
   });
   document.getElementById('activationRefresh').onclick=()=>{
+   desired=new Set(candidates());
    for(const ref of desired)if(parks[ref])parks[ref].at=0;
    errors.clear();refreshProfiles(true);
   };
