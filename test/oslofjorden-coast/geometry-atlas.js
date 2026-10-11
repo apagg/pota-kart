@@ -4,7 +4,7 @@ const geometryAtlas={indexes:{},overviews:{},records:new Map(),shards:new Map(),
 function atlasMeta(ref){return geometryAtlas.indexes[ref.split('-')[0]]?.parks?.[ref]||null}
 function atlasHasGeometry(ref){return !!atlasMeta(ref)&&geometryAtlas.byRef.has(ref)}
 async function atlasRecord(ref){
- // Test snapshot overrides the former GIS and edited Hvaler route at every zoom.
+ // Oslofjorden snapshot overrides the former GIS and edited Hvaler route at every zoom.
  if(ref==='NO-2542'||ref==='LA-2542'){
    if(!geometryAtlas.coastalTrailPromise){
      geometryAtlas.coastalTrailPromise=resolveKyststienFallback(null,{reference:'NO-2542'})

@@ -1,8 +1,8 @@
-# Oslofjorden.com – separat kyststitest
+# Kyststien Østfold – Oslofjorden.com
 
-Dette er en datakildeprøve for NO-2542 Kyststien Østfold. Filen inneholder
-Østfold-delen av Oslofjorden.coms KML, inkludert Hvaler. Kyststien i denne
-testversjonen erstatter både den gamle GIS-kilden og vårt redigerte Hvaler-lag;
+Dette er kildesnapshotet for NO-2542 Kyststien Østfold. Filen inneholder
+Østfold-delen av Oslofjorden.coms KML, inkludert Hvaler. Kyststien
+erstatter både den gamle GIS-kilden og vårt redigerte Hvaler-lag;
 ingen av dem blandes inn. Andre POTA-parker og stier er uendret.
 
 Gangruter (blå og turkise kildestiler) og sykkelalternativer (grønne kildestiler)
@@ -11,11 +11,12 @@ at sykkelrutene også tas med. 109 gangruter + 13 sykkelruter gir 122 ruter tota
 inkludert alle 31 Hvaler-rutene. Alle bruker de vanlige blå/gule/grønne appfargene
 og samme 61 m korridor, GPS- og overlappsregler. Ferger og ukjente kategorier
 beholdes som kildemetadata, men inngår ikke i geometrien. Kildens rutefarger er
-ikke en garanti for offisiell POTA-avgrensning. Testen må vurderes før sammenslåing.
+ikke en garanti for offisiell POTA-avgrensning. Brukeren godkjente rutene og bestilte sammenslåing 2026-10-11.
 
 ## Husk ved annen eller utvidet bruk
 
-Brukeren oppgir at appen foreløpig brukes privat. Oslofjorden.com oppgir at
+Brukeren oppgir at appen foreløpig brukes privat, har lest bruksvilkårene og
+godkjente 2026-10-11 bruken til ikke-kommersielle formål samt sammenslåing til hovedkartet. Oslofjorden.com oppgir at
 materiale kan brukes privat og kommersiell utnyttelse krever skriftlig avtale.
 Det er ikke funnet en åpen gjenbrukslisens. Avklar rettigheter med eieren før
 eventuell annen, bredere eller kommersiell bruk; dette notatet skal følge dataene.

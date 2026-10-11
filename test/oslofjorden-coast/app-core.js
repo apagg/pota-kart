@@ -351,7 +351,7 @@ async function resolveKyststienFallback(link,p){
       }
     }
     if(!lines.length)throw Error('Oslofjorden-testen mangler gangruter');
-    return {source:'notrail',sourceLabel:'Oslofjorden.com – Østfold gang- og sykkelruter (test)',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 Oslofjorden test',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,testSource:true};
+    return {source:'notrail',sourceLabel:'Oslofjorden.com – Østfold gang- og sykkelruter',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 Oslofjorden',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,snapshotSource:true};
   })().catch(e=>{oslofjordenTrailPromise=null;throw e});
   return oslofjordenTrailPromise;
 }

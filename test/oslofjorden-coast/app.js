@@ -12,7 +12,7 @@
     await load('diagnostics.js?v=011-release');
     await load('geojson-utils.js?v=011-release');
     await load('geometry-topology.js?v=011-release');
-    await load('geometry-atlas.js?v=oslofjorden-coast-2');
+    await load('geometry-atlas.js?v=oslofjorden-coast-3');
     await load('map-setup.js?v=011-release');
     await load('map-layers.js?v=011-release');
     await load('gps-controller.js?v=point-colors-1');
@@ -24,12 +24,12 @@
     await load('sweden-park-registry.js?v=011-release');
     await load('geometry-format-utils.js?v=011-release');
     await load('sweden-heritage-registry.js?v=011-release');
-    await load('app-core.js?v=oslofjorden-coast-2');
+    await load('app-core.js?v=oslofjorden-coast-3');
     await load('park-diagnostics.js?v=011-release');
     await load('park-selection-state.js?v=011-release');
     await load('pota-park-loader.js?v=point-fill-1');
     await load('park-selection-controller.js?v=point-fill-1');
-    await load('pota-startup.js?v=oslofjorden-coast-2');
+    await load('pota-startup.js?v=oslofjorden-coast-3');
     await load('mobile-ui.js?v=activated-parks-1');
     await load('desktop-ui.js?v=ui-structure-1');
     await load('park-activations.js?v=point-colors-1');
