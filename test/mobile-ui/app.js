@@ -30,15 +30,17 @@
     await load('pota-park-loader.js?v=011-release');
     await load('park-selection-controller.js?v=011-release');
     await load('pota-startup.js?v=011-release');
-    await load('mobile-ui.js?v=mobile-ui-5');
-    await load('desktop-ui.js?v=pc-ui-4');
+    await load('mobile-ui.js?v=ui-structure-1');
+    await load('desktop-ui.js?v=ui-structure-1');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
+    const error=document.getElementById('startupError');
+    if(error){error.textContent='Oppstartsfeil: '+e.message;error.hidden=false;}
     if(typeof potaDiagnostics!=='undefined')potaDiagnostics.report('startup',e,'error');
     else console.error(e);
   }finally{
-    // Reveal the panel only after the responsive UI is mounted, or show startup errors.
+    // Enable the static responsive UI after its interaction handlers are ready.
     document.documentElement.classList.remove('ui-loading');
   }
 })();
