@@ -44,6 +44,22 @@ På skjermbredder opptil 700 px fyller kartet skjermen. Runde knapper åpner sø
 
 ## Versjon 0.11.0
 
+### Aktiveringer og punktmarkører (2026-10-11)
+
+Legg inn ett eller flere hovedkallesignaler under **Innstillinger → Mine kallesignaler**.
+Tilknyttede kallesignaler tas med automatisk. Parker med en aktivering på minst
+10 QSO blir gule. Offentlig profil gir rask start; historikk sjekkes automatisk
+for valgte parker og opptil 40 nærliggende parker når du zoomer inn. Resultater
+mellomlagres lokalt og oppfriskes etter 15 minutter. Ingen innlogging eller
+manuell CSV-import kreves.
+
+Punkter og parkflater bruker blått som grunnfarge, gult for aktiverte parker og
+grønt når GPS-posisjonen er innenfor. GPS-grønn har prioritet. For parker uten
+geometri brukes 100 m radius rundt POTA-punktet; parker med geometri følger
+grensene sine. Punkter har 90 % fyll, og valgte punkter 100 % fyll med mørkere
+blå/gul nyanse og uendret størrelse. Parkflater beholder 25 % / 40 % fyll.
+
+
 Hovedkart: https://apagg.github.io/pota-kart/
 
 Alle parker i valgt land vises med lagret, verifisert registergeometri. Parker

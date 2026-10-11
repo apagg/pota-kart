@@ -116,15 +116,15 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Mobil-/PC-grensesnitt, samlet mobilfane, GPS-presentasjon, direkte UI-struktur og parkfyll 25 % / 40 % er brukertestet og godkjent for `main` via PR #4.
 - Hovedkartet bruker nå denne løsningen. Tidligere trinnbeskrivelser over dokumenterer avtalene; testkopiene er bare øyeblikksbilder. Nye appendringer avtales og testes separat.
 
-## Aktiveringsmarkering (testimplementering 2026-10-11)
+## Aktiveringsmarkering (2026-10-11)
 - Brukeren ønsker gule parker når minst ett kallesignal i Innstillinger har en godkjent aktivering der. Flere hovedkallesignaler skal kunne legges inn. LB6BK er hovedkallesignal; POTA-profilen inkluderer SM/LB6BK som alternativt kallesignal.
 - Manuell CSV-import er avvist fordi aktiveringslisten oppdateres ofte. Automatisk oppdatering er nødvendig. Brukeren har bestilt implementering på egen testgren.
 - Offentlig `/profile/{callsign}` gir `other_callsigns`, statistikk og nylig aktivitet. Test med W3AAX (492 aktiveringer) returnerte bare 25 aktiveringsrader, også med `?count=all`. Ikke behandle dette som komplett historikk.
 - `/user/stats/activator/park` returnerte HTTP 403 / «Not authorized» uten innlogging. POTA-nettstedet bruker Cognito, men ingen dokumentert tredjepartsinnlogging er funnet; ikke lov en ferdig «Logg inn med POTA»-integrasjon.
 - Offentlig `/park/activations/{reference}?count=all` returnerer parkhistorikk med `activeCallsign`, `qso_date` og `totalQSOs`, og CORS `Access-Control-Allow-Origin: *`. Testet med NO-3198 og SE-0016; LB6BK finnes i begge. POTA-nettstedet bruker samme endepunkt for parkhistorikk.
-- Implementert på `test/activated-parks`: offentlig profil som rask start, deretter automatisk parkhistorikk for valgte parker og opptil 40 nærliggende parker ved zoomnivå 10 eller høyere. Ett oppslag om gangen, lokal cache og oppfriskning etter 15 minutter. Nettverksfeil beholder tidligere bekreftet status og vises i Innstillinger. Dette gir gradvis historikksjekk; komplett global liste i ett kall er ikke funnet.
+- Implementert og brukertestet på `test/activated-parks`, deretter slått sammen til `main` via PR #5: offentlig profil som rask start, deretter automatisk parkhistorikk for valgte parker og opptil 40 nærliggende parker ved zoomnivå 10 eller høyere. Ett oppslag om gangen, lokal cache og oppfriskning etter 15 minutter. Nettverksfeil beholder tidligere bekreftet status og vises i Innstillinger. Dette gir gradvis historikksjekk; komplett global liste i ett kall er ikke funnet.
 - Innstillinger støtter opptil 10 hovedkallesignaler. Profilens alternative kallesignaler tas med automatisk. Minst 10 QSO kreves for gulmarkering. GPS-grønn har prioritet; overlapp og parkfyll/kanttykkelser bevares.
-- Testkart: https://apagg.github.io/pota-kart/test/activated-parks/. Kodecommit `3085d6fc346c6aaa5c63e11ff3b7e6a02600998c`, Verify UI Preview `38168302079` og Pages `38168457409` fullførte med success. Live nettleserkontroll bekreftet 9 aktiverte parker for LB6BK og gul NO-3198 med «Aktivert av LB6BK». Brukerens visuelle godkjenning og eventuell sammenslåing gjenstår; hovedkartets appkode er uendret.
+- Testkart: https://apagg.github.io/pota-kart/test/activated-parks/. Kodecommit `3085d6fc346c6aaa5c63e11ff3b7e6a02600998c`, Verify UI Preview `38168302079` og Pages `38168457409` fullførte med success. Live nettleserkontroll bekreftet 9 aktiverte parker for LB6BK og gul NO-3198 med «Aktivert av LB6BK». Dette var første testpublisering. Senere punktfarger, GPS-radius og punktfyll er også brukertestet; sammenslåingen er godkjent 2026-10-11.
 
 ## Punktfarger og GPS-radius (avtalt 2026-10-11)
 - Brukeren har godkjent aktiveringsvisningen visuelt og bestilt samme blå/gule/grønne farger på punktmarkører. Vanlige punkter er blå, aktiverte gule, og GPS-markering grønne. Valgte punkter får mørkere blå/gul nyanse med samme radius på skjermen.
@@ -132,4 +132,8 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Verifisert kode `7e08ec983478efb5d4a3a67e0e2708a2908c70d7`; Verify POTA map `38169748717` fullførte med success. Testene dekker faktisk grønn/blå markør ved 99/101 m, gulmarkering, mørkere valgte punkter med uendret størrelse, grønn prioritet og bevarte geometri-/GPS-/mobilregler.
 
 ## Punktfyll (avtalt 2026-10-11)
-- Brukeren har visuelt godkjent blå/gule/grønne punkter og 100 m GPS-radius. For bedre skille fra parkgeometrien prøves nå 90 % fyll for vanlige punktmarkører og 100 % for valgte punktmarkører. Farger og punktstørrelse beholdes; parkflatene beholder 25 % / 40 % fyll.
+- Brukeren har visuelt godkjent blå/gule/grønne punkter og 100 m GPS-radius. For bedre skille fra parkgeometrien er 90 % fyll godkjent for vanlige punktmarkører og 100 % for valgte punktmarkører. Farger og punktstørrelse beholdes; parkflatene beholder 25 % / 40 % fyll.
+
+## Fullført aktiveringsvisning (2026-10-11)
+- Brukeren har godkjent funksjonen, punktfargene, 100 m GPS-radius og punktfyll 90 % / 100 %, og bestilt fullføring. PR #5 er slått sammen med `main`; hovedkartet bruker løsningen.
+- Merge `ed4a14c068e24f40de096a541049a4ceea143e95`, Verify POTA map `38171388125`, PR-kontroll `38171232542` og Pages `38171387679` er verifisert med success. Live hovedkart bekreftet nye innstillinger og punktfyll. Testkopien er et øyeblikksbilde; nye app-/dataendringer avtales separat.
