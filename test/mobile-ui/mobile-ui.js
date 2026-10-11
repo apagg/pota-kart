@@ -9,7 +9,7 @@
     <div class="mobile-brand">POTA Kart <span>${esc(content.querySelector('.version')?.textContent||'0.11.0')}</span></div>
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false">${svg('search')}</button>
-      <button id="mobileLayers" aria-label="Velg karttype">${svg('layers')}</button>
+      <button id="mobileLayers" aria-label="Velg karttype" aria-controls="infoPanel" aria-expanded="false">${svg('layers')}</button>
       <button id="mobileLocate" aria-label="Min posisjon">${svg('locate')}</button>
     </div>
     <div id="mobileSearchPopover" class="mobile-search-popover" hidden><button id="mobileSearchClose" aria-label="Lukk søk">×</button></div>
@@ -41,7 +41,7 @@
   const empty=document.createElement('p');empty.id='mobileEmptySelection';empty.textContent='Ingen parker er valgt. Trykk på et POTA-punkt eller bruk søket.';empty.dataset.mobileSection='selected';content.appendChild(empty);
   const searchRow=$('q').closest('.row'), anchor=document.createComment('desktop search');searchRow.before(anchor);
   const mark=(node,section)=>{if(node)node.dataset.mobileSection=section;};
-  mark($('countryFilter').closest('.row'),'settings');mark($('baseMapSelect').closest('.row'),'settings');mark($('multiMode').closest('.selectbar'),'settings');
+  mark($('countryFilter').closest('.row'),'settings');mark($('baseMapSelect').closest('.row'),'layers');mark($('multiMode').closest('.selectbar'),'settings');
   mark($('geometrySummary'),'settings');mark($('gpsStatus'),'settings');mark($('status'),'');mark($('linkbox'),'');mark($('selectedBox'),'');mark(content.querySelector('.info-more'),'');
   mark(content.querySelector('.mapkey'),'settings');
   let current=null,view='park',expanded=false,enabled=false;
@@ -86,8 +86,8 @@
     empty.hidden=count>0;
     const isPark=view==='park';
     $('mobileParkRef').textContent=isPark&&current?current.p.reference:'';
-    $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='overlap'?'Velg POTA-park':view==='selected'?'Valgte parker':'Innstillinger';
-    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:'Land, kart og flervalg';
+    $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='overlap'?'Velg POTA-park':view==='selected'?'Valgte parker':view==='layers'?'Karttype':'Innstillinger';
+    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:view==='layers'?'Velg bakgrunnskart':'Land, flervalg og hjelp';
     $('mobileParkType').hidden=!!(isPark&&current);
     $('mobileParkSummary').hidden=!isPark||!current;
     renderParkDetails();
@@ -100,10 +100,11 @@
     $('mobileDetailsToggle').hidden=!isPark||!current;
     $('mobileDetailsToggle').textContent=expanded?'Vis mindre':'Vis detaljer';
     $('mobileDetailsToggle').setAttribute('aria-expanded',String(isPark&&expanded));
+    $('mobileLayers').setAttribute('aria-expanded',String(view==='layers'&&expanded));
     panel.dataset.mobileView=view;panel.classList.toggle('sheet-expanded',expanded);
     $('mobileHandle').setAttribute('aria-expanded',String(expanded));
     $('mobileHandle').setAttribute('aria-label',expanded?'Minimer parkboksen':'Utvid parkboksen');
-    for(const [id,active] of [['mobileMapTab',isPark||view==='overlap'],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
+    for(const [id,active] of [['mobileMapTab',isPark||view==='overlap'||view==='layers'],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
     if(enabled)for(const child of content.children){const visible=expanded&&(child.dataset.mobileSection||'').split(' ').includes(isPark?'details':view);child.hidden=!visible;}
     geometryNote.hidden=!(enabled&&isPark&&expanded&&current&&geometryResults.get(current.p.reference)===false);
     empty.hidden=!enabled||view!=='selected'||count>0;
@@ -118,7 +119,7 @@
   }
   $('mobileSearch').onclick=()=>{const open=$('mobileSearchPopover').hidden;$('mobileSearchPopover').hidden=!open;$('mobileSearch').setAttribute('aria-expanded',String(open));if(open)$('q').focus();};
   $('mobileSearchClose').onclick=closeSearch;
-  $('mobileLayers').onclick=()=>{openView('settings');$('baseMapSelect').focus();};
+  $('mobileLayers').onclick=()=>{openView('layers');$('baseMapSelect').focus();};
   $('mobileLocate').onclick=()=>{$('locateBtn').click();};
   function syncMobileGps(){
     const active=$('locateBtn').getAttribute('aria-pressed')==='true',button=$('mobileLocate');
