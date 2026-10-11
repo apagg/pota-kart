@@ -4,7 +4,8 @@ Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** st�
 
 ## Mobil-UI – første trinn (2026-10-11)
 - Parkboks/detaljer og klikkbar valgliste er implementert på `test/mobile-ui`; brukerens godkjenning gjelder første trinn.
-- [ ] Brukeren tester parkboksen og valgtlisten på https://apagg.github.io/pota-kart/test/mobile-ui/.
+- Parkboksen og valgtlisten er manuelt testet og bekreftet av brukeren 2026-10-11.
+- [ ] Brukeren retester skillet mellom karttype-knappen og Innstillinger på https://apagg.github.io/pota-kart/test/mobile-ui/.
 - [ ] Sluttkontroll og eventuell sammenslåing etter uttrykkelig godkjenning.
 - [ ] Avtal andre trinn: GPS under zoom på høyre side, større zoomknapper, tydelig GPS-status og markering av allerede valgte parker i overlappslisten. Eksisterende kart-/GPS-/overlappslogikk beholdes.
 

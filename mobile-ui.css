@@ -54,3 +54,8 @@
 @media(max-width:700px) and (max-height:500px){
   .panel{max-height:calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
 }
+
+@media(max-width:700px){
+  .panel[data-mobile-view=layers] #locateBtn{display:none}
+  #mobileLayers[aria-expanded=true]{color:#155eef;background:#edf4ff}
+}

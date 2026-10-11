@@ -79,3 +79,5 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Generell bruksanvisning og datakilder samles under sammenleggbar hjelp i innstillinger.
 - Valgte parker kan åpnes fra listen uten panorering/zoom eller ny lasting av valgt geometri. Gjeldende park markeres; fjerning og tømming har separate knapper.
 - Første trinn endrer ikke GPS-/zoomplassering, park-/stidata, geometri-, GPS- eller overlappsfunksjoner. PC-oppsettet skal bevares. Testvisning og eventuell sammenslåing følger avtalt gjennomgang.
+
+- Mobilens kartlag-knapp åpner kun karttypevalg (OpenStreetMap/Esri/satellitt). Innstillinger viser land, flervalg, tegnforklaring og hjelp. Avtalt 2026-10-11 etter brukerens tilbakemelding om to like menyer.
