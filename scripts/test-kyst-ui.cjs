@@ -8,7 +8,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready&&typeof showLink==='function',null,{timeout:120000});
  await page.waitForFunction(()=>document.body.classList.contains('desktop-layout'));
  await page.evaluate(()=>{
-  window.kystTicks=0;setInterval(()=>kystTicks++,50);
+  window.kystTicks=0;window.kystMetaCalls=0;setInterval(()=>kystTicks++,50);
+  const meta=selectedGeometryMeta;selectedGeometryMeta=function(...args){kystMetaCalls++;return meta(...args)};
   const diagnostic=updateSelectionDiagnostics;updateSelectionDiagnostics=function(){const start=performance.now();console.log('KYST diagnostics start');try{return diagnostic()}finally{console.log('KYST diagnostics ms '+Math.round(performance.now()-start))}};
   for(const name of ['pota:park','pota:geometry','pota:selection','pota:overlap'])document.addEventListener(name,e=>console.log('KYST event '+name+' '+JSON.stringify(e.detail?.p?.reference||e.detail?.reference||e.detail?.refs||lastSelectedRef)));
  });
@@ -25,8 +26,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await page.waitForTimeout(1500);
   target=await page.evaluate(()=>{
    const lines=[];function visit(g){if(g.type==='GeometryCollection')g.geometries.forEach(visit);else if(g.type==='LineString')lines.push(g.coordinates);else if(g.type==='MultiLineString')lines.push(...g.coordinates)}visit(geometryAtlas.byRef.get('NO-2542'));
-   const p=pota.find(p=>p.reference==='NO-2542');let best=null,distance=Infinity;
-   for(const line of lines)for(const c of line){const d=L.latLng(c[1],c[0]).distanceTo([+p.latitude,+p.longitude]);if(d<distance){best=c;distance=d}}
+   const p=pota.find(p=>p.reference==='NO-2542');
+   const points=potaMarkers.filter(x=>map.hasLayer(x.marker)).map(x=>map.latLngToContainerPoint(x.marker.getLatLng()));
+   const candidates=lines.flat().map(c=>({c,d:L.latLng(c[1],c[0]).distanceTo([+p.latitude,+p.longitude])})).sort((a,b)=>a.d-b.d);
+   const best=candidates.find(({c})=>{const pos=map.latLngToContainerPoint([c[1],c[0]]);return points.every(pt=>pos.distanceTo(pt)>25)})?.c;
+   if(!best)throw Error('No unobstructed Kyststien click target');
    console.log('KYST displayed hit '+JSON.stringify(atlasRefsAt(L.latLng(best[1],best[0]))));return best;
   });
   await page.evaluate(c=>{map.setView([c[1],c[0]],map.getZoom(),{animate:false});},target);
@@ -41,9 +45,15 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
     await page.waitForFunction(()=>lastSelectedRef==='NO-2542'&&(multiMode.checked?selectedParks.has('NO-2542'):!!selectedGeo),null,{timeout:30000});
     await page.waitForTimeout(150);
     const info=await page.evaluate(()=>({ticks:kystTicks,reference:document.querySelector('#linkbox .park-reference')?.textContent,segments:selectedGeo?.getLayers().length||selectedParks.get('NO-2542')?.geo?.getLayers().length}));
-    console.log('KYST response '+JSON.stringify({...info,elapsed:Date.now()-started}));assert(info.ticks>point.ticks,'Event loop must remain responsive');assert.equal(info.reference,'NO-2542');assert(Date.now()-started<10000,'Kyststien click must finish within 10 seconds');
+    console.log('KYST response '+JSON.stringify({...info,elapsed:Date.now()-started}));assert(info.ticks>point.ticks,'Event loop must remain responsive');assert.equal(info.reference,'NO-2542');assert.equal(await page.evaluate(()=>kystMetaCalls),0,'Closed PC technical panel must not recompute geometry diagnostics');assert(Date.now()-started<10000,'Kyststien click must finish within 10 seconds');
    }
   }
  }
+ // The technical section must show the current selection when explicitly opened.
+ await page.evaluate(async()=>{multiMode.checked=true;multiMode.dispatchEvent(new Event('change'));clearSelectedParks();clearSelection();lastSelectedRef=null;await showLink(pota.find(p=>p.reference==='NO-3198'),false,false);});
+ await page.locator('.info-more > summary').click();
+ await page.waitForFunction(()=>kystMetaCalls>0&&document.querySelector('#overlapDiag').textContent.includes('NO-3198'));
+ assert.doesNotMatch(await page.locator('#overlapDiag').innerText(),/NO-2542/);
+ await page.locator('.info-more > summary').click();
  await page.screenshot({path:'atlas-kyst-click.png'});console.log('PASS Kyststien direct and repeated clicks, zoom 9/14, single and multiselect');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
