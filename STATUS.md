@@ -17,7 +17,7 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Nettlesertesten er tilpasset avtalt PC-presentasjon og utvidet med bredder, skjul/vis, parkdetaljer og valg fra liste uten kartbevegelse. Eksisterende mobil-/GPS-/geometritester beholdes.
 - Trinn 1–2 er verifisert i commit `125cbcb0d7cc6bba4cb0dda8e2444f5186a1f32a`. [Verify POTA map 38128439816](https://github.com/apagg/pota-kart/actions/runs/38128439816) = `completed/success`: geometri/JS, PC-/mobil-, GPS-, overlapps- og stiregresjonstester bestått. PC- og mobilskjermbilder finnes i kjøringens `geometry-browser-checks`-artefakt.
 - Leaflets inline `position:relative` overstyres kun i PC-layout; kartstørrelsen oppdateres korrekt. Skjul/vis bevarer sentrum og zoom.
-- Publisering er **ikke utført**: automatisk godkjenningskontroll avviste oppdatering av testgrenen med en workflow som ville skrive en testkopi til beskyttet `main` og publisere offentlig. Testgrenen kjører derfor kun verifisering. Be om uttrykkelig godkjenning av isolert `test/pc-ui/`-publisering før dette aktiveres; ikke slå PC-koden sammen til hovedkartet.
+- Publisering er godkjent av brukeren 2026-10-11 og pågår. Tidligere blokkering: automatisk godkjenningskontroll avviste oppdatering av testgrenen med en workflow som ville skrive en testkopi til beskyttet `main` og publisere offentlig. Godkjenningen gjelder kun testkopien under `test/pc-ui/`; ikke slå PC-koden sammen til hovedkartet.
 - Planlagt testadresse etter godkjent publisering: https://apagg.github.io/pota-kart/test/pc-ui/.
 - Trinn 3 (GPS på kartet og sammenleggbare innstillinger) gjenstår til etter første brukertest. Hovedkartets UI er uendret.
 

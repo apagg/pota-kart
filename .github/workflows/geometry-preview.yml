@@ -111,15 +111,16 @@ jobs:
           name: geometry-browser-checks
           path: candidate/atlas-*.png
       - uses: actions/checkout@v4
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers'
+        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui'
         with:
           ref: main
           path: stable
       - name: Publish isolated test directory
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers'
+        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui'
         run: |
           DEST=all-geometries
           if [ "${{ github.ref }}" = 'refs/heads/refactor/core-geometry-helpers' ]; then DEST=code-refactor; fi
+          if [ "${{ github.ref }}" = 'refs/heads/test/pc-ui' ]; then DEST=pc-ui; fi
           mkdir -p "stable/test/$DEST"
           for file in index.html app.js app-core.js diagnostics.js geojson-utils.js map-setup.js map-layers.js gps-controller.js polygon-layer-utils.js pota-activation.js park-info-ui.js app-text-utils.js norway-park-registry.js sweden-park-registry.js geometry-format-utils.js sweden-heritage-registry.js park-diagnostics.js park-selection-state.js pota-park-loader.js park-selection-controller.js pota-startup.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
             cp "candidate/$file" "stable/test/$DEST/$file"
@@ -134,7 +135,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Request GitHub Pages publication
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers'
+        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
