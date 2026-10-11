@@ -95,3 +95,7 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Endringen prøves på `test/mobile-ui` før eventuell godkjent sammenslåing. PC og kart-/GPS-/geometrilogikk bevares.
 
 - Forenkling godkjent 2026-10-11: fjern begge handlingsknappene fra mobilens parkheader. Håndtaket brukes for å åpne/lukke fanen, kartvalg legger til parker, og fjerning/tømming gjøres i valgtlisten. PC-knappene beholdes.
+
+## Oppstartsvisning (2026-10-11)
+- Den gamle infoboksen skal ikke blinke frem ved lasting eller oppdatering. En tidlig, innebygd CSS-regel skjuler panelet frem til mobil- og PC-oppsettet er montert.
+- Oppstartsfeil må frigjøre skjulingen og fortsatt være synlige, også hvis selve app.js ikke kan lastes. Kart-, GPS- og geometrioppførsel bevares.
