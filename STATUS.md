@@ -22,9 +22,16 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Målrettede tester dekker 320/390/640 px, samlet fane, venstre innstillinger, knappestørrelser, lange parknavn, fjerning/tømming, karttype, parkstil før/etter valg, uendret Kyststien-stil, forsinket oppstart/synlige oppstartsfeil og gjentatte PC-/mobilbytter.
 - **Separate testkopier:** https://apagg.github.io/pota-kart/test/mobile-ui/ og https://apagg.github.io/pota-kart/test/pc-ui/. De er øyeblikksbilder og kan avvike fra senere endringer i hovedkartet.
 
+## Undersøkelse: automatisk aktiveringsmarkering
+- Brukeren ønsker flere kallesignaler i Innstillinger og gule aktiverte parker. Manuell CSV-import er avvist. LB6BK-profilen inkluderer SM/LB6BK som alternativt kallesignal.
+- Offentlig profil er bekreftet begrenset til nylig aktivitet (25 rader på en profil med 492 aktiveringer). Full brukerparkoversikt avviste uautorisert forespørsel med 403. Ingen dokumentert tredjepartsinnlogging er funnet.
+- En offentlig vei finnes per park: parkhistorikk med `count=all` og CORS for nettlesere. Bekreftet LB6BK-aktiveringer i NO-3198 og SE-0016. Profil + automatisk historikksjekk av synlige parker med cache er foreslått til vurdering; dette gir gradvis kontroll, ikke en komplett global liste i ett kall.
+- Ingen appkode, parkfarger eller data er endret i undersøkelsen. Se PROJECT/TODO for funn og uavklarte valg.
+- Brukeren har også bekreftet hovedkartet etter PR #4 med «ser bra ut» 2026-10-11.
+
 ## Neste arbeid
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
-- Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Ingen ny appendring er bestilt.
+- Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Brukeren ønsker nå å undersøke automatisk gulmarkering av aktiverte parker; implementering er ikke avtalt.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**

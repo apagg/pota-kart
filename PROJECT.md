@@ -115,3 +115,11 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 ## Godkjent sammenslåing (2026-10-11)
 - Mobil-/PC-grensesnitt, samlet mobilfane, GPS-presentasjon, direkte UI-struktur og parkfyll 25 % / 40 % er brukertestet og godkjent for `main` via PR #4.
 - Hovedkartet bruker nå denne løsningen. Tidligere trinnbeskrivelser over dokumenterer avtalene; testkopiene er bare øyeblikksbilder. Nye appendringer avtales og testes separat.
+
+## Ønsket aktiveringsmarkering (undersøkt 2026-10-11)
+- Brukeren ønsker gule parker når minst ett kallesignal i Innstillinger har en godkjent aktivering der. Flere hovedkallesignaler skal kunne legges inn. LB6BK er hovedkallesignal; POTA-profilen inkluderer SM/LB6BK som alternativt kallesignal.
+- Manuell CSV-import er avvist fordi aktiveringslisten oppdateres ofte. Automatisk oppdatering er nødvendig. Ingen implementering er avtalt ennå.
+- Offentlig `/profile/{callsign}` gir `other_callsigns`, statistikk og nylig aktivitet. Test med W3AAX (492 aktiveringer) returnerte bare 25 aktiveringsrader, også med `?count=all`. Ikke behandle dette som komplett historikk.
+- `/user/stats/activator/park` returnerte HTTP 403 / «Not authorized» uten innlogging. POTA-nettstedet bruker Cognito, men ingen dokumentert tredjepartsinnlogging er funnet; ikke lov en ferdig «Logg inn med POTA»-integrasjon.
+- Offentlig `/park/activations/{reference}?count=all` returnerer parkhistorikk med `activeCallsign`, `qso_date` og `totalQSOs`, og CORS `Access-Control-Allow-Origin: *`. Testet med NO-3198 og SE-0016; LB6BK finnes i begge. POTA-nettstedet bruker samme endepunkt for parkhistorikk.
+- Mulig løsning til vurdering: offentlig profil som rask start, deretter køet historikksjekk av synlige parker, lokal mellomlagring og automatisk oppfriskning. Dette trenger begrenset samtidighet/antall kall ved utzooming; ikke hent tusenvis av parkhistorikker ved oppstart. Vis forskjell på bekreftet status, ventende sjekk og nettverksfeil. Komplett global liste i ett kall er ikke funnet.

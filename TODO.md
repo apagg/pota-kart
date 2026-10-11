@@ -2,6 +2,11 @@
 
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
+## Aktiverte parker – avtal løsning før implementering
+- [ ] Avtal automatisk gulmarkering for flere hovedkallesignaler. CSV-import er avvist. LB6BK dekker tilknyttede kallesignaler som SM/LB6BK.
+- [ ] Vurder offentlig profil + køet sjekk av synlige parkhistorikker med cache og oppfriskning. Profilens 25 siste aktiveringer er ikke komplett historikk; full brukeroversikt krever innlogging i testet endepunkt. Ingen dokumentert tredjepartsinnlogging er funnet.
+- [ ] Avtal GPS-/valg-/overlappsfarger og synlig status for ventende/feilede oppslag. Test API-belastning og PC/mobil på egen testgren.
+
 ## Neste UI-trinn
 - [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.
 
