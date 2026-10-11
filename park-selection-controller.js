@@ -19,14 +19,14 @@ async function showParkLink(p,openPopup=true,centerOnSearch=false,popupLatLng=nu
   if(centerOnSearch&&Number.isFinite(lat)&&Number.isFinite(lon))map.setView([lat,lon],Math.max(11,map.getZoom()));
   if(!atlasHasGeometry(p.reference)&&Number.isFinite(lat)&&Number.isFinite(lon)){
     if(centerOnSearch)map.setView([lat,lon],map.getZoom());
-    selectedMarker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(true)}).addTo(map):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:gpsParkColor(p.reference,true),fillColor:gpsParkColor(p.reference,true),fillOpacity:.95}).addTo(map);
+    selectedMarker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(true)}).addTo(map):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:gpsParkColor(p.reference,true),fillColor:gpsParkColor(p.reference,true),fillOpacity:1}).addTo(map);
     bindParkHover(selectedMarker,p,link);
     selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,e.latlng||selectedMarker.getLatLng())});
   }
   openParkInfo(p,link,openPopup?(popupLatLng||(Number.isFinite(lat)&&Number.isFinite(lon)?L.latLng(lat,lon):null)):null);
   const result=await focusOfficialGeometry(link,p);
   if(result&&selectedGeo&&selectedMarker){map.removeLayer(selectedMarker);selectedMarker=null}
-  if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:gpsParkColor(p.reference,true),fillColor:gpsParkColor(p.reference,true),fillOpacity:.95}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,L.latLng(lat,lon))});}
+  if(!result&&!selectedMarker&&Number.isFinite(lat)&&Number.isFinite(lon)){selectedMarker=L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:2,color:gpsParkColor(p.reference,true),fillColor:gpsParkColor(p.reference,true),fillOpacity:1}).addTo(map);bindParkHover(selectedMarker,p,link);selectedMarker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);openParkInfo(p,link,L.latLng(lat,lon))});}
   if(selectedGeo)bindSelectedGeometry(selectedGeo,p,link);
   if(multi){
     selectedParks.set(p.reference,{p,link,marker:selectedMarker,geo:selectedGeo});
