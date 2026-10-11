@@ -11,16 +11,14 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - **Testvisning:** https://apagg.github.io/pota-kart/test/code-refactor/ (separat kopi; kan avvike fra senere `main`).
 
 ## Aktiv prioritet – PC-UI (2026-10-11)
-- Brukeren har godkjent oppsett og oppstart av trinn 1–2 på `test/pc-ui`, basert på `main` 94e6bcfa12b52c6656a8ccee46c0e36a8c16c9cd.
-- Implementert for verifisering: fast 350 px sidepanel, skjul/vis med kartstørrelse uten panorering, kompakt parkinfo med utvidbare detaljer, ingen PC-popup, overlappliste i panelet og klikkbar valgliste med antall.
-- PC-oppsettet ligger i et eget UI-lag. Mobilfilene og alle data-/GPS-/geometri-/overlappsberegninger er uendret.
-- Nettlesertesten er tilpasset avtalt PC-presentasjon og utvidet med bredder, skjul/vis, parkdetaljer og valg fra liste uten kartbevegelse. Eksisterende mobil-/GPS-/geometritester beholdes.
-- Trinn 1–2 er verifisert i commit `125cbcb0d7cc6bba4cb0dda8e2444f5186a1f32a`. [Verify POTA map 38128439816](https://github.com/apagg/pota-kart/actions/runs/38128439816) = `completed/success`: geometri/JS, PC-/mobil-, GPS-, overlapps- og stiregresjonstester bestått. PC- og mobilskjermbilder finnes i kjøringens `geometry-browser-checks`-artefakt.
-- Leaflets inline `position:relative` overstyres kun i PC-layout; kartstørrelsen oppdateres korrekt. Skjul/vis bevarer sentrum og zoom.
-- Offentlig testpublisering er uttrykkelig godkjent av brukeren 2026-10-11. [Verify POTA map 38147397128](https://github.com/apagg/pota-kart/actions/runs/38147397128) = `completed/success`, inkludert PC/mobil og publisering av testkopi.
-- Testkopien er lagret på `main` i commit `a0c64f22a6d263781344239f85f26ca7e803886f`. Bare `test/pc-ui/` ble publisert; hovedkartets kildekode er ikke slått sammen med UI-grenen.
-- Testkart: https://apagg.github.io/pota-kart/test/pc-ui/. [GitHub Pages 38147518979](https://github.com/apagg/pota-kart/actions/runs/38147518979) = `completed/success`.
-- Trinn 3 (GPS på kartet og sammenleggbare innstillinger) gjenstår til etter første brukertest. Hovedkartets UI er uendret.
+- Trinn 1–2 er manuelt testet og godkjent av brukeren. Trinn 3 ble deretter godkjent for implementering og separat testpublisering.
+- Trinn 1–3 er ferdige på `test/pc-ui`: fast 350 px sidepanel med skjul/vis, kompakt parkinfo og utvidbare detaljer, klikkbar valgliste, ingen PC-popup, overlappliste i panelet, GPS/zoom øverst til høyre og sammenleggbare kartinnstillinger, tegnforklaring og hjelp/teknisk informasjon.
+- Søke- og GPS-feil forblir synlige selv med lukkede seksjoner. Mobilens opprinnelige elementplassering gjenopprettes ved 700 px.
+- Verifisert kode: `c89c9de10e203b1349389ea133d7e45bc9aeed1d`. [Verify POTA map 38148644470](https://github.com/apagg/pota-kart/actions/runs/38148644470) = `completed/success`: geometri/JS, PC/mobil, GPS-følging og sti-/overlappsregresjoner bestått. Skjermbilder kontrollert i `geometry-browser-checks`-artefakten.
+- Testkopi publisert til `test/pc-ui/` på `main` i commit `e968323226bf40bc93e7550d87ea97521adc2aac`. [GitHub Pages 38148749733](https://github.com/apagg/pota-kart/actions/runs/38148749733) = `completed/success`.
+- **Testkart:** https://apagg.github.io/pota-kart/test/pc-ui/. Testversjonen er offentlig etter uttrykkelig brukerautorisasjon.
+- Hovedkartets kildekode er ikke slått sammen med UI-grenen. Mobilfiler, parkdata, geometrier, GPS-beregninger, overlapp og hele stisystemet er uendret.
+- Neste steg: brukeren tester trinn 3, deretter avtales eventuell sammenslåing til hovedkartet. Ingen sammenslåing er godkjent ennå.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**

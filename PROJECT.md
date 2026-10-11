@@ -70,5 +70,5 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Søk øverst. Kompakt parkinfo med referanse, navn, aktiveringer, pota.app og «Vis flere detaljer». Tom parkboks skjules.
 - Valgte parker vises som liste med antall når minst én park er valgt; valg fra listen oppdaterer info uten å flytte kartet.
 - Ingen PC-popup ved parkvalg; valg ved overlapp vises i sidepanelet. Mouseover beholdes.
-- Neste trinn: GPS øverst til høyre på kartet og sammenleggbare innstillinger (land, bakgrunnskart, flervalg, tegnforklaring og teknisk informasjon).
+- GPS og zoom øverst til høyre på kartet. Sammenleggbare kartinnstillinger (land, bakgrunnskart og flervalg), tegnforklaring og hjelp/teknisk informasjon. Søke-/GPS-feil er synlige selv med lukkede seksjoner.
 - Mobiloppsett, parkdata, geometrier, GPS-beregninger, overlapp og hele stisystemet bevares. `desktop-ui.js` styrer kun PC-presentasjonen over 700 px.
