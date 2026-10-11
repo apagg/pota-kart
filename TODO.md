@@ -3,7 +3,7 @@
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
 ## Aktiverte parker – klar til brukertest
-- [ ] Brukertest gulmarkering og flere kallesignaler på https://apagg.github.io/pota-kart/test/activated-parks/. Automatisk profil-/parkhistorikk, aliaser, cache, feilhåndtering og PC/mobil er implementert og automatiske tester er grønne.
+- [ ] Brukertest blå/gule/grønne punkter og 100 m GPS-radius for parker uten geometri på https://apagg.github.io/pota-kart/test/activated-parks/. Aktiveringsvisningen er visuelt godkjent. Punktfarger og 100 m GPS-radius er implementert; relevante automatiske tester er grønne.
 - [ ] Innhent særskilt godkjenning før eventuell sammenslåing fra `test/activated-parks` til `main`. Ingen sammenslåing er bestilt for denne funksjonen.
 
 ## Neste UI-trinn
