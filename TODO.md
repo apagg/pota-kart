@@ -1,6 +1,6 @@
 # POTA-kart – åpne oppgaver
 
-Sist gjennomgått: 2026-10-08. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
+Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
 ## Neste oppgaver – avtal prioritet før implementering
 - [ ] Vurder forbedring av nettverksfeilhåndtering og brukervennlige feilmeldinger uten å endre kartets funksjon.
@@ -21,3 +21,8 @@ Sist gjennomgått: 2026-10-08. **Kun aktive eller bevisst utsatte oppgaver** st�
 
 ## Fast arbeidsregel (ikke en uferdig engangsoppgave)
 Kodeendringer skal committes og testes med endelig grønn GitHub Actions-status, inkludert relevante PC-/mobiltester, før ferdigmelding. Dokumentasjonsendringer alene krever ikke kodetest etter særskilt avtale. Se [PROJECT.md](PROJECT.md).
+
+## PC-UI – avtalt 2026-10-11
+- [ ] Brukeren tester https://apagg.github.io/pota-kart/test/pc-ui/ før videre finjustering.
+- [ ] Trinn 3: GPS på kartet øverst til høyre og sammenleggbare innstillinger.
+- [ ] Sluttkontroll og eventuell sammenslåing til `main` etter uttrykkelig godkjenning.
