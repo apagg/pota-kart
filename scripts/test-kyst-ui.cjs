@@ -9,9 +9,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>document.body.classList.contains('desktop-layout'));
  await page.evaluate(()=>{
   window.kystTicks=0;setInterval(()=>kystTicks++,50);
+  const diagnostic=updateSelectionDiagnostics;updateSelectionDiagnostics=function(){const start=performance.now();console.log('KYST diagnostics start');try{return diagnostic()}finally{console.log('KYST diagnostics ms '+Math.round(performance.now()-start))}};
   for(const name of ['pota:park','pota:geometry','pota:selection','pota:overlap'])document.addEventListener(name,e=>console.log('KYST event '+name+' '+JSON.stringify(e.detail?.p?.reference||e.detail?.reference||e.detail?.refs||lastSelectedRef)));
  });
- const target=await page.evaluate(async()=>{
+ let target=await page.evaluate(async()=>{
   const p=pota.find(p=>p.reference==='NO-2542'),r=await atlasRecord(p.reference);const lines=[];
   function visit(g){if(g.type==='GeometryCollection')g.geometries.forEach(visit);else if(g.type==='LineString')lines.push(g.coordinates);else if(g.type==='MultiLineString')lines.push(...g.coordinates)}visit(r.geometry);
   let best=null,distance=Infinity;
@@ -22,6 +23,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  for(const zoom of [9,14]){
   await page.evaluate(({c,zoom})=>{map.setView([c[1],c[0]],zoom,{animate:false});}, {c:target,zoom});
   await page.waitForTimeout(1500);
+  target=await page.evaluate(()=>{
+   const lines=[];function visit(g){if(g.type==='GeometryCollection')g.geometries.forEach(visit);else if(g.type==='LineString')lines.push(g.coordinates);else if(g.type==='MultiLineString')lines.push(...g.coordinates)}visit(geometryAtlas.byRef.get('NO-2542'));
+   const p=pota.find(p=>p.reference==='NO-2542');let best=null,distance=Infinity;
+   for(const line of lines)for(const c of line){const d=L.latLng(c[1],c[0]).distanceTo([+p.latitude,+p.longitude]);if(d<distance){best=c;distance=d}}
+   console.log('KYST displayed hit '+JSON.stringify(atlasRefsAt(L.latLng(best[1],best[0]))));return best;
+  });
+  await page.evaluate(c=>map.setView([c[1],c[0]],map.getZoom(),{animate:false}),target);
   for(const multi of [true,false]){
    await page.evaluate(multi=>{multiMode.checked=multi;multiMode.dispatchEvent(new Event('change'));clearSelectedParks();clearSelection();lastSelectedRef=null},multi);
    for(let attempt=0;attempt<2;attempt++){
