@@ -32,6 +32,7 @@
     }
   }
   function activate(){
+    const center=map.getCenter(),zoom=map.getZoom();
     document.body.classList.toggle('desktop-layout',mq.matches);
     document.body.classList.remove('panel-hidden');
     if(mq.matches){
@@ -46,6 +47,7 @@
       if(current)openParkInfo(current.p,current.link);
     }
     map.invalidateSize({pan:false});
+    if(mq.matches)map.setView(center,zoom,{animate:false});
   }
   document.addEventListener('pota:park',e=>{
     current=e.detail;pending=true;choices.hidden=true;

@@ -32,7 +32,7 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
 /* PC layout only; mobile retains its existing sheet and toolbar. */
 @media (min-width:701px){
   body.desktop-layout{overflow:hidden}
-  .desktop-layout #map{position:absolute;left:350px;right:0;top:0;width:auto}
+  .desktop-layout #map{position:absolute!important;left:350px;right:0;top:0;width:auto}
   .desktop-layout.panel-hidden #map{left:0}
   .desktop-layout .panel{box-sizing:border-box;top:0;left:0;width:350px;height:100%;padding:20px 18px;overflow-y:auto;border-radius:0;box-shadow:none;border-right:1px solid #d9dfe8}
   .desktop-layout .panel h1{font-size:20px;padding-right:30px;margin-bottom:12px}
