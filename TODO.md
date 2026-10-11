@@ -7,7 +7,9 @@ Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** st�
 - Parkboksen og valgtlisten er manuelt testet og bekreftet av brukeren 2026-10-11.
 - [ ] Brukeren retester skillet mellom karttype-knappen og Innstillinger på https://apagg.github.io/pota-kart/test/mobile-ui/.
 - [ ] Sluttkontroll og eventuell sammenslåing etter uttrykkelig godkjenning.
-- [ ] Avtal andre trinn: GPS under zoom på høyre side, større zoomknapper, tydelig GPS-status og markering av allerede valgte parker i overlappslisten. Eksisterende kart-/GPS-/overlappslogikk beholdes.
+- GPS-delen er bestilt 2026-10-11: GPS under zoom til høyre, større zoomknapper og synlig GPS-status. Eksisterende GPS-logikk beholdes.
+- [ ] Brukeren tester mobil-GPS: start, dra/pause, gjenoppta og slå av, inkludert ekte posisjonstilgang på telefon.
+- [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.
 
 ## Neste oppgaver – avtal prioritet før implementering
 - [ ] Vurder forbedring av nettverksfeilhåndtering og brukervennlige feilmeldinger uten å endre kartets funksjon.
