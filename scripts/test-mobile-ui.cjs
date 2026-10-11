@@ -26,6 +26,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.match(await page.locator('#mobileParkDetails').innerText(),/Enhusvidda/);
  assert.doesNotMatch(await page.locator('#infoPanel').innerText(),/Slik bruker du kartet|Datakilder|register-ID/);
  assert.equal(await page.locator('#mobileSelectedList').isVisible(),true,'Details and selected parks share the sheet');
+ assert.equal(await page.evaluate(()=>{const range=document.createRange();range.selectNodeContents(document.getElementById('mobileParkTitle'));const close=document.getElementById('mobileSheetClose').getBoundingClientRect();return [...range.getClientRects()].every(r=>r.right<=close.left-4)}),true,'Park name must clear the close button');
  await page.screenshot({path:'atlas-mobile-ui-details.png'});
  await page.click('#mobileDetailsToggle');
  assert.equal(await page.locator('#mobileParkDetails').isVisible(),false);
