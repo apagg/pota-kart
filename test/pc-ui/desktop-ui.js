@@ -14,6 +14,14 @@
   const settings=makeSection('desktopSettings','Kartinnstillinger'),key=makeSection('desktopLegend','Tegnforklaring');
   const helpSummary=help.querySelector('summary'),helpTitle=helpSummary.textContent;
   let mobileHelpOpen=help.open,desktopHelpOpen=false,controlsMounted=false;
+  // The collapsed desktop section must not rebuild trail corridors and pairwise
+  // diagnostic areas on every selection. Map/GPS/overlap calculations are separate.
+  const renderDiagnostics=updateSelectionDiagnostics;
+  updateSelectionDiagnostics=function(){
+    if(mq.matches&&!help.open)return;
+    return renderDiagnostics();
+  };
+  help.addEventListener('toggle',()=>{if(mq.matches&&help.open)updateSelectionDiagnostics();});
   const zoomNode=map.getContainer().querySelector('.leaflet-control-zoom'),zoomParent=zoomNode.parentNode;
   const gpsControl=L.control({position:'topright'});
   gpsControl.onAdd=()=>{const box=L.DomUtil.create('div','desktop-map-controls');box.appendChild(locateBtn);L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);return box;};
