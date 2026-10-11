@@ -27,8 +27,8 @@
     await load('app-core.js?v=park-style-2');
     await load('park-diagnostics.js?v=011-release');
     await load('park-selection-state.js?v=011-release');
-    await load('pota-park-loader.js?v=point-colors-1');
-    await load('park-selection-controller.js?v=point-colors-1');
+    await load('pota-park-loader.js?v=point-fill-1');
+    await load('park-selection-controller.js?v=point-fill-1');
     await load('pota-startup.js?v=011-release');
     await load('mobile-ui.js?v=activated-parks-1');
     await load('desktop-ui.js?v=ui-structure-1');
