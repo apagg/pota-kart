@@ -1,7 +1,7 @@
 name: Verify POTA map
 on:
   push:
-    branches: ['main', 'feature/all-park-geometries', 'refactor/core-geometry-helpers']
+    branches: ['main', 'feature/all-park-geometries', 'refactor/core-geometry-helpers', 'test/pc-ui']
     paths:
       - '*.js'
       - 'scripts/test-diagnostics.cjs'
@@ -12,6 +12,7 @@ on:
       - 'scripts/update-geometries.py'
       - 'scripts/test-geometries.py'
       - 'scripts/test-atlas.cjs'
+      - 'scripts/test-kyst-ui.cjs'
       - 'scripts/test-overlap-engine.cjs'
       - '.github/workflows/geometry-preview.yml'
   pull_request:
@@ -73,6 +74,7 @@ jobs:
           node --check overlap-engine.js
           node --check overlap-worker.js
           node --check mobile-ui.js
+          if [ -f desktop-ui.js ]; then node --check desktop-ui.js; fi
       - name: Save verified geometry on the feature branch
         if: github.ref == 'refs/heads/feature/all-park-geometries'
         working-directory: candidate
@@ -104,35 +106,38 @@ jobs:
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
           node scripts/test-overlap-engine.cjs
           timeout 300 node scripts/test-atlas.cjs
+          timeout 180 node scripts/test-kyst-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: geometry-browser-checks
           path: candidate/atlas-*.png
       - uses: actions/checkout@v4
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers'
+        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui'
         with:
           ref: main
           path: stable
       - name: Publish isolated test directory
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers'
+        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui'
         run: |
           DEST=all-geometries
           if [ "${{ github.ref }}" = 'refs/heads/refactor/core-geometry-helpers' ]; then DEST=code-refactor; fi
+          if [ "${{ github.ref }}" = 'refs/heads/test/pc-ui' ]; then DEST=pc-ui; fi
           mkdir -p "stable/test/$DEST"
           for file in index.html app.js app-core.js diagnostics.js geojson-utils.js map-setup.js map-layers.js gps-controller.js polygon-layer-utils.js pota-activation.js park-info-ui.js app-text-utils.js norway-park-registry.js sweden-park-registry.js geometry-format-utils.js sweden-heritage-registry.js park-diagnostics.js park-selection-state.js pota-park-loader.js park-selection-controller.js pota-startup.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
             cp "candidate/$file" "stable/test/$DEST/$file"
           done
+          if [ -f candidate/desktop-ui.js ]; then cp candidate/desktop-ui.js "stable/test/$DEST/"; fi
           cp -R candidate/data "stable/test/$DEST/"
           cd stable
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "test/$DEST"
-          git diff --cached --quiet || git commit -m 'Publish isolated geometry test map'
+          git diff --cached --quiet || git commit -m 'Publish isolated POTA test map'
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Request GitHub Pages publication
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers'
+        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

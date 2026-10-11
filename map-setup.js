@@ -16,8 +16,8 @@ map.getPane('overlapPane').style.zIndex='625';
 map.getPane('overlapPane').style.pointerEvents='auto';
 const st=document.getElementById('status'), linkbox=document.getElementById('linkbox');
 const infoPanel=document.getElementById('infoPanel'), hidePanel=document.getElementById('hidePanel'), showPanel=document.getElementById('showPanel');
-hidePanel.onclick=()=>{infoPanel.classList.add('hidden');showPanel.classList.add('visible')};
-showPanel.onclick=()=>{infoPanel.classList.remove('hidden');showPanel.classList.remove('visible')};
+hidePanel.onclick=()=>{const center=map.getCenter(),zoom=map.getZoom();infoPanel.classList.add('hidden');showPanel.classList.add('visible');document.body.classList.add('panel-hidden');map.invalidateSize({pan:false});map.setView(center,zoom,{animate:false})};
+showPanel.onclick=()=>{const center=map.getCenter(),zoom=map.getZoom();infoPanel.classList.remove('hidden');showPanel.classList.remove('visible');document.body.classList.remove('panel-hidden');map.invalidateSize({pan:false});map.setView(center,zoom,{animate:false})};
 const multiMode=document.getElementById('multiMode'), selectedBox=document.getElementById('selectedBox'), selectedList=document.getElementById('selectedList'), countryFilter=document.getElementById('countryFilter');
 const baseMapSelect=document.getElementById('baseMapSelect'), locateBtn=document.getElementById('locateBtn'), gpsStatus=document.getElementById('gpsStatus');
 const baseLayers={
