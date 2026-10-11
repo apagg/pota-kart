@@ -25,7 +25,6 @@
     <div id="mobileParkSummary" class="mobile-park-summary" hidden>
       <div class="mobile-activations">Aktiveringer: <span id="mobileActivationCount" aria-live="polite">Henter …</span></div>
       <a id="mobilePotaLink" target="_blank" rel="noopener noreferrer">pota.app ↗</a>
-      <div class="mobile-sheet-actions"><button id="mobileSelectionToggle" type="button" hidden></button><button id="mobileDetailsToggle" type="button" aria-expanded="false" aria-controls="mobileParkDetails" hidden>Vis detaljer</button></div>
     </div>`;panel.prepend(header);
   const geometryResults=new Map(),geometryNote=document.createElement('p');geometryNote.id='mobileGeometryNote';geometryNote.className='mobile-geometry-note';geometryNote.dataset.mobileSection='details';geometryNote.textContent='Geometri mangler – parken vises som punkt';geometryNote.hidden=true;content.prepend(geometryNote);
   const choices=document.createElement('div');choices.id='mobileOverlapChoices';choices.className='mobile-overlap-list';choices.dataset.mobileSection='overlap';choices.hidden=true;content.appendChild(choices);
@@ -92,13 +91,6 @@
     renderParkDetails();
     if(current)$('mobilePotaLink').href='https://pota.app/#/park/'+encodeURIComponent(current.p.reference);
     syncActivationCount();
-    const selected=current&&(selectedParks.has(current.p.reference)||(!multiMode.checked&&lastSelectedRef===current.p.reference));
-    $('mobileSelectionToggle').hidden=!isPark||!current;
-    $('mobileSelectionToggle').textContent=selected?'✓ Valgt · Fjern':'＋ Legg til';
-    $('mobileSelectionToggle').setAttribute('aria-pressed',String(!!selected));
-    $('mobileDetailsToggle').hidden=!isPark||!current;
-    $('mobileDetailsToggle').textContent=expanded?'Vis mindre':'Vis detaljer';
-    $('mobileDetailsToggle').setAttribute('aria-expanded',String(isPark&&expanded));
     $('mobileLayers').setAttribute('aria-expanded',String(view==='layers'&&expanded));
     panel.dataset.mobileView=view;panel.classList.toggle('sheet-expanded',expanded);
     $('mobileHandle').setAttribute('aria-expanded',String(expanded));
@@ -133,15 +125,7 @@
   $('mobileSettings').onclick=()=>openView('settings');
   $('mobileSheetClose').onclick=()=>openView('park',false);
   $('mobileHandle').onclick=()=>{expanded=!expanded;update();};
-  $('mobileDetailsToggle').onclick=()=>{expanded=!expanded;update();};
   $('mobileClearSelected').onclick=()=>{clearSelectedParks();if(!multiMode.checked){clearSelection();lastSelectedRef=null;update();}};
-  $('mobileSelectionToggle').onclick=async()=>{
-    if(!current)return;
-    if(selectedParks.has(current.p.reference))removeSelectedPark(current.p.reference);
-    else if(!multiMode.checked&&lastSelectedRef===current.p.reference){clearSelection();lastSelectedRef=null;}
-    else await showLink(current.p,false,false);
-    update();
-  };
   let startY=null,dragged=false;
   $('mobileHandle').addEventListener('pointerdown',e=>{startY=e.clientY;dragged=false;e.currentTarget.setPointerCapture(e.pointerId);});
   $('mobileHandle').addEventListener('pointermove',e=>{if(startY!==null&&Math.abs(e.clientY-startY)>24){expanded=e.clientY<startY;dragged=true;update();}});
