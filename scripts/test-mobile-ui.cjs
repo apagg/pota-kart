@@ -10,7 +10,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await probe.route('**/desktop-ui.js*',async route=>{seen();await gate;await route.continue();});
   await probe.goto('http://127.0.0.1:8765',{waitUntil:'domcontentloaded'});await requested;
   assert.equal(await probe.locator('html').evaluate(el=>el.classList.contains('ui-loading')),true);
-  assert.equal(await probe.locator('#infoPanel').isVisible(),false,'Legacy panel must stay hidden while UI loads');
+  assert.equal(await probe.locator('#infoPanel').isVisible(),false,'Responsive panel waits for its handlers');
+  assert.equal(await probe.locator('#infoPanel > .desktop-panel-content').count(),1,'Static desktop view exists before UI modules');
+  assert.equal(await probe.locator('#infoPanel > .mobile-sheet-header').count(),1,'Static mobile view exists before UI modules');
+  assert.equal(await probe.locator('#infoPanel > h1').count(),0,'No legacy flat panel');
   assert.equal(await probe.locator('#showPanel').isVisible(),false);
   release();await probe.waitForFunction(()=>!document.documentElement.classList.contains('ui-loading'));
   assert.equal(await probe.locator('#infoPanel').isVisible(),true,'Ready responsive panel must be visible');
@@ -22,8 +25,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   const probe=await browser.newPage({viewport:{width:1280,height:900}});
   await probe.route('**/'+script+'*',route=>route.abort());
   await probe.goto('http://127.0.0.1:8765',{waitUntil:'domcontentloaded'});
-  await probe.waitForFunction(()=>document.getElementById('status').textContent.startsWith('Oppstartsfeil:')&&!document.documentElement.classList.contains('ui-loading'));
-  assert.equal(await probe.locator('#status').isVisible(),true,'Startup errors must remain visible');await probe.close();
+  await probe.waitForFunction(()=>document.getElementById('startupError').textContent.startsWith('Oppstartsfeil:')&&!document.documentElement.classList.contains('ui-loading'));
+  assert.equal(await probe.locator('#startupError').isVisible(),true,'Startup errors must remain visible');await probe.close();
  }
  await page.goto('http://127.0.0.1:8765');
  await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready&&document.body.classList.contains('mobile-layout'),null,{timeout:120000});
@@ -121,6 +124,13 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('#mobileParkDetails').isVisible(),false);
  assert.equal(await page.locator('#mobileHelp').isVisible(),false);
  assert.equal(await page.locator('.desktop-map-controls').count(),1);
+ for(const width of [390,1280,390,1280]){
+  await page.setViewportSize({width,height:900});await page.waitForTimeout(100);
+  for(const id of ['q','countryFilter','baseMapSelect','multiMode','locateBtn','gpsStatus'])assert.equal(await page.locator('#'+id).count(),1,'One shared field: '+id);
+  assert.equal(await page.locator(width>700?'#desktopCountrySlot #countryFilter':'#mobileSettingsContent #countryFilter').count(),1,'Country field returns to the correct static slot');
+  assert.equal(await page.locator(width>700?'#desktopBasemapSlot #baseMapSelect':'#mobileLayersContent #baseMapSelect').count(),1,'Basemap field returns to the correct static slot');
+  assert.equal(await page.locator('#baseMapSelect').inputValue(),'esri','Basemap choice survives repeated resizing');
+ }
  assert.deepEqual(errors,[]);
- console.log('PASS startup UI: delayed PC/mobile modules without legacy flash and visible failures; mobile UI: relevant details, selected info without map/geometry changes, removal, empty/single/multi, 320/390/640 layouts, unified sheet without bottom navigation, left settings, separate karttype/settings, basemap changes and PC restore');await browser.close();
+ console.log('PASS startup UI: static PC/mobile views, delayed handlers without flash and visible failures; mobile UI: relevant details, selected info without map/geometry changes, removal, empty/single/multi, 320/390/640 layouts, unified sheet without bottom navigation, left settings, separate karttype/settings, basemap changes and PC restore');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
