@@ -10,15 +10,12 @@
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false">${svg('search')}</button>
       <button id="mobileLayers" aria-label="Velg karttype" aria-controls="infoPanel" aria-expanded="false">${svg('layers')}</button>
+      <button id="mobileSettings" aria-label="Innstillinger" aria-controls="infoPanel" aria-expanded="false">${svg('settings')}</button>
     </div>
     <div class="mobile-gps-control"><button id="mobileLocate" aria-label="Min posisjon">${svg('locate')}<span id="mobileGpsLabel" aria-hidden="true">GPS av</span></button></div>
     <div id="mobileSearchPopover" class="mobile-search-popover" hidden><button id="mobileSearchClose" aria-label="Lukk søk">×</button></div>
     <div id="mobileNotice" class="mobile-notice" role="status" hidden></div>
-    <nav class="mobile-nav" aria-label="Hovedmeny">
-      <button id="mobileMapTab" aria-pressed="true">${svg('map')}<span>Kart</span></button>
-      <button id="mobileSelectedTab" aria-pressed="false">${svg('layers')}<span>Valgte parker <b id="mobileCount">0</b></span></button>
-      <button id="mobileSettingsTab" aria-pressed="false">${svg('settings')}<span>Innstillinger</span></button>
-    </nav>`;document.body.appendChild(root);
+    `;document.body.appendChild(root);
   const header=document.createElement('div');header.className='mobile-sheet-header';header.innerHTML=`
     <button id="mobileHandle" class="mobile-handle" aria-label="Utvid parkboksen" aria-expanded="false"><span></span></button>
     <button id="mobileSheetClose" class="mobile-sheet-close" aria-label="Lukk panelet">×</button>
@@ -39,6 +36,8 @@
   const helpSummary=document.createElement('summary');helpSummary.textContent='Hjelp og datakilder';help.appendChild(helpSummary);
   for(const p of content.querySelector('.info-more').querySelectorAll(':scope > p'))help.appendChild(p.cloneNode(true));content.appendChild(help);
   const empty=document.createElement('p');empty.id='mobileEmptySelection';empty.textContent='Ingen parker er valgt. Trykk på et POTA-punkt eller bruk søket.';empty.dataset.mobileSection='selected';content.appendChild(empty);
+  const selectionGroup=document.createElement('section');selectionGroup.className='mobile-selection-group';selectionGroup.dataset.mobileSection='details';
+  const selectionHeading=document.createElement('h3');selectionHeading.innerHTML='Valgte parker <span id="mobileCount">0</span>';selectionGroup.append(selectionHeading,mobileActions,mobileList,empty);content.appendChild(selectionGroup);
   const searchRow=$('q').closest('.row'), anchor=document.createComment('desktop search');searchRow.before(anchor);
   const mark=(node,section)=>{if(node)node.dataset.mobileSection=section;};
   mark($('countryFilter').closest('.row'),'settings');mark($('baseMapSelect').closest('.row'),'layers');mark($('multiMode').closest('.selectbar'),'settings');
@@ -86,8 +85,8 @@
     empty.hidden=count>0;
     const isPark=view==='park';
     $('mobileParkRef').textContent=isPark&&current?current.p.reference:'';
-    $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='overlap'?'Velg POTA-park':view==='selected'?'Valgte parker':view==='layers'?'Karttype':'Innstillinger';
-    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='selected'?`${count} park${count===1?'':'er'} i utvalget`:view==='layers'?'Velg bakgrunnskart':'Land, flervalg og hjelp';
+    $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='overlap'?'Velg POTA-park':view==='layers'?'Karttype':'Innstillinger';
+    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='layers'?'Velg bakgrunnskart':'Land, flervalg og hjelp';
     $('mobileParkType').hidden=!!(isPark&&current);
     $('mobileParkSummary').hidden=!isPark||!current;
     renderParkDetails();
@@ -104,17 +103,18 @@
     panel.dataset.mobileView=view;panel.classList.toggle('sheet-expanded',expanded);
     $('mobileHandle').setAttribute('aria-expanded',String(expanded));
     $('mobileHandle').setAttribute('aria-label',expanded?'Minimer parkboksen':'Utvid parkboksen');
-    for(const [id,active] of [['mobileMapTab',isPark||view==='overlap'||view==='layers'],['mobileSelectedTab',view==='selected'],['mobileSettingsTab',view==='settings']])$(id).setAttribute('aria-pressed',String(active));
+    $('mobileSettings').setAttribute('aria-expanded',String(view==='settings'&&expanded));
     if(enabled)for(const child of content.children){const visible=expanded&&(child.dataset.mobileSection||'').split(' ').includes(isPark?'details':view);child.hidden=!visible;}
     geometryNote.hidden=!(enabled&&isPark&&expanded&&current&&geometryResults.get(current.p.reference)===false);
-    empty.hidden=!enabled||view!=='selected'||count>0;
-    mobileActions.hidden=!enabled||view!=='selected'||count===0;
+    mobileList.hidden=!enabled||!isPark||!expanded;
+    empty.hidden=!enabled||!isPark||!expanded||count>0;
+    mobileActions.hidden=!enabled||!isPark||!expanded||count===0;
   }
   function openView(next,full=true){view=next;expanded=full;closeSearch();panel.classList.remove('hidden');update();content.scrollTop=0;}
   function activate(){
     enabled=mq.matches;document.body.classList.toggle('mobile-layout',enabled);
     if(enabled){$('mobileSearchPopover').appendChild(searchRow);panel.classList.remove('hidden');$('showPanel').classList.remove('visible');update();}
-    else{anchor.after(searchRow);for(const child of content.children)child.hidden=false;empty.hidden=true;mobileList.hidden=true;mobileActions.hidden=true;parkDetails.hidden=true;help.hidden=true;choices.hidden=true;if(view==='overlap'){view='park';expanded=false;}closeSearch();panel.classList.remove('hidden');}
+    else{anchor.after(searchRow);for(const child of content.children)child.hidden=false;empty.hidden=true;selectionGroup.hidden=true;mobileList.hidden=true;mobileActions.hidden=true;parkDetails.hidden=true;help.hidden=true;choices.hidden=true;if(view==='overlap'){view='park';expanded=false;}closeSearch();panel.classList.remove('hidden');}
     map.invalidateSize({pan:false});
   }
   $('mobileSearch').onclick=()=>{const open=$('mobileSearchPopover').hidden;$('mobileSearchPopover').hidden=!open;$('mobileSearch').setAttribute('aria-expanded',String(open));if(open)$('q').focus();};
@@ -130,9 +130,7 @@
     button.title=$('locateBtn').title;button.disabled=false;
   }
   document.addEventListener('pota:gps',syncMobileGps);syncMobileGps();
-  $('mobileMapTab').onclick=()=>openView('park',false);
-  $('mobileSelectedTab').onclick=()=>openView('selected');
-  $('mobileSettingsTab').onclick=()=>openView('settings');
+  $('mobileSettings').onclick=()=>openView('settings');
   $('mobileSheetClose').onclick=()=>openView('park',false);
   $('mobileHandle').onclick=()=>{expanded=!expanded;update();};
   $('mobileDetailsToggle').onclick=()=>{expanded=!expanded;update();};
