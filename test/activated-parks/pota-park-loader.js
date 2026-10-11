@@ -14,7 +14,7 @@ async function loadPota(){
  pota=[...se,...no];buildLinkTable();layers.pts.clearLayers();potaMarkers=[];
  let shown=0,linked=0;const unknown=[],unsupported=[],byCountry={SE:0,NO:0};
  for(const p of pota){const lat=+p.latitude,lon=+p.longitude;if(!Number.isFinite(lat)||!Number.isFinite(lon))continue;shown++;const cc=countryOf(p);byCountry[cc]=(byCountry[cc]||0)+1;const link=linkTable[p.reference];if(link&&link.layer)linked++;else if(link&&link.recognized)unsupported.push({reference:p.reference,name:p.name,type:link.type});else unknown.push({reference:p.reference,name:p.name});
-   const marker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(false)}):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:1,color:'#e67e22',fillColor:'#f39c12',fillOpacity:.8});
+   const marker=isTrailLink(link)?L.marker([lat,lon],{pane:'potaPane',icon:makeTrailIcon(false)}):L.circleMarker([lat,lon],{pane:'potaPane',radius:6,weight:1,color:gpsParkColor(p.reference),fillColor:gpsParkColor(p.reference),fillOpacity:.8});
    bindParkHover(marker,p,link);
    marker.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);showLink(p,true,false)});
    layers.pts.addLayer(marker);potaMarkers.push({marker,country:cc,reference:p.reference});

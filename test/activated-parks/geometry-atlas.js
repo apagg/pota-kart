@@ -27,6 +27,12 @@ function atlasStyle(ref,geometry=geometryAtlas.byRef.get(ref)){
  const area=atlasAreaGeometry(geometry)&&!isTrailLink(linkTable[ref]);
  return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,fillOpacity:area?(selected?.40:.25):(selected?.22:.09)};
 }
+const GPS_POINT_RADIUS_M=100;
+function gpsPointHit(p,ll){
+ if(!p||atlasHasGeometry(p.reference)||selectedParks.get(p.reference)?.geo||(!multiMode.checked&&lastSelectedRef===p.reference&&selectedGeo))return false;
+ const lat=Number(p.latitude),lon=Number(p.longitude);
+ return p.latitude!=null&&p.longitude!=null&&p.latitude!==''&&p.longitude!==''&&Number.isFinite(lat)&&Number.isFinite(lon)&&ll.distanceTo(L.latLng(lat,lon))<=GPS_POINT_RADIUS_M;
+}
 function gpsGeometryHit(g,ll){
  if(!g)return false;
  if(g.type==='GeometryCollection')return g.geometries.some(x=>gpsGeometryHit(x,ll));
@@ -45,6 +51,7 @@ async function updateGpsParkColors(){
  const epoch=++gpsColorEpoch,next=new Set(),position=lastGps;
  if(position&&gpsWatchId!==null){
   const ll=L.latLng(position.lat,position.lon),dy=TRAIL_BUFFER_M/111000,dx=dy/Math.max(.01,Math.cos(position.lat*Math.PI/180));
+  for(const p of pota)if(atlasInCountry(p.reference)&&gpsPointHit(p,ll))next.add(p.reference);
   const candidates=[];
   for(const [ref,g] of geometryAtlas.byRef){
    if(!atlasInCountry(ref))continue;const bb=atlasMeta(ref)?.bbox;
@@ -64,6 +71,7 @@ async function updateGpsParkColors(){
  for(const ref of changed)geometryAtlas.layers.get(ref)?.setStyle(f=>atlasStyle(ref,f?.geometry));
  paintGpsSelected();
  for(const x of atlasOverlapState.layers.values())if(x.refs.some(ref=>changed.has(ref)))x.layer.setStyle(gpsOverlapStyle(x.refs));
+ document.dispatchEvent(new CustomEvent('pota:gps-colors'));
 }
 function atlasBuildLayer(ref,geometry){
  const p=pota.find(x=>x.reference===ref);if(!p)return null;

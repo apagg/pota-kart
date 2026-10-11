@@ -4,8 +4,8 @@ function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-marker" 
 function gpsInsideSelected(lat,lon){
   if(typeof turf==='undefined')return[];const pt=turf.point([lon,lat]),hits=[];
   const entries=[...selectedParks];
-  if(!multiMode.checked&&lastSelectedRef&&selectedGeo)entries.push([lastSelectedRef,{geo:selectedGeo,link:linkTable[lastSelectedRef]}]);
-  for(const [ref,x] of entries){if(!x.geo)continue;let hit=false;
+  if(!multiMode.checked&&lastSelectedRef&&(selectedGeo||selectedMarker))entries.push([lastSelectedRef,{geo:selectedGeo,p:pota.find(p=>p.reference===lastSelectedRef),link:linkTable[lastSelectedRef]}]);
+  for(const [ref,x] of entries){if(!x.geo){if(gpsPointHit(x.p||pota.find(p=>p.reference===ref),L.latLng(lat,lon)))hits.push(ref);continue;}let hit=false;
     for(const f of featuresOfGeoJson(x.geo.toGeoJSON())){const g=f.geometry;if(!g)continue;try{
       if(g.type==='Polygon'||g.type==='MultiPolygon')hit=turf.booleanPointInPolygon(pt,f);
       else if(isTrailLink(x.link)&&(g.type==='LineString'||g.type==='MultiLineString')){const b=turf.buffer(f,TRAIL_BUFFER_M/1000,{units:'kilometers',steps:12});hit=!!b&&turf.booleanPointInPolygon(pt,b)}
@@ -15,7 +15,7 @@ function gpsInsideSelected(lat,lon){
 }
 function updateGpsStatus(lat,lon,accuracy){
   const hits=gpsInsideSelected(lat,lon);gpsStatus.classList.add('visible');
-  gpsStatus.innerHTML=`<b>GPS:</b> ${lat.toFixed(5)}, ${lon.toFixed(5)}${Number.isFinite(accuracy)?` · nøyaktighet ca. ${Math.round(accuracy)} m`:''}${hits.length?`<br><b>Innenfor valgt POTA:</b> ${hits.map(esc).join(', ')}`:'<br>Ikke innenfor noen valgt POTA-geometri.'}`;
+  gpsStatus.innerHTML=`<b>GPS:</b> ${lat.toFixed(5)}, ${lon.toFixed(5)}${Number.isFinite(accuracy)?` · nøyaktighet ca. ${Math.round(accuracy)} m`:''}${hits.length?`<br><b>Innenfor valgt POTA:</b> ${hits.map(esc).join(', ')}`:'<br>Ikke innenfor noen valgt POTA-park.'}`;
 }
 function syncGpsControl(waiting=false){
   const active=gpsWatchId!==null;
