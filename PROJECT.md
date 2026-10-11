@@ -86,3 +86,10 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Brukeren har bestilt GPS-delen på `test/mobile-ui`: GPS-knapp under zoom til høyre, minst 44 px zoomknapper og synlig tekst for GPS av, søking, følging og pauset følging.
 - Knappen bruker eksisterende GPS-kontroller. Dra pauser følging, nytt trykk gjenopptar samme GPS-watch, og trykk under følging slår av. Ingen separat GPS-informasjonsboks.
 - PC-oppsettet og GPS-/geometri-/overlappsberegningene bevares. Markering av valgte parker i mobilens overlappsliste er fortsatt utsatt.
+
+## Avtalt samlet mobilfane (2026-10-11)
+- Innstillinger flyttes til venstre under søk og karttype. Zoom og GPS blir til høyre.
+- Bunnmenyen med Kart, Valgte parker og Innstillinger fjernes. Én opptrekksfane går ned til skjermkanten med safe-area-støtte.
+- Lukket fane viser kompakt parkinfo. Utvidet fane viser parkdetaljer og valgtlisten sammen, inkludert antall, gjeldende park, separat fjerning og tømming.
+- Karttype og Innstillinger åpner egne visninger i samme fane; lukk går tilbake til kompakt parkinfo. Valg fra listen åpner parkinfo uten panorering/zoom eller ny geometri.
+- Endringen prøves på `test/mobile-ui` før eventuell godkjent sammenslåing. PC og kart-/GPS-/geometrilogikk bevares.
