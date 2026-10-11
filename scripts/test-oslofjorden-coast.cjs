@@ -15,7 +15,7 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  assert.deepEqual(other.record,JSON.parse(fs.readFileSync('data/geometries/'+other.shard,'utf8'))['NO-3198']);
  const hvaler=data.features.find(f=>f.properties.includedInPota&&f.properties.folderPath.includes('Turer Hvaler kommune')).geometry.coordinates[0];
  for(const zoom of [5,14,5]){
-  await page.evaluate(({c,zoom})=>map.setView([c[1],c[0]],zoom,{animate:false}),{c:hvaler,zoom});
+  await page.evaluate(({c,zoom})=>{map.setView([c[1],c[0]],zoom,{animate:false})},{c:hvaler,zoom});
   await page.waitForTimeout(1000);
   assert.deepEqual(await page.evaluate(()=>geometryAtlas.byRef.get('NO-2542')),expected,'No old overview restored at zoom '+zoom);
  }
