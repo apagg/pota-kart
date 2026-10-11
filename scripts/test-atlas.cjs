@@ -23,7 +23,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('Desktop sidebar layout');
  await page.waitForFunction(()=>document.body.classList.contains('desktop-layout'));
  const layout=()=>page.evaluate(()=>({panel:infoPanel.getBoundingClientRect().width,map:map.getContainer().getBoundingClientRect().left,size:map.getSize().x,center:[map.getCenter().lat,map.getCenter().lng],zoom:map.getZoom()}));
- const initialLayout=await layout();assert.equal(initialLayout.panel,350);assert.equal(initialLayout.map,350);assert.equal(initialLayout.size,930);assert.equal(await page.locator('#linkbox').isVisible(),false);
+ const initialLayout=await layout();console.log('Desktop initial',initialLayout,errors,await page.evaluate(()=>({client:map.getContainer().clientWidth,rect:map.getContainer().getBoundingClientRect().width,position:getComputedStyle(map.getContainer()).position,status:st.textContent})));assert.equal(initialLayout.panel,350);assert.equal(initialLayout.map,350);assert.equal(initialLayout.size,930);assert.equal(await page.locator('#linkbox').isVisible(),false);
  await page.click('#hidePanel');const hiddenLayout=await layout();assert.equal(hiddenLayout.map,0);assert.equal(hiddenLayout.size,1280);assert.deepEqual(hiddenLayout.center,initialLayout.center);assert.equal(hiddenLayout.zoom,initialLayout.zoom);
  await page.click('#showPanel');assert.equal((await layout()).map,350);
  for(const width of [701,1024,1600]){await page.setViewportSize({width,height:900});await page.waitForFunction(w=>map.getSize().x===w-350,width);assert.equal((await layout()).panel,350);assert.equal((await layout()).size,width-350);}
