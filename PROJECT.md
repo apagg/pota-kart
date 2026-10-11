@@ -23,7 +23,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Musepekerinformasjon på geometri og punkt; overlapp skal vise alle berørte parker (også flere enn to), med mobilvalg ved overlappende trykk.
 - Stier: **61 m total korridorbredde** (30,5 m på hver side). Blå som grunnfarge; stier og parker blir grønne når GPS-posisjonen er innenfor. Valg gjør ikke symbolene større; valgt parkpunkt kan markeres mørkere.
 - GPS: av → på og følg; dra kartet → GPS fortsatt på, men følging pauses; trykk igjen → følg; trykk mens følging er aktiv → av.
-- Mobil: kompakt parkboks, aktiveringstall, `pota.app`-lenke og valgfri «Vis detaljer». Ingen separat GPS-informasjonsboks eller egen varselboks om manglende geometri.
+- Mobil: kompakt parkboks, aktiveringstall og `pota.app`-lenke. Håndtaket åpner/lukker parkdetaljer og valgtlisten; egne «Legg til/Fjern» og «Vis detaljer/Vis mindre»-knapper er fjernet etter avtale 2026-10-11. Ingen separat GPS-informasjonsboks eller egen varselboks om manglende geometri.
 - Bakgrunnskart: OpenStreetMap, Esri og satellitt.
 - Lokal serverport i bruk skal gi tydelig feilmelding, ikke automatisk bytte port.
 - **Stisystemet er satt på vent.** Ikke endre Hvaler-stier, øvrige stier, kilder eller korridorberegning før ny avtale om samlet redesign. Tidligere detaljplaner er historikk, ikke aktiv arbeidsordre.
@@ -93,3 +93,5 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Lukket fane viser kompakt parkinfo. Utvidet fane viser parkdetaljer og valgtlisten sammen, inkludert antall, gjeldende park, separat fjerning og tømming.
 - Karttype og Innstillinger åpner egne visninger i samme fane; lukk går tilbake til kompakt parkinfo. Valg fra listen åpner parkinfo uten panorering/zoom eller ny geometri.
 - Endringen prøves på `test/mobile-ui` før eventuell godkjent sammenslåing. PC og kart-/GPS-/geometrilogikk bevares.
+
+- Forenkling godkjent 2026-10-11: fjern begge handlingsknappene fra mobilens parkheader. Håndtaket brukes for å åpne/lukke fanen, kartvalg legger til parker, og fjerning/tømming gjøres i valgtlisten. PC-knappene beholdes.
