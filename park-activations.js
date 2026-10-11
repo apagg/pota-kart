@@ -171,6 +171,7 @@ const parkActivations=(()=>{
   document.addEventListener('pota:selection',()=>{paint();schedule();});
   document.addEventListener('pota:atlas',()=>{paint();schedule();});
   document.addEventListener('pota:gps',paint);
+  document.addEventListener('pota:gps-colors',paint);
   map.on('moveend zoomend',schedule);countryFilter.addEventListener('change',schedule);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshProfiles();});
   setInterval(()=>{if(!document.hidden){refreshProfiles();schedule();}},TTL);

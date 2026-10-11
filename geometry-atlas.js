@@ -71,6 +71,7 @@ async function updateGpsParkColors(){
  for(const ref of changed)geometryAtlas.layers.get(ref)?.setStyle(f=>atlasStyle(ref,f?.geometry));
  paintGpsSelected();
  for(const x of atlasOverlapState.layers.values())if(x.refs.some(ref=>changed.has(ref)))x.layer.setStyle(gpsOverlapStyle(x.refs));
+ document.dispatchEvent(new CustomEvent('pota:gps-colors'));
 }
 function atlasBuildLayer(ref,geometry){
  const p=pota.find(x=>x.reference===ref);if(!p)return null;
