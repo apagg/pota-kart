@@ -130,3 +130,6 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Brukeren har godkjent aktiveringsvisningen visuelt og bestilt samme blå/gule/grønne farger på punktmarkører. Vanlige punkter er blå, aktiverte gule, og GPS-markering grønne. Valgte punkter får mørkere blå/gul nyanse med samme radius på skjermen.
 - Parker uten geometri regnes som innenfor for GPS ved avstand på høyst 100 m fra POTA-referansepunktet. Dette gjelder GPS-status/farge; parker med geometri bruker fortsatt sine faktiske grenser. Ingen parkgrense eller stikorridor utvides.
 - Verifisert kode `7e08ec983478efb5d4a3a67e0e2708a2908c70d7`; Verify POTA map `38169748717` fullførte med success. Testene dekker faktisk grønn/blå markør ved 99/101 m, gulmarkering, mørkere valgte punkter med uendret størrelse, grønn prioritet og bevarte geometri-/GPS-/mobilregler.
+
+## Punktfyll (avtalt 2026-10-11)
+- Brukeren har visuelt godkjent blå/gule/grønne punkter og 100 m GPS-radius. For bedre skille fra parkgeometrien prøves nå 90 % fyll for vanlige punktmarkører og 100 % for valgte punktmarkører. Farger og punktstørrelse beholdes; parkflatene beholder 25 % / 40 % fyll.
