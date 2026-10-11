@@ -26,7 +26,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Mobil: kompakt parkboks, aktiveringstall og `pota.app`-lenke. Håndtaket åpner/lukker parkdetaljer og valgtlisten; egne «Legg til/Fjern» og «Vis detaljer/Vis mindre»-knapper er fjernet etter avtale 2026-10-11. Ingen separat GPS-informasjonsboks eller egen varselboks om manglende geometri.
 - Bakgrunnskart: OpenStreetMap, Esri og satellitt.
 - Lokal serverport i bruk skal gi tydelig feilmelding, ikke automatisk bytte port.
-- **Stisystemet er satt på vent.** Ikke endre Hvaler-stier, øvrige stier, kilder eller korridorberegning før ny avtale om samlet redesign. Tidligere detaljplaner er historikk, ikke aktiv arbeidsordre.
+- **Avgrenset kyststitest bestilt 2026-10-11:** `test/oslofjorden-coast` erstatter kun NO-2542 med Østfold/Hvaler fra Oslofjorden.com. 109 gangruter, hvorav 29 Hvaler; ferger/sykkelalternativer utelates. Gamle GIS-/Hvaler-segmenter blandes ikke inn. Andre stier og 61 m korridor bevares. Bredere redesign er fortsatt utsatt; sammenslåing er ikke bestilt.
 
 ## Arkitektur
 Statisk webapp med Leaflet, Turf og polygon-clipping; ingen egen appserver. `app.js` styrer modulrekkefølgen.
@@ -148,4 +148,7 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Rettigheter: https://www.oslofjorden.com/om_oss.html sier materiale kun kan benyttes privat og kommersiell utnyttelse krever skriftlig avtale. Ingen åpen gjenbrukslisens er funnet. Avklar offentlig viderepublisering av rutekoordinater med eieren før eventuell import til offentlig GitHub/Pages.
 - Teknisk anbefaling ved avklart bruk: bygg et lokalt GeoJSON-datasett i oppdateringsjobben, behold navn, rute-/områdemetadata, kildelenker, kategorier og dataversjon. HEAD med Origin ga ikke Access-Control-Allow-Origin; direkte nettleserhenting bør ikke være løsningen. POTA-kobling og 61 m korridor kan bruke dagens modell etter separat kvalitetssjekk.
 - Dagens runtime har allerede KML-parser, men den beholder bare linje/navn og bruker nærhet/navnescore. Den er ikke tilstrekkelig til trygg, samlet import av denne blandede filen. NO-2542 bruker fortsatt eksisterende GIS-kilde med lokalt Hvaler-erstatningslag; dette er ikke endret.
-- Anbefalt neste avtalte trinn: rettighetsavklaring og en separat sammenligning av Østfold/Hvaler mot dagens geometri før valg av import-/erstatningsregler. Ingen appkode eller rutefil ble endret i undersøkelsen.
+- Undersøkelsen endret ingen appkode eller rutefil. Den senere bestilte Østfold/Hvaler-kildetesten og valgte erstatningsregler er dokumentert nedenfor; POTA-avgrensning og eventuell utvidet bruk må fortsatt vurderes.
+
+## Bestilt Oslofjorden-test og varig rettighetsnotat
+Brukeren bestilte en separat test med ny kilde 2026-10-11 og oppgir privat bruk. Etter informasjon om at GitHub Pages er offentlig tilgjengelig, valgte brukeren vanlig testlenke. Dette er ikke en tillatelse fra kildeeieren. Kildens vilkår oppgir privat bruk og skriftlig avtale ved kommersiell utnyttelse; ingen åpen gjenbrukslisens er funnet. **Ved annen, bredere eller kommersiell bruk må rettighetene avklares med Oslofjorden.com.** Notatet følger datasettet i [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/test/oslofjorden-coast/data/coastal/README.md) og metadata. Testlenke: https://apagg.github.io/pota-kart/test/oslofjorden-coast/. Hovedkartets appkode og data skal ikke endres uten separat sammenslåingsbestilling.
