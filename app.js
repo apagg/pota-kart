@@ -12,7 +12,7 @@
     await load('diagnostics.js?v=011-release');
     await load('geojson-utils.js?v=011-release');
     await load('geometry-topology.js?v=011-release');
-    await load('geometry-atlas.js?v=011-release');
+    await load('geometry-atlas.js?v=park-style-2');
     await load('map-setup.js?v=011-release');
     await load('map-layers.js?v=011-release');
     await load('gps-controller.js?v=011-release');
@@ -24,18 +24,23 @@
     await load('sweden-park-registry.js?v=011-release');
     await load('geometry-format-utils.js?v=011-release');
     await load('sweden-heritage-registry.js?v=011-release');
-    await load('app-core.js?v=011-release');
+    await load('app-core.js?v=park-style-2');
     await load('park-diagnostics.js?v=011-release');
     await load('park-selection-state.js?v=011-release');
     await load('pota-park-loader.js?v=011-release');
     await load('park-selection-controller.js?v=011-release');
     await load('pota-startup.js?v=011-release');
-    await load('mobile-ui.js?v=011-release');
-    await load('desktop-ui.js?v=pc-ui-4');
+    await load('mobile-ui.js?v=ui-structure-1');
+    await load('desktop-ui.js?v=ui-structure-1');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
+    const error=document.getElementById('startupError');
+    if(error){error.textContent='Oppstartsfeil: '+e.message;error.hidden=false;}
     if(typeof potaDiagnostics!=='undefined')potaDiagnostics.report('startup',e,'error');
     else console.error(e);
+  }finally{
+    // Enable the static responsive UI after its interaction handlers are ready.
+    document.documentElement.classList.remove('ui-loading');
   }
 })();

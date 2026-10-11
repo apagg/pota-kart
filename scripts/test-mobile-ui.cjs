@@ -1,0 +1,136 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch(),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('https://api.pota.app/park/stats/**',route=>route.fulfill({headers:{'Access-Control-Allow-Origin':'*'},json:{activations:17}}));
+ // Hold the final UI module so the legacy panel cannot flash during startup.
+ for(const viewport of [{width:1280,height:900},{width:390,height:844}]){
+  const probe=await browser.newPage({viewport});let release,seen;
+  const gate=new Promise(resolve=>release=resolve),requested=new Promise(resolve=>seen=resolve);
+  await probe.route('**/desktop-ui.js*',async route=>{seen();await gate;await route.continue();});
+  await probe.goto('http://127.0.0.1:8765',{waitUntil:'domcontentloaded'});await requested;
+  assert.equal(await probe.locator('html').evaluate(el=>el.classList.contains('ui-loading')),true);
+  assert.equal(await probe.locator('#infoPanel').isVisible(),false,'Responsive panel waits for its handlers');
+  assert.equal(await probe.locator('#infoPanel > .desktop-panel-content').count(),1,'Static desktop view exists before UI modules');
+  assert.equal(await probe.locator('#infoPanel > .mobile-sheet-header').count(),1,'Static mobile view exists before UI modules');
+  assert.equal(await probe.locator('#infoPanel > h1').count(),0,'No legacy flat panel');
+  assert.equal(await probe.locator('#showPanel').isVisible(),false);
+  release();await probe.waitForFunction(()=>!document.documentElement.classList.contains('ui-loading'));
+  assert.equal(await probe.locator('#infoPanel').isVisible(),true,'Ready responsive panel must be visible');
+  assert.equal(await probe.locator('body').evaluate((el,width)=>el.classList.contains(width>700?'desktop-layout':'mobile-layout'),viewport.width),true);
+  await probe.screenshot({path:'atlas-startup-ready-'+viewport.width+'.png'});await probe.close();
+ }
+ // Both bootstrap and module failures must release the gate and expose an error.
+ for(const script of ['app.js','desktop-ui.js']){
+  const probe=await browser.newPage({viewport:{width:1280,height:900}});
+  await probe.route('**/'+script+'*',route=>route.abort());
+  await probe.goto('http://127.0.0.1:8765',{waitUntil:'domcontentloaded'});
+  await probe.waitForFunction(()=>document.getElementById('startupError').textContent.startsWith('Oppstartsfeil:')&&!document.documentElement.classList.contains('ui-loading'));
+  assert.equal(await probe.locator('#startupError').isVisible(),true,'Startup errors must remain visible');await probe.close();
+ }
+ await page.goto('http://127.0.0.1:8765');
+ await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready&&document.body.classList.contains('mobile-layout'),null,{timeout:120000});
+ await page.evaluate(async()=>{clearSelectedParks();clearSelection();await showLink(pota.find(p=>p.reference==='NO-3198'),false,false);await showLink(pota.find(p=>p.reference==='NO-3374'),false,false);});
+ await page.waitForFunction(()=>document.querySelector('#mobileActivationCount').textContent==='17');
+ const expandSheet=async()=>{if(await page.locator('#infoPanel').getAttribute('data-mobile-view')!=='park')await page.click('#mobileSheetClose');if(await page.locator('#mobileHandle').getAttribute('aria-expanded')!=='true')await page.click('#mobileHandle');};
+ assert.equal(await page.locator('.mobile-nav').count(),0);
+ const tools=await Promise.all(['#mobileSearch','#mobileLayers','#mobileSettings'].map(s=>page.locator(s).boundingBox()));assert(tools[0].y+tools[0].height<tools[1].y&&tools[1].y+tools[1].height<tools[2].y,'Settings below search and layers on left');assert(tools.every(b=>b.x<40&&b.width>=44&&b.height>=44));
+ const view=()=>page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng,zoom:map.getZoom()}));
+ const mapBefore=await view(),selectionBefore=await page.evaluate(()=>[...selectedParks].map(([ref,x])=>[ref,L.stamp(x.geo)]));
+ await expandSheet();
+ assert.equal(await page.locator('#mobileSelectedList .mobile-selected-open').count(),2);
+ await page.locator('#mobileSelectedList .mobile-selected-open[data-reference="NO-3198"]').click();
+ assert.equal(await page.locator('#mobileParkRef').innerText(),'NO-3198');
+ assert.deepEqual(await view(),mapBefore,'Opening a selected park must preserve map center/zoom');
+ assert.deepEqual(await page.evaluate(()=>[...selectedParks].map(([ref,x])=>[ref,L.stamp(x.geo)])),selectionBefore,'Opening info must reuse selected geometry');
+ assert.equal(await page.locator('#mobileDetailsToggle').count(),0);assert.equal(await page.locator('#mobileSelectionToggle').count(),0);assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'false');
+ assert.equal(await page.locator('#mobileParkDetails').isVisible(),false);
+ await page.click('#mobileHandle');
+ assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'true');
+ assert.equal(await page.locator('#mobileParkDetails').isVisible(),true);
+ assert.match(await page.locator('#mobileParkDetails').innerText(),/Enhusvidda/);
+ assert.doesNotMatch(await page.locator('#infoPanel').innerText(),/Slik bruker du kartet|Datakilder|register-ID/);
+ assert.equal(await page.locator('#mobileSelectedList').isVisible(),true,'Details and selected parks share the sheet');
+ assert.equal(await page.evaluate(()=>{const range=document.createRange();range.selectNodeContents(document.getElementById('mobileParkTitle'));const close=document.getElementById('mobileSheetClose').getBoundingClientRect();return [...range.getClientRects()].every(r=>r.right<=close.left-4)}),true,'Park name must clear the close button');
+ await page.screenshot({path:'atlas-mobile-ui-details.png'});
+ await page.click('#mobileHandle');
+ assert.equal(await page.locator('#mobileParkDetails').isVisible(),false);
+ await expandSheet();
+ assert.equal(await page.locator('.mobile-selected-open[data-reference="NO-3198"]').getAttribute('aria-current'),'true');
+ await page.screenshot({path:'atlas-mobile-ui-selected.png'});
+ await page.locator('.mobile-selected-remove[data-reference="NO-3374"]').click();
+ assert.equal(await page.evaluate(()=>selectedParks.has('NO-3374')),false);
+ assert.equal(await page.locator('#mobileCount').innerText(),'1');
+ assert.deepEqual(await view(),mapBefore,'Removing a park must preserve the view');
+ await page.locator('.mobile-selected-open[data-reference="NO-3198"]').click();
+ await page.screenshot({path:'atlas-mobile-ui-compact.png'});
+ for(const viewport of [{width:320,height:568},{width:640,height:390}]){
+  await page.setViewportSize(viewport);
+  await page.waitForTimeout(100);
+  await page.click('#mobileHandle');
+  const box=await page.locator('#mobileHandle').boundingBox();
+  assert(box.width>=44&&box.x>=0&&box.x+box.width<=viewport.width,'Sheet handle must fit');
+  const dimensions=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth,panel:infoPanel.getBoundingClientRect().bottom,height:innerHeight}));
+  assert.equal(dimensions.width,dimensions.viewport,'No horizontal overflow');
+  assert(Math.abs(dimensions.panel-dimensions.height)<1,'Sheet reaches screen bottom');
+  assert.equal(await page.locator('#mobileSelectedList').isVisible(),true,'Expanded sheet includes selected parks');
+  await page.screenshot({path:'atlas-mobile-ui-'+viewport.width+'.png'});
+  await page.click('#mobileHandle');
+ }
+ await page.setViewportSize({width:390,height:844});
+ await page.click('#mobileSettings');
+ assert.equal(await page.locator('#mobileParkTitle').innerText(),'Innstillinger');assert.equal(await page.locator('#mobileSettings').getAttribute('aria-expanded'),'true');assert.equal(await page.locator('#mobileSelectedList').isVisible(),false);
+ assert.equal(await page.locator('#baseMapSelect').isVisible(),false);
+ for(const selector of ['#countryFilter','#multiMode','.mapkey','#mobileHelp'])assert.equal(await page.locator(selector).isVisible(),true,'Settings must include '+selector);
+ const beforeLayers=await view(),beforeLayersSelection=await page.evaluate(()=>[...selectedParks].map(([ref,x])=>[ref,L.stamp(x.geo)]));
+ await page.click('#mobileLayers');
+ assert.equal(await page.locator('#mobileParkTitle').innerText(),'Karttype');
+ assert.equal(await page.locator('#mobileLayers').getAttribute('aria-expanded'),'true');
+ assert.equal(await page.locator('#baseMapSelect').isVisible(),true);
+ for(const selector of ['#countryFilter','#multiMode','.mapkey','#mobileHelp','#locateBtn'])assert.equal(await page.locator(selector).isVisible(),false,'Karttype must exclude '+selector);
+ await page.selectOption('#baseMapSelect','satellite');
+ assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
+ await page.selectOption('#baseMapSelect','esri');
+ assert.equal(await page.evaluate(()=>activeBase===baseLayers.esri),true);
+ assert.deepEqual(await view(),beforeLayers,'Changing the basemap must preserve center/zoom');
+ assert.deepEqual(await page.evaluate(()=>[...selectedParks].map(([ref,x])=>[ref,L.stamp(x.geo)])),beforeLayersSelection,'Changing the basemap must preserve selected geometry');
+ await page.screenshot({path:'atlas-mobile-ui-layers.png'});
+ await page.click('#mobileSheetClose');
+ assert.equal(await page.locator('#mobileLayers').getAttribute('aria-expanded'),'false');assert.equal(await page.locator('#infoPanel').getAttribute('data-mobile-view'),'park');assert.equal(await page.locator('#mobileHandle').getAttribute('aria-expanded'),'false');
+ assert.equal(await page.locator('#baseMapSelect').isVisible(),false);
+ await page.click('#mobileSettings');
+ assert.equal(await page.locator('#baseMapSelect').isVisible(),false);
+ assert.equal(await page.locator('#mobileHelp').isVisible(),true);
+ await page.locator('#mobileHelp > summary').click();
+ assert.match(await page.locator('#mobileHelp').innerText(),/Slik bruker du kartet|Datakilder/);
+ await page.screenshot({path:'atlas-mobile-ui-help.png'});
+ await expandSheet();await page.click('#mobileClearSelected');
+ assert.equal(await page.locator('#mobileCount').innerText(),'0');
+ assert.equal(await page.locator('#mobileEmptySelection').isVisible(),true);
+ assert.equal(await page.locator('#mobileClearSelected').isVisible(),false);
+ // Single selection uses the same info and remove controls.
+ await page.evaluate(async()=>{multiMode.checked=false;multiMode.dispatchEvent(new Event('change'));await showLink(pota.find(p=>p.reference==='NO-3198'),false,false);});
+ await expandSheet();assert.equal(await page.locator('.mobile-selected-open').count(),1);
+ await page.locator('.mobile-selected-open').click();assert.equal(await page.locator('#mobileParkRef').innerText(),'NO-3198');
+ await expandSheet();await page.locator('.mobile-selected-remove').click();assert.equal(await page.locator('#mobileCount').innerText(),'0');
+ // Park labels are plain text, including unusual names.
+ await page.evaluate(()=>{selectedParks.set('UI-NAME',{p:{reference:'UI-NAME',name:'Park <b>literal</b>'},link:{}});multiMode.checked=true;document.dispatchEvent(new CustomEvent('pota:selection'));});
+ await expandSheet();assert.equal(await page.locator('.mobile-selected-open b').count(),0);assert.match(await page.locator('.mobile-selected-open').innerText(),/<b>literal<\/b>/);
+ await page.locator('.mobile-selected-open').click();await page.click('#mobileHandle');
+ assert.equal(await page.locator('#mobileParkDetails b').count(),0);assert.match(await page.locator('#mobileParkDetails').innerText(),/<b>literal<\/b>/);
+ await page.evaluate(()=>{selectedParks.delete('UI-NAME');lastSelectedRef=null;document.dispatchEvent(new CustomEvent('pota:selection'));});
+ await page.setViewportSize({width:1280,height:900});
+ await page.waitForFunction(()=>document.body.classList.contains('desktop-layout'));
+ assert.equal(await page.locator('#mobileParkDetails').isVisible(),false);
+ assert.equal(await page.locator('#mobileHelp').isVisible(),false);
+ assert.equal(await page.locator('.desktop-map-controls').count(),1);
+ for(const width of [390,1280,390,1280]){
+  await page.setViewportSize({width,height:900});await page.waitForTimeout(100);
+  for(const id of ['q','countryFilter','baseMapSelect','multiMode','locateBtn','gpsStatus'])assert.equal(await page.locator('#'+id).count(),1,'One shared field: '+id);
+  assert.equal(await page.locator(width>700?'#desktopCountrySlot #countryFilter':'#mobileSettingsContent #countryFilter').count(),1,'Country field returns to the correct static slot');
+  assert.equal(await page.locator(width>700?'#desktopBasemapSlot #baseMapSelect':'#mobileLayersContent #baseMapSelect').count(),1,'Basemap field returns to the correct static slot');
+  assert.equal(await page.locator('#baseMapSelect').inputValue(),'esri','Basemap choice survives repeated resizing');
+ }
+ assert.deepEqual(errors,[]);
+ console.log('PASS startup UI: static PC/mobile views, delayed handlers without flash and visible failures; mobile UI: relevant details, selected info without map/geometry changes, removal, empty/single/multi, 320/390/640 layouts, unified sheet without bottom navigation, left settings, separate karttype/settings, basemap changes and PC restore');await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

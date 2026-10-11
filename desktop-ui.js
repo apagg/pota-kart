@@ -1,19 +1,8 @@
-// Desktop presentation only. The mobile module keeps its original DOM order.
+// Desktop interactions for the static sidebar. Shared fields keep their declared slots.
 (()=>{
   const mq=matchMedia('(min-width:701px)'),panel=document.getElementById('infoPanel');
-  const searchRow=document.getElementById('q').closest('.row');
-  const original=[linkbox,selectedBox].map(node=>{const anchor=document.createComment('original UI position');node.before(anchor);return {node,anchor}});
-  const choices=document.createElement('section');choices.className='desktop-overlap';choices.id='desktopOverlapChoices';choices.hidden=true;
-  const countryRow=countryFilter.closest('.row'),baseRow=baseMapSelect.closest('.row'),multiRow=multiMode.closest('.selectbar');
-  const legend=panel.querySelector('.mapkey'),trailNote=legend.nextElementSibling,help=panel.querySelector('.info-more');
-  const usage=multiRow.previousElementSibling,geometrySummary=document.getElementById('geometrySummary');
-  const secondary=[countryRow,baseRow,multiRow,legend,trailNote,usage,geometrySummary,st,gpsStatus,help];
-  const secondaryOriginal=secondary.map(node=>{const anchor=document.createComment('original settings position');node.before(anchor);return {node,anchor}});
-  const gpsAnchor=document.createComment('original GPS button');locateBtn.before(gpsAnchor);
-  const makeSection=(id,title)=>{const section=document.createElement('details');section.id=id;section.className='desktop-section';const summary=document.createElement('summary');summary.textContent=title;section.appendChild(summary);return section;};
-  const settings=makeSection('desktopSettings','Kartinnstillinger'),key=makeSection('desktopLegend','Tegnforklaring');
-  const helpSummary=help.querySelector('summary'),helpTitle=helpSummary.textContent;
-  let mobileHelpOpen=help.open,desktopHelpOpen=false,controlsMounted=false;
+  const choices=document.getElementById('desktopOverlapChoices'),help=document.getElementById('desktopHelp');
+  let controlsMounted=false;
   // The collapsed desktop section must not rebuild trail corridors and pairwise
   // diagnostic areas on every selection. Map/GPS/overlap calculations are separate.
   const renderDiagnostics=updateSelectionDiagnostics;
@@ -25,8 +14,8 @@
   const zoomNode=map.getContainer().querySelector('.leaflet-control-zoom'),zoomParent=zoomNode.parentNode;
   const gpsControl=L.control({position:'topright'});
   gpsControl.onAdd=()=>{const box=L.DomUtil.create('div','desktop-map-controls');box.appendChild(locateBtn);L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);return box;};
-  gpsControl.onRemove=()=>gpsAnchor.after(locateBtn);
-  const notice=document.createElement('div');notice.id='desktopNotice';notice.className='desktop-notice';notice.setAttribute('role','status');notice.hidden=true;
+  gpsControl.onRemove=()=>document.getElementById('gpsControlHome').appendChild(locateBtn);
+  const notice=document.getElementById('desktopNotice');
   function syncNotice(){
     const statusText=st.textContent,gpsText=gpsStatus.textContent;
     const statusError=!/^Kunne ikke hente en verifisert enkeltgeometri/.test(statusText)&&/^(Fant ikke|POTA-listen kunne ikke|Oppstartsfeil|Kunne ikke hente|Bakgrunnskartet kunne ikke)/.test(statusText);
@@ -36,19 +25,13 @@
   }
   new MutationObserver(syncNotice).observe(st,{childList:true,subtree:true,characterData:true});
   new MutationObserver(syncNotice).observe(gpsStatus,{childList:true,subtree:true,characterData:true});
-  function mountSettings(){
-    mobileHelpOpen=help.open;helpSummary.textContent='Hjelp og teknisk informasjon';help.open=desktopHelpOpen;
-    settings.append(countryRow,baseRow,multiRow);key.append(legend,trailNote);
-    help.append(usage,geometrySummary,st,gpsStatus);
-    selectedBox.after(settings,key,help);searchRow.after(notice);
+  function mountControls(){
     if(!controlsMounted){map._controlCorners.topright.appendChild(zoomNode);gpsControl.addTo(map);controlsMounted=true;}
     syncNotice();
   }
-  function restoreSettings(){
-    if(controlsMounted){gpsControl.remove();zoomParent.appendChild(zoomNode);controlsMounted=false;desktopHelpOpen=help.open;help.open=mobileHelpOpen;}
-    helpSummary.textContent=helpTitle;
-    for(const {node,anchor} of secondaryOriginal)anchor.after(node);
-    settings.remove();key.remove();notice.remove();
+  function restoreControls(){
+    if(controlsMounted){gpsControl.remove();zoomParent.appendChild(zoomNode);controlsMounted=false;}
+    syncNotice();
   }
   let current=null,pending=false;
   function entries(){
@@ -82,14 +65,12 @@
     document.body.classList.toggle('desktop-layout',mq.matches);
     document.body.classList.remove('panel-hidden');
     if(mq.matches){
-      searchRow.after(linkbox,choices,selectedBox);
-      mountSettings();
+      mountControls();
       if(current)openParkInfo(current.p,current.link);
       render();
     }else{
-      restoreSettings();
-      for(const {node,anchor} of original)anchor.after(node);
-      choices.remove();choices.hidden=true;
+      restoreControls();
+      choices.hidden=true;
       selectedBox.querySelector('.head b').textContent='Valgte POTA-parker';
       renderSelectedList();
       if(current)openParkInfo(current.p,current.link);
