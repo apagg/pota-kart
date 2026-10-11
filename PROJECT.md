@@ -26,7 +26,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Mobil: kompakt parkboks, aktiveringstall og `pota.app`-lenke. Håndtaket åpner/lukker parkdetaljer og valgtlisten; egne «Legg til/Fjern» og «Vis detaljer/Vis mindre»-knapper er fjernet etter avtale 2026-10-11. Ingen separat GPS-informasjonsboks eller egen varselboks om manglende geometri.
 - Bakgrunnskart: OpenStreetMap, Esri og satellitt.
 - Lokal serverport i bruk skal gi tydelig feilmelding, ikke automatisk bytte port.
-- **Avgrenset kyststitest bestilt 2026-10-11:** `test/oslofjorden-coast` erstatter kun NO-2542 med Østfold/Hvaler fra Oslofjorden.com. 109 gangruter, hvorav 29 Hvaler; ferger/sykkelalternativer utelates. Gamle GIS-/Hvaler-segmenter blandes ikke inn. Andre stier og 61 m korridor bevares. Bredere redesign er fortsatt utsatt; sammenslåing er ikke bestilt.
+- **Avgrenset kyststitest bestilt 2026-10-11:** `test/oslofjorden-coast` erstatter kun NO-2542 med Østfold/Hvaler fra Oslofjorden.com. 109 gangruter + 13 sykkelruter = 122 ruter, hvorav 31 Hvaler. Brukeren godkjente gangrutetesten og bestilte sykkelrutene 2026-10-11; ferger utelates. Gamle GIS-/Hvaler-segmenter blandes ikke inn. Andre stier og 61 m korridor bevares. Bredere redesign er fortsatt utsatt; sammenslåing er ikke bestilt.
 
 ## Arkitektur
 Statisk webapp med Leaflet, Turf og polygon-clipping; ingen egen appserver. `app.js` styrer modulrekkefølgen.
