@@ -97,5 +97,12 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Forenkling godkjent 2026-10-11: fjern begge handlingsknappene fra mobilens parkheader. Håndtaket brukes for å åpne/lukke fanen, kartvalg legger til parker, og fjerning/tømming gjøres i valgtlisten. PC-knappene beholdes.
 
 ## Oppstartsvisning (2026-10-11)
-- Den gamle infoboksen skal ikke blinke frem ved lasting eller oppdatering. En tidlig, innebygd CSS-regel skjuler panelet frem til mobil- og PC-oppsettet er montert.
-- Oppstartsfeil må frigjøre skjulingen og fortsatt være synlige, også hvis selve app.js ikke kan lastes. Kart-, GPS- og geometrioppførsel bevares.
+- PC-panelet, mobilfanen og mobilverktøyene ligger nå direkte i HTML-en. Den gamle flate infoboksen og rekonstruering med opprinnelige DOM-ankre er fjernet etter brukerens bestilling 2026-10-11.
+- En tidlig CSS-regel holder interaktive flater skjult til hendelsene er koblet opp; den brukes ikke til å skjule en gammel reserveboks.
+- Oppstartsfeil frigjør skjulingen og vises i et eget feilfelt, også hvis selve app.js ikke kan lastes. Kart-, GPS- og geometrioppførsel bevares.
+
+## Direkte UI-struktur (2026-10-11)
+- `index.html` eier PC-sidepanelet, mobilfanen, verktøyknappene, valgliste-/overlappsplasser og innstillingsseksjonene. UI-modulene kobler opp handlinger og oppdaterer informasjon.
+- Unike søk-/land-/karttype-/flervalg-/tegnforklarings-/GPS-statusfelt flyttes bare mellom navngitte PC- og mobilplasser. Verdier og lyttere beholdes ved endret skjermbredde.
+- PC-modulen flytter ikke innstillings-/hjelpseksjoner eller gjenoppretter den gamle panelrekkefølgen. GPS-knappen har én skjult hjemmeplass på mobil og en Leaflet-kontroll på PC.
+- Gammelt flytende panel og gammel mobil reserveboks er fjernet fra CSS. Godkjent utseende og kart-/GPS-/geometrilogikk skal bevares.

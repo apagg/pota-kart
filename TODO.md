@@ -7,7 +7,8 @@ Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** st�
 - Parkboksen og valgtlisten er manuelt testet og bekreftet av brukeren 2026-10-11.
 - Brukeren har bekreftet samlet opptrekksfane og plasseringen av Innstillinger med «dette ble mye bedre» 2026-10-11.
 - Brukeren har bekreftet at UI for både mobil og PC er tilfredsstillende 2026-10-11.
-- [ ] Brukeren kontrollerer oppdatering/nylasting uten blink fra gammel infoboks på https://apagg.github.io/pota-kart/test/mobile-ui/.
+- Brukeren bekreftet at oppstartsblinkingen var borte 2026-10-11 og bestilte opprydding av den gamle UI-grunnstrukturen.
+- [ ] Brukeren kontrollerer den direkte PC-/mobilstrukturen, oppstart og skjermbreddebytte på https://apagg.github.io/pota-kart/test/mobile-ui/.
 - [ ] Sluttkontroll og eventuell sammenslåing etter uttrykkelig godkjenning.
 - GPS-delen er bestilt 2026-10-11: GPS under zoom til høyre, større zoomknapper og synlig GPS-status. Eksisterende GPS-logikk beholdes.
 - Brukeren har bekreftet GPS-presentasjonen med «ser bra ut» 2026-10-11.
