@@ -337,12 +337,12 @@ let oslofjordenTrailPromise=null;
 async function resolveKyststienFallback(link,p){
   if(!['NO-2542','LA-2542'].includes(p.reference)&&!/kyststien\s*[øo]stfold/i.test(p.name||''))throw Error('Ingen testgeometri for denne ruten');
   if(!oslofjordenTrailPromise)oslofjordenTrailPromise=(async()=>{
-    const d=await getJSON('data/coastal/oslofjorden-ostfold-test.geojson?v=1');
+    const d=await getJSON('data/coastal/oslofjorden-ostfold-test.geojson?v=2');
     if(d.type!=='FeatureCollection'||d.metadata?.reference!=='NO-2542'||d.metadata?.schemaVersion!==1||!Array.isArray(d.features))throw Error('Ugyldig Oslofjorden-testdatasett');
     const lines=[];
     for(const f of d.features){
       if(!f.properties?.includedInPota)continue;
-      if(!['marked-walking-route','walking-suggestion'].includes(f.properties.category)||f.properties.reference!=='NO-2542')throw Error('Ugyldig rutekategori');
+      if(!['marked-walking-route','walking-suggestion','cycling-alternative'].includes(f.properties.category)||f.properties.reference!=='NO-2542')throw Error('Ugyldig rutekategori');
       const g=f.geometry,parts=g?.type==='LineString'?[g.coordinates]:g?.type==='MultiLineString'?g.coordinates:null;
       if(!parts?.length)throw Error('Mangler rutegeometri');
       for(const line of parts){
@@ -351,7 +351,7 @@ async function resolveKyststienFallback(link,p){
       }
     }
     if(!lines.length)throw Error('Oslofjorden-testen mangler gangruter');
-    return {source:'notrail',sourceLabel:'Oslofjorden.com – Østfold gangruter (test)',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 Oslofjorden test',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,testSource:true};
+    return {source:'notrail',sourceLabel:'Oslofjorden.com – Østfold gang- og sykkelruter (test)',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 Oslofjorden test',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,testSource:true};
   })().catch(e=>{oslofjordenTrailPromise=null;throw e});
   return oslofjordenTrailPromise;
 }

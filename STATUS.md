@@ -36,11 +36,11 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
 - Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkering og punktutseende er ferdigstilt i hovedkartet.
 
-## Oslofjorden-kyststitest – publisert og verifisert
+## Oslofjorden-kyststitest – sykkelutvidelse under verifisering
 - Bestilt separat test 2026-10-11 på `test/oslofjorden-coast`: https://apagg.github.io/pota-kart/test/oslofjorden-coast/.
-- NO-2542 bruker 109 gangruter fra Østfold, inkludert 29 Hvaler. Kildeøyeblikksbilde 2026-10-11; ferger/sykkelalternativer utelates. Gammel GIS og redigert Hvaler erstattes ved alle zoomnivåer i denne testen. Andre parker/stier og korridor/GPS/farger bevares.
-- **Kode:** `68932bc7762eeb8a735ef3fd26d52336ffe78430`. [Verify POTA map 38173646678](https://github.com/apagg/pota-kart/actions/runs/38173646678) = completed/success. Import, eksakt geometri ved alle zoomnivåer, uendret annen parkgeometri, 20/44 m GPS-grense og eksisterende overlapp-/PC-/mobil-/aktiveringstester består. Kyststi-klikk forblir responsive.
-- **Publisering:** `13676c70b46b87223ecb5f73e62f1f30d3562468`; [Pages 38173768905](https://github.com/apagg/pota-kart/actions/runs/38173768905) = completed/success. Live HTML har riktig testversjon. PC- og mobilbilder er visuelt kontrollert; faktisk POTA-avgrensning venter på brukertest.
+- NO-2542 får 109 gangruter + 13 sykkelruter fra Østfold, inkludert alle 31 Hvaler-rutene. Kildeøyeblikksbilde 2026-10-11; ferger utelates. Brukeren godkjente gangrutetesten og bestilte sykkelrutene 2026-10-11. Lokal import-/datakontroll består; ny nettleserkjøring og publisering gjenstår. Gammel GIS og redigert Hvaler erstattes ved alle zoomnivåer i denne testen. Andre parker/stier og korridor/GPS/farger bevares.
+- **Forrige verifiserte gangrutetest:** `68932bc7762eeb8a735ef3fd26d52336ffe78430`. [Verify POTA map 38173646678](https://github.com/apagg/pota-kart/actions/runs/38173646678) = completed/success. Import, eksakt geometri ved alle zoomnivåer, uendret annen parkgeometri, 20/44 m GPS-grense og eksisterende overlapp-/PC-/mobil-/aktiveringstester består. Kyststi-klikk forblir responsive.
+- **Forrige publisering:** `13676c70b46b87223ecb5f73e62f1f30d3562468`; [Pages 38173768905](https://github.com/apagg/pota-kart/actions/runs/38173768905) = completed/success. Live HTML har riktig testversjon. PC- og mobilbilder er visuelt kontrollert; faktisk POTA-avgrensning venter på brukertest.
 - Varig bruksvilkårsnotat: [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/test/oslofjorden-coast/data/coastal/README.md) og PROJECT.md. Brukeren oppgir privat bruk og valgte vanlig offentlig tilgjengelig testlenke etter informasjon om dette. Ved annen/bredere/kommersiell bruk må rettighetene avklares med kildeeieren.
 - Sammenslåing av testkoden er ikke bestilt. Visuell POTA-avgrensning må vurderes av brukeren.
 

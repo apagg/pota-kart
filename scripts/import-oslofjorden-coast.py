@@ -66,7 +66,7 @@ def convert(raw, snapshot_date=None, source_last_modified=None):
             features.append({'type': 'Feature', 'properties': {
                 'name': name, 'folderPath': path, 'sourceUrl': source_url,
                 'sourceColor': color, 'category': category,
-                'includedInPota': category in ('marked-walking-route', 'walking-suggestion'),
+                'includedInPota': category in ('marked-walking-route', 'walking-suggestion', 'cycling-alternative'),
                 'reference': 'NO-2542',
             }, 'geometry': geometry})
         for child in folder.findall('k:Folder', NS):
@@ -74,7 +74,7 @@ def convert(raw, snapshot_date=None, source_last_modified=None):
 
     walk(folders[0], [])
     if not features or not any(f['properties']['includedInPota'] for f in features):
-        raise ValueError('No usable Østfold walking routes')
+        raise ValueError('No usable Østfold walking/cycling routes')
     return {'type': 'FeatureCollection', 'metadata': {
         'schemaVersion': 1, 'source': SOURCE, 'sourceSha256': hashlib.sha256(raw).hexdigest(),
         'snapshotDate': snapshot_date or date.today().isoformat(), 'sourceLastModified': source_last_modified,
@@ -95,4 +95,4 @@ if __name__ == '__main__':
     data = convert(args.input.read_bytes(), args.snapshot_date, args.source_last_modified)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')))
-    print('Østfold:', data['metadata']['includedFeatureCount'], 'walking routes of', len(data['features']))
+    print('Østfold:', data['metadata']['includedFeatureCount'], 'walking/cycling routes of', len(data['features']))

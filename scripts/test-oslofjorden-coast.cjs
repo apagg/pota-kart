@@ -1,5 +1,7 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
 const data=JSON.parse(fs.readFileSync('data/coastal/oslofjorden-ostfold-test.geojson','utf8'));
+const cycling=data.features.filter(f=>f.properties.category==='cycling-alternative');
+assert.equal(cycling.length,13);assert(cycling.every(f=>f.properties.includedInPota));
 const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.properties.includedInPota).flatMap(f=>f.geometry.type==='LineString'?[f.geometry.coordinates]:f.geometry.coordinates)};
 (async()=>{
  const browser=await chromium.launch(),page=await browser.newPage({viewport:{width:1280,height:900}}),errors=[],requests=[];
@@ -7,7 +9,9 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  await page.goto('http://127.0.0.1:8765');
  await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  const initial=await page.evaluate(async()=>({record:(await atlasRecord('NO-2542')).geometry,alias:(await atlasRecord('LA-2542')).geometry,overview:geometryAtlas.overviewByRef.get('NO-2542'),bbox:atlasMeta('NO-2542').bbox}));
- assert.deepEqual(initial.record,expected);assert.deepEqual(initial.alias,expected);assert.deepEqual(initial.overview,expected);
+ assert.deepEqual(initial.record,expected);
+ const cyclingHits=await page.evaluate(points=>points.map(c=>{const ll=L.latLng(c[1],c[0]),g=geometryAtlas.byRef.get('NO-2542');return atlasHit(g,ll)&&gpsGeometryHit(g,ll)}),cycling.map(f=>f.geometry.coordinates[0]));
+ assert(cyclingHits.every(Boolean),'Every imported cycling route supports map and GPS hits');assert.deepEqual(initial.alias,expected);assert.deepEqual(initial.overview,expected);
  const coords=expected.coordinates.flat(),bbox=[Math.min(...coords.map(c=>c[0])),Math.min(...coords.map(c=>c[1])),Math.max(...coords.map(c=>c[0])),Math.max(...coords.map(c=>c[1]))];
  assert.deepEqual(initial.bbox,bbox);
  // Other parks still come from the original atlas shard.
@@ -38,9 +42,10 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  await page.screenshot({path:'atlas-coast-desktop.png'});
  await page.setViewportSize({width:390,height:844});await page.waitForFunction(()=>document.body.classList.contains('mobile-layout'));
  await page.waitForTimeout(500);assert.equal(await page.locator('#mobileParkRef').innerText(),'NO-2542');
- await page.screenshot({path:'atlas-coast-mobile.png'});
+ await page.evaluate(c=>{map.setView([c[1],c[0]],13,{animate:false})},hvaler);
+ await page.waitForTimeout(500);await page.screenshot({path:'atlas-coast-mobile.png'});
  assert.equal(requests.filter(u=>u.includes('/data/coastal/oslofjorden-ostfold-test.geojson')).length,1,'Snapshot memoized');
  assert.equal(requests.filter(u=>u.includes('hvaler-tillegg.geojson')||u.includes('RegFriluft_innsyn/MapServer/15/query')).length,0,'Former source not requested');
- assert.deepEqual(errors,[]);console.log('PASS coastal replacement: exact geometry at every zoom, alias, memo, unchanged other park, real-route GPS 20/44m, desktop/mobile');
+ assert.deepEqual(errors,[]);console.log('PASS coastal replacement: exact walking/cycling geometry at every zoom, cycling map/GPS hits, alias, memo, unchanged other park, real-route GPS 20/44m, desktop/mobile');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
