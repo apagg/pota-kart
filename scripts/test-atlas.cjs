@@ -26,6 +26,18 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const initialLayout=await layout();console.log('Desktop initial',initialLayout,errors,await page.evaluate(()=>({client:map.getContainer().clientWidth,rect:map.getContainer().getBoundingClientRect().width,position:getComputedStyle(map.getContainer()).position,status:st.textContent})));assert.equal(initialLayout.panel,350);assert.equal(initialLayout.map,350);assert.equal(initialLayout.size,930);assert.equal(await page.locator('#linkbox').isVisible(),false);
  await page.click('#hidePanel');const hiddenLayout=await layout();assert.equal(hiddenLayout.map,0);assert.equal(hiddenLayout.size,1280);assert.deepEqual(hiddenLayout.center,initialLayout.center);assert.equal(hiddenLayout.zoom,initialLayout.zoom);
  await page.click('#showPanel');assert.equal((await layout()).map,350);
+ console.log('Desktop collapsible settings and map controls');
+ assert.equal(await page.locator('#desktopSettings').getAttribute('open'),null);assert.equal(await page.locator('#countryFilter').isVisible(),false);
+ assert.equal(await page.locator('#desktopLegend').getAttribute('open'),null);assert.equal(await page.locator('#desktopLegend .mapkey').isVisible(),false);
+ assert.equal(await page.locator('.info-more > summary').innerText(),'Hjelp og teknisk informasjon');
+ assert.equal(await page.locator('.leaflet-top.leaflet-right #locateBtn').count(),1);assert.equal(await page.locator('.leaflet-top.leaflet-right .leaflet-control-zoom').count(),1);
+ await page.click('#hidePanel');assert.equal(await page.locator('#locateBtn').isVisible(),true);await page.click('#showPanel');
+ await page.locator('#desktopSettings > summary').click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
+ await page.selectOption('#baseMapSelect','osm');await page.uncheck('#multiMode');await page.check('#multiMode');await page.locator('#desktopSettings > summary').click();
+ await page.fill('#q','NO-NO-SUCH-PARK');await page.click('#search');await page.locator('#desktopNotice').waitFor({state:'visible'});assert.match(await page.locator('#desktopNotice').innerText(),/Fant ikke/);
+ await page.evaluate(()=>{st.textContent='Kartet viser lagret geometri';});await page.waitForFunction(()=>document.getElementById('desktopNotice').hidden);await page.fill('#q','');
+ await page.screenshot({path:'atlas-desktop-settings-closed.png'});
+
  for(const width of [701,1024,1600]){await page.setViewportSize({width,height:900});await page.waitForFunction(w=>map.getSize().x===w-350,width);assert.equal((await layout()).panel,350);assert.equal((await layout()).size,width-350);}
  await page.setViewportSize({width:1280,height:900});
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
@@ -57,7 +69,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   return {parts:polygons.length,holes:polygons.reduce((n,p)=>n+p.length-1,0),holeHit:atlasHit(geometry,L.latLng(3,3)),islandHit:atlasHit(geometry,L.latLng(1,21)),holeOverlap:polygonClipping.intersection(polygons,[hole]).length};
  });
  assert.deepEqual(topology,{parts:2,holes:1,holeHit:false,islandHit:true,holeOverlap:0});
- console.log('Country filter');await page.selectOption('#countryFilter','NO');await page.waitForTimeout(800);
+ console.log('Country filter');await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','NO');await page.waitForTimeout(800);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.country==='SE'&&layers.pts.hasLayer(x.marker)).length),0);
  console.log('Automatic overlap without selection');
  const automaticPair=await page.evaluate(()=>{
@@ -72,8 +84,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const completed=await page.evaluate(()=>atlasOverlapState.completed);await page.evaluate(()=>{map.panBy([1,0],{animate:false})});
  await page.waitForFunction(n=>atlasOverlapState.completed>n,completed,{timeout:60000});assert(await page.evaluate(()=>atlasOverlapState.stats.cacheHits)>0);
 
- await page.selectOption('#countryFilter','SE');await page.waitForFunction(()=>atlasOverlapState.pairs.every(p=>p.refs.every(ref=>ref.startsWith('SE-'))));
- await page.selectOption('#countryFilter','NO');await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
+ await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','SE');await page.waitForFunction(()=>atlasOverlapState.pairs.every(p=>p.refs.every(ref=>ref.startsWith('SE-'))));
+ await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','NO');await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
  console.log('Selecting Enhusvidda');await page.fill('#q','NO-3198');await page.click('#search');await page.waitForFunction(()=>selectedParks.has('NO-3198'),null,{timeout:60000});
  assert.equal(await page.evaluate(()=>selectedParks.get('NO-3198').marker),null);assert.equal(await page.evaluate(()=>!!selectedParks.get('NO-3198').geo),true);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.reference==='NO-3198'&&layers.pts.hasLayer(x.marker)).length),0);
@@ -99,10 +111,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3198'),false,false)});await page.waitForTimeout(300);
  assert.equal(await page.evaluate(()=>atlasOverlapState.requests),requests,'park selection must not recompute automatic overlaps');
  assert.equal(statRequests['NO-3198'],1);
- await page.screenshot({path:'atlas-desktop.png'});
+ await page.locator('#desktopSettings').evaluate(el=>{el.open=false});await page.screenshot({path:'atlas-desktop.png'});
 
- await page.selectOption('#countryFilter','SE');await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>map.hasLayer(selectedParks.get('NO-3198').geo)),false);
- await page.selectOption('#countryFilter','NO');await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>map.hasLayer(selectedParks.get('NO-3198').geo)),true);
+ await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','SE');await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>map.hasLayer(selectedParks.get('NO-3198').geo)),false);
+ await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','NO');await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>map.hasLayer(selectedParks.get('NO-3198').geo)),true);
  // Shared source geometry must offer every POTA park, including unselected parks.
  console.log('Overlap chooser');const overlap=await page.evaluate(()=>{
   const groups=new Map();for(const [ref,meta] of Object.entries(geometryAtlas.indexes.NO.parks)){const key=meta.source+':'+meta.id;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(ref)}
@@ -138,7 +150,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>document.querySelector('#linkbox [data-pota-activation-count]')?.textContent==='ikke tilgjengelig');
  const reserveLink=page.locator('#linkbox a');assert.equal(await reserveLink.getAttribute('href'),'https://pota.app/#/park/'+missing);
  await page.evaluate(ref=>{selectedParks.get(ref).marker.openTooltip()},missing);assert.equal(await page.locator('.pota-point-tooltip:visible').count()>0,true,'desktop keeps point labels');
- console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/POTA Kart 0\.11\.0$/);
+ console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('#desktopSettings').count(),0);assert.equal(await page.locator('.desktop-map-controls').count(),0);assert.equal(await page.locator('#baseMapSelect').evaluate(el=>el.closest('.row').contains(document.getElementById('locateBtn'))),true);assert.equal(await page.locator('.mobile-nav').isVisible(),true);assert.match(await page.locator('.mobile-brand').innerText(),/POTA Kart 0\.11\.0$/);
  await page.getByRole('button',{name:'Innstillinger',exact:true}).click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.getByRole('button',{name:'Kart',exact:true}).click();await page.screenshot({path:'atlas-mobile.png'});
  console.log('Mobile geometry warnings stay inside the expanded sheet; point labels are restored');
@@ -214,7 +226,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');assert.equal(await page.evaluate(()=>testGps.watches.size),3);
  await gpsButton.click();await emitGps(2,63,13,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
  assert.deepEqual(await page.evaluate(()=>testGps.watches.get(0).options),{enableHighAccuracy:true,timeout:15000,maximumAge:0});
- await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300);await page.click('#locateBtn');await emitGps(3,60.01,10.01,6);
+ await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300);assert.equal(await page.locator('.leaflet-top.leaflet-right #locateBtn').count(),1);await page.locator('#desktopSettings').evaluate(el=>{el.open=false});await page.click('#locateBtn');await emitGps(3,60.01,10.01,6);
  assert.equal(await page.locator('#locateBtn').getAttribute('aria-pressed'),'true');
  await emitGps(3,60.011,10.011,6);await page.waitForFunction(()=>map.getCenter().distanceTo([60.011,10.011])<10);
  await dragMap();assert.equal(await page.locator('#locateBtn').innerText(),'Følg posisjon');const desktopPan=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));

@@ -20,7 +20,9 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Offentlig testpublisering er uttrykkelig godkjent av brukeren 2026-10-11. [Verify POTA map 38147397128](https://github.com/apagg/pota-kart/actions/runs/38147397128) = `completed/success`, inkludert PC/mobil og publisering av testkopi.
 - Testkopien er lagret på `main` i commit `a0c64f22a6d263781344239f85f26ca7e803886f`. Bare `test/pc-ui/` ble publisert; hovedkartets kildekode er ikke slått sammen med UI-grenen.
 - Testkart: https://apagg.github.io/pota-kart/test/pc-ui/. [GitHub Pages 38147518979](https://github.com/apagg/pota-kart/actions/runs/38147518979) = `completed/success`.
-- Trinn 3 (GPS på kartet og sammenleggbare innstillinger) gjenstår til etter første brukertest. Hovedkartets UI er uendret.
+- Brukeren testet og godkjente trinn 1–2 (2026-10-11) og ba om trinn 3.
+- Trinn 3 er implementert for verifisering: GPS og zoom øverst til høyre, sammenleggbare kartinnstillinger, tegnforklaring og hjelp/teknisk informasjon. Feilmeldinger beholdes synlige uten å åpne seksjonene. Mobilens opprinnelige elementplassering gjenopprettes ved 700 px.
+- Ny CI og testpublisering av trinn 3 avventes; ikke meld ferdig før `completed/success`. Hovedkartets UI er uendret.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**

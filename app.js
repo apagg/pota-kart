@@ -31,7 +31,7 @@
     await load('park-selection-controller.js?v=011-release');
     await load('pota-startup.js?v=011-release');
     await load('mobile-ui.js?v=011-release');
-    await load('desktop-ui.js?v=pc-ui-1');
+    await load('desktop-ui.js?v=pc-ui-3');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
