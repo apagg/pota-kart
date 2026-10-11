@@ -18,9 +18,11 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - **Separat testkopi:** https://apagg.github.io/pota-kart/test/pc-ui/ på testgrenen `test/pc-ui`. Kan avvike fra senere endringer i hovedkartet.
 
 ## Aktivt arbeid – mobil-UI
-- Brukeren har bestilt en gjennomgang og et konkret forslag til mobiloppsettet. Kildekode og eksisterende mobilskjermbilder er kontrollert mot gjeldende `main`.
-- Funn: utvidet parkboks viser hovedsakelig bruksanvisning/datatekst; valgtlisten har fjerning, men ingen åpning av parkinfo; GPS ligger til venstre og zoomknappene er 36 × 36 px.
-- Foreslått prioritet: parkboks/detaljer og klikkbar valgliste først, deretter kartkontroller. Se TODO.md for konkret omfang. Ingen mobilkode er endret, og implementering/publisering av forslaget er ikke avtalt ennå.
+- Brukeren har godkjent implementering av første mobiltrinn 2026-10-11: parkboks/detaljer og klikkbar valgliste på egen testgren `test/mobile-ui`.
+- Første trinn er implementert på testgrenen: kompakt parkboks med «Vis detaljer»/«Vis mindre», områdenavn/parktype/geometristatus, 44 px handlinger, klikkbar valgliste med gjeldende park markert og separate knapper for fjerning/tømming. Generell hjelp/datatekst er samlet i innstillinger.
+- Verifisert kode og testpublisering: `9c6532e41ae004ec103c15ca759790ddcf5a0069`; [Verify POTA map 38153458084](https://github.com/apagg/pota-kart/actions/runs/38153458084) = `completed/success`. PC/mobil, GPS, overlapp, Kyststien og målrettet mobiltest er bestått. Åpning fra valgtlisten bevarer kartutsnitt og geometriinstanser. 320/390/640 px, enkelt-/flervalg, fjerning, tømming, tekstescaping og gjenoppretting av PC er kontrollert. Skjermbilder er visuelt gjennomgått.
+- **Mobiltest:** https://apagg.github.io/pota-kart/test/mobile-ui/. Kopien er publisert på `main/test/mobile-ui/` i commit `18647aebf4bb56dc0f8daff69dd5c30f29309042`; [GitHub Pages 38153589038](https://github.com/apagg/pota-kart/actions/runs/38153589038) = `completed/success`. Rotnivået ble kontrollert: kun `test/` endret ved apppublisering, så hovedkartets app/data er bevart. Brukertest gjenstår.
+- GPS-/zoomplassering og overlappslisten er utsatt til neste trinn. Ingen sammenslåing av mobiltrinnet til hovedkartet er godkjent.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**
