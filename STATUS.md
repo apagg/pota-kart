@@ -18,7 +18,8 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Testkopi publisert til `test/pc-ui/` på `main` i commit `e968323226bf40bc93e7550d87ea97521adc2aac`. [GitHub Pages 38148749733](https://github.com/apagg/pota-kart/actions/runs/38148749733) = `completed/success`.
 - **Testkart:** https://apagg.github.io/pota-kart/test/pc-ui/. Testversjonen er offentlig etter uttrykkelig brukerautorisasjon.
 - Hovedkartets kildekode er ikke slått sammen med UI-grenen. Mobilfiler, parkdata, geometrier, GPS-beregninger, overlapp og hele stisystemet er uendret.
-- Neste steg: brukeren tester trinn 3, deretter avtales eventuell sammenslåing til hovedkartet. Ingen sammenslåing er godkjent ennå.
+- Brukeren rapporterte 2026-10-11 at direkte klikk på Kyststien får kartet til å henge. Feilsøking pågår på testgrenen med egen test for direkte/gjentatte klikk, oversikts-/detaljzoom og enkelt-/flervalg. Ingen endring i stidata eller beregninger er gjort.
+- Ingen sammenslåing til hovedkartet er godkjent.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**

@@ -12,6 +12,7 @@ on:
       - 'scripts/update-geometries.py'
       - 'scripts/test-geometries.py'
       - 'scripts/test-atlas.cjs'
+      - 'scripts/test-kyst-ui.cjs'
       - 'scripts/test-overlap-engine.cjs'
       - '.github/workflows/geometry-preview.yml'
   pull_request:
@@ -105,6 +106,7 @@ jobs:
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
           node scripts/test-overlap-engine.cjs
           timeout 300 node scripts/test-atlas.cjs
+          timeout 180 node scripts/test-kyst-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
