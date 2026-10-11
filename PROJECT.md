@@ -71,4 +71,5 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Valgte parker vises som liste med antall når minst én park er valgt; valg fra listen oppdaterer info uten å flytte kartet.
 - Ingen PC-popup ved parkvalg; valg ved overlapp vises i sidepanelet. Mouseover beholdes.
 - GPS og zoom øverst til høyre på kartet. Sammenleggbare kartinnstillinger (land, bakgrunnskart og flervalg), tegnforklaring og hjelp/teknisk informasjon. Søke-/GPS-feil er synlige selv med lukkede seksjoner.
+- Teknisk valg-/overlappsdiagnostikk beregnes først når hjelpseksjonen åpnes på PC. Lukket seksjon skal ikke gjenta kostbare korridor-/arealberegninger ved parkvalg; selve kart-, GPS- og overlappsmotorene bevares.
 - Mobiloppsett, parkdata, geometrier, GPS-beregninger, overlapp og hele stisystemet bevares. `desktop-ui.js` styrer kun PC-presentasjonen over 700 px.
