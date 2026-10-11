@@ -86,7 +86,10 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
 
  await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','SE');await page.waitForFunction(()=>atlasOverlapState.pairs.every(p=>p.refs.every(ref=>ref.startsWith('SE-'))));
  await page.locator('#desktopSettings').evaluate(el=>{el.open=true});await page.selectOption('#countryFilter','NO');await page.waitForFunction(refs=>atlasOverlapState.pairs.some(p=>refs.every(ref=>p.refs.includes(ref))),automaticPair,{timeout:60000});
+ const areaStyles=()=>page.evaluate(()=>{const first=layer=>{while(layer.eachLayer)layer=layer.getLayers()[0];return {weight:layer.options.weight,fill:layer.options.fillOpacity}};return {overview:first(geometryAtlas.layers.get('NO-3198')),selected:selectedParks.has('NO-3198')?first(selectedParks.get('NO-3198').geo):null}});
+ assert.deepEqual((await areaStyles()).overview,{weight:2,fill:.14},'Ordinary park appearance');
  console.log('Selecting Enhusvidda');await page.fill('#q','NO-3198');await page.click('#search');await page.waitForFunction(()=>selectedParks.has('NO-3198'),null,{timeout:60000});
+ assert.deepEqual((await areaStyles()).selected,{weight:3.5,fill:.26},'Selected park appearance');
  assert.equal(await page.evaluate(()=>selectedParks.get('NO-3198').marker),null);assert.equal(await page.evaluate(()=>!!selectedParks.get('NO-3198').geo),true);
  assert.equal(await page.evaluate(()=>potaMarkers.filter(x=>x.reference==='NO-3198'&&layers.pts.hasLayer(x.marker)).length),0);
  await page.waitForFunction(()=>document.querySelector('#linkbox [data-pota-activation-count]')?.textContent==='0');
@@ -142,6 +145,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('#selectedBox .head b').innerText(),'Valgte parker (2)');
  await page.locator('#selectedList .selected-park-open[data-reference="NO-3198"]').click();
  console.log('Kyststien');await page.fill('#q','NO-2542');await page.click('#search');await page.waitForFunction(()=>selectedParks.has('NO-2542'),null,{timeout:60000});
+ assert.equal(await page.evaluate(()=>{const styles=[];const walk=x=>{if(x.eachLayer)x.eachLayer(walk);else{const type=x.toGeoJSON().geometry.type;styles.push(type==='Polygon'||type==='MultiPolygon'?x.options.weight===1&&x.options.fillOpacity===.28:x.options.weight===2&&x.options.opacity===.95)}};walk(selectedParks.get('NO-2542').geo);return styles.length>0&&styles.every(Boolean)}),true,'Kyststien line and corridor appearance stay unchanged');
  assert.equal(await page.evaluate(()=>TRAIL_CORRIDOR_WIDTH_M),61);assert(await page.evaluate(()=>trailCorridorPolygonsFromLayer(selectedParks.get('NO-2542').geo).length)>0);
  assert.equal(await page.evaluate(()=>{const colors=[];const visit=x=>{if(x.eachLayer)x.eachLayer(visit);else if(x.options.color)colors.push(x.options.color)};visit(selectedParks.get('NO-2542').geo);return colors.every(c=>c==='#1d4ed8')}),true);
  await page.click('#clearSelected');assert.equal(await page.evaluate(()=>selectedParks.size),0);assert.equal(await page.locator('#linkbox').isVisible(),false);assert.equal(await page.locator('#selectedBox').isVisible(),false);assert(await page.evaluate(()=>geometryAtlas.layers.get('NO-2542')&&map.hasLayer(geometryAtlas.layers.get('NO-2542'))));

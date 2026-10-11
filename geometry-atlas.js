@@ -21,9 +21,10 @@ async function atlasRecord(ref){
 }
 const gpsInsideRefs=new Set();let gpsColorEpoch=0;
 function gpsParkColor(ref,selected=false){return gpsInsideRefs.has(ref)?'#15803d':selected?'#1d4ed8':'#3388ff'}
-function atlasStyle(ref){
+function atlasStyle(ref,type='Polygon'){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref,color=gpsParkColor(ref,selected);
- return {color,weight:selected?3:1.5,opacity:.9,fillColor:color,fillOpacity:selected?.22:.09};
+ const area=(type==='Polygon'||type==='MultiPolygon')&&!isTrailLink(linkTable[ref]);
+ return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,fillOpacity:area?(selected?.26:.14):(selected?.22:.09)};
 }
 function gpsGeometryHit(g,ll){
  if(!g)return false;
@@ -59,13 +60,13 @@ async function updateGpsParkColors(){
  if(epoch!==gpsColorEpoch)return;
  const changed=new Set([...gpsInsideRefs,...next].filter(ref=>gpsInsideRefs.has(ref)!==next.has(ref)));
  gpsInsideRefs.clear();for(const ref of next)gpsInsideRefs.add(ref);
- for(const ref of changed)geometryAtlas.layers.get(ref)?.setStyle(()=>atlasStyle(ref));
+ for(const ref of changed)geometryAtlas.layers.get(ref)?.setStyle(f=>atlasStyle(ref,f.geometry.type));
  paintGpsSelected();
  for(const x of atlasOverlapState.layers.values())if(x.refs.some(ref=>changed.has(ref)))x.layer.setStyle(gpsOverlapStyle(x.refs));
 }
 function atlasBuildLayer(ref,geometry){
  const p=pota.find(x=>x.reference===ref);if(!p)return null;
- const lyr=L.geoJSON(geometry,{pane:'atlasPane',renderer:geometryAtlas.renderer,style:()=>atlasStyle(ref),pointToLayer:(f,ll)=>L.circleMarker(ll,{pane:'atlasPane',renderer:geometryAtlas.renderer,radius:5,...atlasStyle(ref)})});
+ const lyr=L.geoJSON(geometry,{pane:'atlasPane',renderer:geometryAtlas.renderer,style:f=>atlasStyle(ref,f.geometry.type),pointToLayer:(f,ll)=>L.circleMarker(ll,{pane:'atlasPane',renderer:geometryAtlas.renderer,radius:5,...atlasStyle(ref,'Point')})});
  if(isKyststienPark(p)){
   const polygons=trailCorridorPolygonsFromLayer(lyr);
   if(polygons.length)lyr.addLayer(L.geoJSON({type:'MultiPolygon',coordinates:polygons},{pane:'atlasPane',renderer:geometryAtlas.renderer,style:{...atlasStyle(ref),weight:1,fillOpacity:.16}}));
@@ -162,7 +163,7 @@ async function initializeGeometryAtlas(){
  }));
  geometryAtlas.ready=true;await atlasRefresh();
  let timer;map.on('moveend',()=>{clearTimeout(timer);timer=setTimeout(atlasRefresh,100)});
- document.addEventListener('pota:selection',()=>requestAnimationFrame(()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(()=>atlasStyle(ref))}));
+ document.addEventListener('pota:selection',()=>requestAnimationFrame(()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(f=>atlasStyle(ref,f.geometry.type))}));
  map.on('click',e=>atlasPick(e.latlng,null));
 }
 

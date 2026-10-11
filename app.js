@@ -12,7 +12,7 @@
     await load('diagnostics.js?v=011-release');
     await load('geojson-utils.js?v=011-release');
     await load('geometry-topology.js?v=011-release');
-    await load('geometry-atlas.js?v=011-release');
+    await load('geometry-atlas.js?v=park-style-1');
     await load('map-setup.js?v=011-release');
     await load('map-layers.js?v=011-release');
     await load('gps-controller.js?v=011-release');
@@ -24,7 +24,7 @@
     await load('sweden-park-registry.js?v=011-release');
     await load('geometry-format-utils.js?v=011-release');
     await load('sweden-heritage-registry.js?v=011-release');
-    await load('app-core.js?v=011-release');
+    await load('app-core.js?v=park-style-1');
     await load('park-diagnostics.js?v=011-release');
     await load('park-selection-state.js?v=011-release');
     await load('pota-park-loader.js?v=011-release');
