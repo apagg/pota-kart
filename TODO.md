@@ -2,10 +2,9 @@
 
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## Oslofjorden-kyststitest – bestilt
-- [ ] Fullfør nettleserverifisering og publiser separat test på `test/oslofjorden-coast`.
+## Oslofjorden-kyststitest – klar for brukertest
 - [ ] Brukertest NO-2542 på Østfold/Hvaler; vurder hvilke gangruter som faktisk inngår i POTA-parken før eventuell sammenslåing.
-- [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se varig notat i PROJECT.md og `data/coastal/README.md`.
+- [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se varig notat i PROJECT.md og [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/test/oslofjorden-coast/data/coastal/README.md).
 - [ ] Avtal sammenslåing separat. Hovedkartets eksisterende data er bevart.
 
 ## Neste UI-trinn
