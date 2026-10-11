@@ -53,3 +53,17 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
   .desktop-layout .desktop-overlap button{display:block;width:100%;text-align:left;margin-top:8px}
   .desktop-layout button:focus-visible,.desktop-layout summary:focus-visible,.desktop-layout a:focus-visible{outline:2px solid #155eef;outline-offset:3px}
 }
+
+@media (min-width:701px){
+  .desktop-layout .desktop-section,.desktop-layout .info-more{margin-top:12px;border-top:1px solid #e4e7ec;padding-top:12px}
+  .desktop-layout .desktop-section>summary,.desktop-layout .info-more>summary{cursor:pointer;color:#344054;font-weight:600;padding:4px 0}
+  .desktop-layout .desktop-section[open]>summary,.desktop-layout .info-more[open]>summary{color:#155eef;margin-bottom:8px}
+  .desktop-layout .mapkey{display:grid;gap:12px;font-size:12px}
+  .desktop-layout .selectbar{flex-wrap:wrap}
+  .desktop-layout .desktop-map-controls{border:0;background:none;box-shadow:none}
+  .desktop-layout .desktop-map-controls button{min-height:40px;background:#fff;color:#155eef;box-shadow:0 1px 7px #0003;border:1px solid #d9dfe8;font-weight:600}
+  .desktop-layout .desktop-map-controls button.gps-active{background:#3388ff;color:#fff;border-color:#3388ff}
+  .desktop-layout .desktop-map-controls button[data-gps-state="paused"]{background:#edf4ff;color:#155eef}
+  .desktop-layout .desktop-notice{margin:10px 0;padding:10px;border-radius:8px;background:#fff4e5;color:#7a4400;font-size:12px;line-height:1.4}
+  .desktop-layout .desktop-notice[hidden]{display:none}
+}
