@@ -3,6 +3,29 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const browser=await chromium.launch(),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://api.pota.app/park/stats/**',route=>route.fulfill({headers:{'Access-Control-Allow-Origin':'*'},json:{activations:17}}));
+ // Hold the final UI module so the legacy panel cannot flash during startup.
+ for(const viewport of [{width:1280,height:900},{width:390,height:844}]){
+  const probe=await browser.newPage({viewport});let release,seen;
+  const gate=new Promise(resolve=>release=resolve),requested=new Promise(resolve=>seen=resolve);
+  await probe.route('**/desktop-ui.js*',async route=>{seen();await gate;await route.continue();});
+  await probe.goto('http://127.0.0.1:8765',{waitUntil:'domcontentloaded'});await requested;
+  assert.equal(await probe.locator('html').evaluate(el=>el.classList.contains('ui-loading')),true);
+  assert.equal(await probe.locator('#infoPanel').isVisible(),false,'Legacy panel must stay hidden while UI loads');
+  assert.equal(await probe.locator('#showPanel').isVisible(),false);
+  await probe.screenshot({path:'atlas-startup-pending-'+viewport.width+'.png'});
+  release();await probe.waitForFunction(()=>!document.documentElement.classList.contains('ui-loading'));
+  assert.equal(await probe.locator('#infoPanel').isVisible(),true,'Ready responsive panel must be visible');
+  assert.equal(await probe.locator('body').evaluate((el,width)=>el.classList.contains(width>700?'desktop-layout':'mobile-layout'),viewport.width),true);
+  await probe.screenshot({path:'atlas-startup-ready-'+viewport.width+'.png'});await probe.close();
+ }
+ // Both bootstrap and module failures must release the gate and expose an error.
+ for(const script of ['app.js','desktop-ui.js']){
+  const probe=await browser.newPage({viewport:{width:1280,height:900}});
+  await probe.route('**/'+script+'*',route=>route.abort());
+  await probe.goto('http://127.0.0.1:8765',{waitUntil:'domcontentloaded'});
+  await probe.waitForFunction(()=>document.getElementById('status').textContent.startsWith('Oppstartsfeil:')&&!document.documentElement.classList.contains('ui-loading'));
+  assert.equal(await probe.locator('#status').isVisible(),true,'Startup errors must remain visible');await probe.close();
+ }
  await page.goto('http://127.0.0.1:8765');
  await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready&&document.body.classList.contains('mobile-layout'),null,{timeout:120000});
  await page.evaluate(async()=>{clearSelectedParks();clearSelection();await showLink(pota.find(p=>p.reference==='NO-3198'),false,false);await showLink(pota.find(p=>p.reference==='NO-3374'),false,false);});
@@ -100,5 +123,5 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('#mobileHelp').isVisible(),false);
  assert.equal(await page.locator('.desktop-map-controls').count(),1);
  assert.deepEqual(errors,[]);
- console.log('PASS mobile UI: relevant details, selected info without map/geometry changes, removal, empty/single/multi, 320/390/640 layouts, unified sheet without bottom navigation, left settings, separate karttype/settings, basemap changes and PC restore');await browser.close();
+ console.log('PASS startup UI: delayed PC/mobile modules without legacy flash and visible failures; mobile UI: relevant details, selected info without map/geometry changes, removal, empty/single/multi, 320/390/640 layouts, unified sheet without bottom navigation, left settings, separate karttype/settings, basemap changes and PC restore');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

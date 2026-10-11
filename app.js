@@ -37,5 +37,8 @@
     if(el)el.textContent='Oppstartsfeil: '+e.message;
     if(typeof potaDiagnostics!=='undefined')potaDiagnostics.report('startup',e,'error');
     else console.error(e);
+  }finally{
+    // Reveal the panel only after the responsive UI is mounted, or show startup errors.
+    document.documentElement.classList.remove('ui-loading');
   }
 })();
