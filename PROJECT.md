@@ -73,3 +73,9 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - GPS og zoom øverst til høyre på kartet. Sammenleggbare kartinnstillinger (land, bakgrunnskart og flervalg), tegnforklaring og hjelp/teknisk informasjon. Søke-/GPS-feil er synlige selv med lukkede seksjoner.
 - Teknisk valg-/overlappsdiagnostikk beregnes først når hjelpseksjonen åpnes på PC. Lukket seksjon skal ikke gjenta kostbare korridor-/arealberegninger ved parkvalg; selve kart-, GPS- og overlappsmotorene bevares.
 - Mobiloppsett, parkdata, geometrier, GPS-beregninger, overlapp og hele stisystemet bevares. `desktop-ui.js` styrer kun PC-presentasjonen over 700 px.
+
+## Avtalt mobiltrinn 1 (2026-10-11)
+- Egen testgren `test/mobile-ui`. Kompakt parkboks med aktiveringer/pota.app og tydelig «Vis detaljer»/«Vis mindre». Utvidelsen viser områdenavn, parktype og tilgjengelig geometri; manglende geometri vises kun inne i utvidet parkboks.
+- Generell bruksanvisning og datakilder samles under sammenleggbar hjelp i innstillinger.
+- Valgte parker kan åpnes fra listen uten panorering/zoom eller ny lasting av valgt geometri. Gjeldende park markeres; fjerning og tømming har separate knapper.
+- Første trinn endrer ikke GPS-/zoomplassering, park-/stidata, geometri-, GPS- eller overlappsfunksjoner. PC-oppsettet skal bevares. Testvisning og eventuell sammenslåing følger avtalt gjennomgang.

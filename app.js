@@ -30,7 +30,7 @@
     await load('pota-park-loader.js?v=011-release');
     await load('park-selection-controller.js?v=011-release');
     await load('pota-startup.js?v=011-release');
-    await load('mobile-ui.js?v=011-release');
+    await load('mobile-ui.js?v=mobile-ui-1');
     await load('desktop-ui.js?v=pc-ui-4');
   }catch(e){
     const el=document.getElementById('status');

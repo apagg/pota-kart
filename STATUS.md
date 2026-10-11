@@ -18,9 +18,9 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - **Separat testkopi:** https://apagg.github.io/pota-kart/test/pc-ui/ på testgrenen `test/pc-ui`. Kan avvike fra senere endringer i hovedkartet.
 
 ## Aktivt arbeid – mobil-UI
-- Brukeren har bestilt en gjennomgang og et konkret forslag til mobiloppsettet. Kildekode og eksisterende mobilskjermbilder er kontrollert mot gjeldende `main`.
+- Brukeren har godkjent implementering av første mobiltrinn 2026-10-11: parkboks/detaljer og klikkbar valgliste på egen testgren `test/mobile-ui`.
 - Funn: utvidet parkboks viser hovedsakelig bruksanvisning/datatekst; valgtlisten har fjerning, men ingen åpning av parkinfo; GPS ligger til venstre og zoomknappene er 36 × 36 px.
-- Foreslått prioritet: parkboks/detaljer og klikkbar valgliste først, deretter kartkontroller. Se TODO.md for konkret omfang. Ingen mobilkode er endret, og implementering/publisering av forslaget er ikke avtalt ennå.
+- Første trinn er implementert på testgrenen og venter på endelig CI-resultat og kontroll av skjermbilder. Generell hjelp/datatekst er samlet i innstillinger. GPS-/zoomplassering og overlappslisten er utsatt til neste trinn. Ingen sammenslåing til hovedkartet er godkjent.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**

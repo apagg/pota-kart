@@ -22,3 +22,35 @@
 
 .mobile-geometry-note{display:none}
 @media(max-width:700px){.mobile-geometry-note:not([hidden]){display:block;margin:8px 0;color:#697487;font-size:12px;line-height:1.4}}
+
+/* Mobile UI stage 1: park details and selected-park navigation. */
+.mobile-park-details,.mobile-help,.mobile-selected-list,.mobile-selected-actions{display:none}
+@media(max-width:700px){
+  .mobile-park-summary{display:grid;grid-template-columns:1fr auto;gap:0 10px}
+  .mobile-park-summary a{min-height:44px;padding:0 4px}
+  .mobile-sheet-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+  .mobile-sheet-actions button{min-height:44px;padding:8px;border-radius:10px;white-space:normal;background:#edf4ff}
+  #mobileDetailsToggle{background:white;border:1px solid #cdddf9}
+  .mobile-park-details:not([hidden]),.mobile-help:not([hidden]),.mobile-selected-list:not([hidden]),.mobile-selected-actions:not([hidden]){display:block}
+  .mobile-park-details dl{margin:8px 0 12px;line-height:1.45}
+  .mobile-park-details dt{font-size:12px;font-weight:650;color:#697487;margin-top:12px}
+  .mobile-park-details dd{margin:3px 0 0;overflow-wrap:anywhere;font-size:14px;color:#172033}
+  .mobile-help{margin-top:16px;border-top:1px solid #e7eaf0;padding-top:8px;font-size:13px;line-height:1.5}
+  .mobile-help>summary{min-height:44px;box-sizing:border-box;padding:12px 0;font-weight:650;cursor:pointer}
+  .mobile-help p{margin:12px 0}
+  .mobile-selected-actions{text-align:right;margin-bottom:8px}
+  #mobileClearSelected{min-height:44px;padding:8px 12px;background:#edf4ff;color:#155eef}
+  .mobile-selected-row{display:flex;align-items:stretch;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f4}
+  .mobile-selected-open{flex:1;min-width:0;min-height:44px;text-align:left;padding:10px;border-radius:10px;background:#f5f7fb;color:#172033;line-height:1.4;font-size:14px;overflow-wrap:anywhere}
+  .mobile-selected-open[aria-current=true]{background:#edf4ff;color:#155eef;box-shadow:inset 3px 0 #155eef}
+  .mobile-selected-remove{flex:0 0 44px;align-self:center;height:44px;padding:0;background:#f0f3f7;color:#536070;font-size:22px;border-radius:10px}
+}
+
+@media(max-width:700px){
+  .mobile-layout .panel,.mobile-layout .panel.hidden{display:flex;flex-direction:column}
+  .mobile-sheet-header{flex:0 0 auto}
+  .panel-content{min-height:0;flex:1 1 auto}
+}
+@media(max-width:700px) and (max-height:500px){
+  .panel{max-height:calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}

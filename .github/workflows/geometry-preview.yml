@@ -1,7 +1,7 @@
 name: Verify POTA map
 on:
   push:
-    branches: ['main', 'feature/all-park-geometries', 'refactor/core-geometry-helpers', 'test/pc-ui']
+    branches: ['main', 'feature/all-park-geometries', 'refactor/core-geometry-helpers', 'test/pc-ui', 'test/mobile-ui']
     paths:
       - '*.js'
       - 'scripts/test-diagnostics.cjs'
@@ -13,6 +13,7 @@ on:
       - 'scripts/test-geometries.py'
       - 'scripts/test-atlas.cjs'
       - 'scripts/test-kyst-ui.cjs'
+      - 'scripts/test-mobile-ui.cjs'
       - 'scripts/test-overlap-engine.cjs'
       - '.github/workflows/geometry-preview.yml'
   pull_request:
@@ -107,6 +108,7 @@ jobs:
           node scripts/test-overlap-engine.cjs
           timeout 300 node scripts/test-atlas.cjs
           timeout 180 node scripts/test-kyst-ui.cjs
+          if [ -f scripts/test-mobile-ui.cjs ]; then timeout 180 node scripts/test-mobile-ui.cjs; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -3,11 +3,11 @@
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
 ## Mobil-UI – forslag til avklaring (2026-10-11)
-- [ ] Avtal omfang før implementering. Gjennomgangen er bestilt, men nytt mobiloppsett er ennå ikke godkjent.
-- [ ] Første trinn foreslått: kompakt parkboks med tydelig «Vis detaljer»/«Vis mindre», parkrelevante detaljer og større trykkflater for pota.app og legg til/fjern. Bruksanvisning/datakilder flyttes til sammenleggbar hjelp i innstillinger.
-- [ ] Første trinn foreslått: klikkbar liste over valgte parker som åpner parkinfo uten panorering/zoom, separat fjernknapp og tydelig markering av gjeldende park. Overlappslisten viser hvilke parker som allerede er valgt.
-- [ ] Andre trinn foreslått: GPS under zoom på høyre side, større zoomknapper og tydelige visuelle tilstander for GPS av/følg/pauset følging. Eksisterende GPS-logikk beholdes.
-- [ ] Ved godkjenning: egen testgren `test/mobile-ui`, PC-/mobilregresjoner, små skjermer, liggende mobil, overlapp og Kyststien. Isolert testpublisering avtales før publisering; sammenslåing etter brukertest.
+- Første trinn (parkboks og valgliste) er godkjent for implementering på `test/mobile-ui` 2026-10-11.
+- [ ] Første trinn: kompakt parkboks med tydelig «Vis detaljer»/«Vis mindre», parkrelevante detaljer og større trykkflater for pota.app og legg til/fjern. Bruksanvisning/datakilder flyttes til sammenleggbar hjelp i innstillinger.
+- [ ] Første trinn foreslått: klikkbar liste over valgte parker som åpner parkinfo uten panorering/zoom, separat fjernknapp og tydelig markering av gjeldende park.
+- [ ] Andre trinn foreslått (ikke implementert): GPS under zoom på høyre side, større zoomknapper og tydelige visuelle tilstander for GPS av/følg/pauset følging. Eksisterende GPS-logikk beholdes.
+- [ ] Fullfør CI og visuell kontroll på egen testgren `test/mobile-ui`, PC-/mobilregresjoner, små skjermer, liggende mobil, overlapp og Kyststien. Isolert testpublisering avtales før publisering; sammenslåing etter brukertest.
 
 ## Neste oppgaver – avtal prioritet før implementering
 - [ ] Vurder forbedring av nettverksfeilhåndtering og brukervennlige feilmeldinger uten å endre kartets funksjon.
