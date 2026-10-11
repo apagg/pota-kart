@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#155eef">
+<script>document.documentElement.classList.add('ui-loading');</script>
+<style>html.ui-loading #infoPanel,html.ui-loading #showPanel{visibility:hidden!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <title>POTA Kart 0.11.0 – Norge og Sverige</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -50,5 +52,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=mobile-ui-5"></script>
+<script src="app.js?v=mobile-ui-6" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('status').textContent='Oppstartsfeil: Kunne ikke laste app.js';"></script>
 </body></html>
