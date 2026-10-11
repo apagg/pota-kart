@@ -22,16 +22,18 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Målrettede tester dekker 320/390/640 px, samlet fane, venstre innstillinger, knappestørrelser, lange parknavn, fjerning/tømming, karttype, parkstil før/etter valg, uendret Kyststien-stil, forsinket oppstart/synlige oppstartsfeil og gjentatte PC-/mobilbytter.
 - **Separate testkopier:** https://apagg.github.io/pota-kart/test/mobile-ui/ og https://apagg.github.io/pota-kart/test/pc-ui/. De er øyeblikksbilder og kan avvike fra senere endringer i hovedkartet.
 
-## Undersøkelse: automatisk aktiveringsmarkering
-- Brukeren ønsker flere kallesignaler i Innstillinger og gule aktiverte parker. Manuell CSV-import er avvist. LB6BK-profilen inkluderer SM/LB6BK som alternativt kallesignal.
-- Offentlig profil er bekreftet begrenset til nylig aktivitet (25 rader på en profil med 492 aktiveringer). Full brukerparkoversikt avviste uautorisert forespørsel med 403. Ingen dokumentert tredjepartsinnlogging er funnet.
-- En offentlig vei finnes per park: parkhistorikk med `count=all` og CORS for nettlesere. Bekreftet LB6BK-aktiveringer i NO-3198 og SE-0016. Profil + automatisk historikksjekk av synlige parker med cache er foreslått til vurdering; dette gir gradvis kontroll, ikke en komplett global liste i ett kall.
-- Ingen appkode, parkfarger eller data er endret i undersøkelsen. Se PROJECT/TODO for funn og uavklarte valg.
-- Brukeren har også bekreftet hovedkartet etter PR #4 med «ser bra ut» 2026-10-11.
+## Aktiv test: automatisk aktiveringsmarkering
+- Brukeren bestilte implementering. Gren `test/activated-parks` er publisert på https://apagg.github.io/pota-kart/test/activated-parks/.
+- Flere hovedkallesignaler i Innstillinger, automatiske profilaliaser, gulmarkering ved minst 10 QSO. GPS-grønn prioriteres og overlapp/stil beholdes.
+- Offentlig profil gir rask start, men bare nylig aktivitet. Full parkhistorikk sjekkes automatisk for valgte parker og opptil 40 nærliggende parker ved innzooming. Ett oppslag om gangen, cache og automatisk oppfriskning etter 15 minutter. Feil vises uten å fjerne tidligere bekreftede aktiveringer.
+- **Kode:** `3085d6fc346c6aaa5c63e11ff3b7e6a02600998c`. **Verify UI Preview:** `38168302079` success. Eksisterende PC-/mobil-/GPS-/Kyststien-tester samt nye tester av flere kallesignaler, aliaser, QSO-terskel, cache, feil, fargeprioritet og begrenset API-kø passerte.
+- **Testpublisering:** `bd68900d28e88f3b269a0785c91b021ba4b60488`. **Pages:** `38168457409` success.
+- **Live kontroll:** LB6BK fant 9 aktiverte parker; NO-3198 Enhusvidda viste gul geometri og «Aktivert av LB6BK». Automatisk historikkø startet ved innzooming. Ingen innlogging eller passord brukes.
+- Brukerens visuelle test og eventuell særskilt sammenslåingsgodkjenning gjenstår. Hovedkartets appkode er uendret; bare testkopien er publisert. Hovedkartet etter PR #4 er bekreftet av brukeren.
 
 ## Neste arbeid
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
-- Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Brukeren ønsker nå å undersøke automatisk gulmarkering av aktiverte parker; implementering er ikke avtalt.
+- Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkeringen er klar til brukerens test på egen testlenke.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**
