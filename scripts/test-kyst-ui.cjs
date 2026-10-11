@@ -29,7 +29,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
    for(const line of lines)for(const c of line){const d=L.latLng(c[1],c[0]).distanceTo([+p.latitude,+p.longitude]);if(d<distance){best=c;distance=d}}
    console.log('KYST displayed hit '+JSON.stringify(atlasRefsAt(L.latLng(best[1],best[0]))));return best;
   });
-  await page.evaluate(c=>map.setView([c[1],c[0]],map.getZoom(),{animate:false}),target);
+  await page.evaluate(c=>{map.setView([c[1],c[0]],map.getZoom(),{animate:false});},target);
   for(const multi of [true,false]){
    await page.evaluate(multi=>{multiMode.checked=multi;multiMode.dispatchEvent(new Event('change'));clearSelectedParks();clearSelection();lastSelectedRef=null},multi);
    for(let attempt=0;attempt<2;attempt++){
