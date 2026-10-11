@@ -6,6 +6,8 @@ function openParkInfo(p,link,latlng=null){
   const details=`<details class="park-details"><summary>Vis flere detaljer</summary><p><b>Område:</b> ${esc(link?.officialName||p.name)}<br><b>Type:</b> ${esc(link?.type||'Ikke tilgjengelig')}</p><p class="small">${atlasHasGeometry(p.reference)?'Parken har tilgjengelig geometri.':'Geometri mangler – parken vises som punkt.'}</p></details>`;
   linkbox.style.display='block';
   linkbox.innerHTML=desktop?`<div class="park-label">VALGT POTA-PARK</div><div class="park-reference">${esc(p.reference)}</div><h2 class="park-name">${esc(p.name)}</h2><div class="park-activations">Aktiveringer: <span data-pota-activation-count aria-live="polite">Henter …</span></div>${potaLink}${details}`:content;
+  const personal=document.createElement('div');personal.className='personal-activation small';personal.dataset.personalActivation=p.reference;
+  personal.textContent=typeof parkActivations==='undefined'?'':parkActivations.statusText(p.reference);personal.hidden=!personal.textContent;linkbox.appendChild(personal);
   const countNodes=[linkbox.querySelector('[data-pota-activation-count]')];
   if(desktop)map.closePopup();
   getPotaActivationCount(p.reference).then(count=>{

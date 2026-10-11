@@ -12,13 +12,13 @@
     await load('diagnostics.js?v=011-release');
     await load('geojson-utils.js?v=011-release');
     await load('geometry-topology.js?v=011-release');
-    await load('geometry-atlas.js?v=park-style-2');
+    await load('geometry-atlas.js?v=activated-parks-1');
     await load('map-setup.js?v=011-release');
     await load('map-layers.js?v=011-release');
     await load('gps-controller.js?v=011-release');
     await load('polygon-layer-utils.js?v=011-release');
     await load('pota-activation.js?v=011-release');
-    await load('park-info-ui.js?v=011-release');
+    await load('park-info-ui.js?v=activated-parks-1');
     await load('app-text-utils.js?v=011-release');
     await load('norway-park-registry.js?v=011-release');
     await load('sweden-park-registry.js?v=011-release');
@@ -30,8 +30,9 @@
     await load('pota-park-loader.js?v=011-release');
     await load('park-selection-controller.js?v=011-release');
     await load('pota-startup.js?v=011-release');
-    await load('mobile-ui.js?v=ui-structure-1');
+    await load('mobile-ui.js?v=activated-parks-1');
     await load('desktop-ui.js?v=ui-structure-1');
+    await load('park-activations.js?v=activated-parks-1');
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;

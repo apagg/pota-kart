@@ -66,3 +66,16 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
 }
 
 .startup-error{position:fixed;z-index:2000;top:16px;left:16px;right:16px;max-width:560px;padding:14px;border-radius:10px;background:#fff4e5;color:#7a4400;box-shadow:0 2px 14px #0003;line-height:1.4}.startup-error[hidden]{display:none}
+/* Shared personal activation settings move between the static PC/mobile slots. */
+.activation-settings{margin-top:12px;padding-top:10px;border-top:1px solid #e3e7ec}
+.activation-settings h3{font-size:14px;margin:0 0 7px}
+.activation-settings .row input{min-width:0;flex:1}
+.activation-settings form label{display:block;margin-bottom:5px}
+.activation-settings .row button{flex:none}
+.activation-calls{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.activation-call{display:inline-flex;align-items:center;gap:6px;border-radius:8px;background:#fef3c7;padding:2px 2px 2px 8px;font-size:13px;color:#713f12}
+.activation-call button{background:transparent;color:#713f12;min-width:36px;min-height:36px;padding:4px;font-size:19px}
+.activation-error{color:#b91c1c}
+.personal-activation{margin-top:5px;color:#713f12;overflow-wrap:anywhere}
+.activatedkey{display:inline-block;width:14px;height:14px;background:#ca8a04;border:1px solid #a16207;border-radius:3px;vertical-align:middle;margin-right:5px}
+@media(max-width:700px){.activation-settings button{min-height:44px}.activation-settings .row input{font-size:16px}.mobile-park-summary .personal-activation{grid-column:1/-1;font-size:12px;text-align:left}}

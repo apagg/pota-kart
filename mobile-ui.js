@@ -12,6 +12,7 @@
     {node:$('countryFilter').closest('.row'),desktop:$('desktopCountrySlot'),mobile:$('mobileSettingsContent')},
     {node:$('baseMapSelect').closest('.row'),desktop:$('desktopBasemapSlot'),mobile:$('mobileLayersContent')},
     {node:$('multiMode').closest('.selectbar'),desktop:$('desktopMultiSlot'),mobile:$('mobileSettingsContent')},
+    {node:$('activationSettings'),desktop:$('desktopActivationSlot'),mobile:$('mobileSettingsContent')},
     {node:document.querySelector('.mapkey'),desktop:$('desktopLegendSlot'),mobile:$('mobileSettingsContent')},
     {node:$('geometrySummary'),desktop:$('desktopGeometrySlot'),mobile:$('mobileSettingsContent')},
     {node:$('gpsStatus'),desktop:$('desktopGpsStatusSlot'),mobile:$('mobileSettingsContent')}
@@ -64,6 +65,7 @@
     $('mobileParkSummary').hidden=!isPark||!current;
     renderParkDetails();
     if(current)$('mobilePotaLink').href='https://pota.app/#/park/'+encodeURIComponent(current.p.reference);
+    if(current){const personal=$('mobilePersonalActivation');personal.dataset.personalActivation=current.p.reference;personal.hidden=typeof parkActivations==='undefined'||!parkActivations.statusText(current.p.reference);personal.textContent=typeof parkActivations==='undefined'?'':parkActivations.statusText(current.p.reference);}
     syncActivationCount();
     $('mobileLayers').setAttribute('aria-expanded',String(view==='layers'&&expanded));
     panel.dataset.mobileView=view;panel.classList.toggle('sheet-expanded',expanded);
