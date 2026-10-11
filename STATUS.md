@@ -5,11 +5,11 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 ## Nå
 - **Kart:** https://apagg.github.io/pota-kart/
 - **Appversjon:** 0.11.0.
-- **Siste sammenslåing:** Aktiveringsmarkering, blå/gule/grønne punkter, 100 m GPS-radius for punktparker og punktfyll 90 % / 100 % via [PR #5](https://github.com/apagg/pota-kart/pull/5), merge-commit `ed4a14c068e24f40de096a541049a4ceea143e95`. Mobil-/PC-grensesnittet fra PR #4 er bevart.
-- **Verifisert kode:** [Verify POTA map 38171388125](https://github.com/apagg/pota-kart/actions/runs/38171388125) på `main` = `completed/success`. Geometri, overlapp, GPS, PC/mobil, oppstart, Kyststien og aktiveringstester består. PR-kjøring [38171232542](https://github.com/apagg/pota-kart/actions/runs/38171232542) = `completed/success`.
-- **Publisering:** [GitHub Pages 38171387679](https://github.com/apagg/pota-kart/actions/runs/38171387679) = `completed/success`. Live kontroll av hovedkartet bekreftet kallesignalinnstillinger og oppdatert punktfyll.
-- **Manuell kontroll:** Brukeren har testet og godkjent aktiveringsvisning, punktfarger, 100 m GPS-radius og punktfyll 90 % / 100 %. Fullføring/sammenslåing ble bestilt med «jeg er fornøyd vi kan fullføre» 2026-10-11. Tidligere mobil-/PC-grensesnitt og parkfyll 25 % / 40 % er også godkjent.
-- Aktiv oppgave: godkjent sammenslåing av Oslofjorden-kyststirutene til hovedkartet. PC-grensesnittet og Kyststien-rettingen fra PR #3 er bevart.
+- **Siste sammenslåing:** [PR #6](https://github.com/apagg/pota-kart/pull/6), merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`: NO-2542 bruker Oslofjorden.coms 109 gangruter + 13 sykkelruter, inkludert alle 31 Hvaler-rutene. Tidligere GIS-/Hvaler-kombinasjon erstattes. Mobil/PC, GPS, overlapp og aktiveringsfarger fra PR #4/#5 er bevart.
+- **Verifisert kode:** [Verify POTA map 38175857227](https://github.com/apagg/pota-kart/actions/runs/38175857227) på main = completed/success. [PR-kontroll 38175667771](https://github.com/apagg/pota-kart/actions/runs/38175667771) og grenens kontroll 38175659975 = completed/success. Alle relevante geometri-, GPS-, overlapps-, Kyststi-, PC-/mobil- og aktiveringstester består.
+- **Publisering:** [Pages 38175857211](https://github.com/apagg/pota-kart/actions/runs/38175857211) = completed/success. Live hovedkart har cacheversjon 3 og publisert datasett matcher nøyaktig den verifiserte 122-rutersfilen. Automatisk Export Hvaler trails 38175857208 = success uten ny commit; main står på merge-commit.
+- **Manuell kontroll:** Brukeren testet og godkjente gang-/sykkelrutene, leste bruksvilkårene og godkjente ikke-kommersiell bruk, deretter sammenslåing 2026-10-11 med «du kan slå den sammen». Dette dokumenterer brukerens vurdering, ikke en lisens fra kildeeieren. Tidligere UI, GPS, aktiveringsfarger og park-/punktfyll er fortsatt godkjent.
+- Ingen implementerings-, publiserings- eller sammenslåingsoppgave gjenstår for kyststikilden.
 
 ## Grensesnitt og parkutseende i hovedkartet
 - **PC:** Fast 350 px sidepanel med skjul/vis, kompakt parkinfo og utvidbare detaljer, klikkbar valgliste, ingen PC-popup og overlappliste i panelet. GPS/zoom øverst til høyre. Kartinnstillinger, tegnforklaring og hjelp/teknisk informasjon kan foldes sammen. Søke- og GPS-feil forblir synlige med lukkede seksjoner.
@@ -36,19 +36,16 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
 - Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkering og punktutseende er ferdigstilt i hovedkartet.
 
-## Oslofjorden-kyststitest – gang- og sykkelruter publisert
-- Separat test: https://apagg.github.io/pota-kart/test/oslofjorden-coast/ på `test/oslofjorden-coast`.
-- Brukeren godkjente gangrutetesten og bestilte sykkelrutene 2026-10-11. NO-2542 bruker nå 109 gangruter + 13 sykkelruter = 122 ruter i Østfold, inkludert alle 31 Hvaler-rutene. Ferger/ukjente kategorier utelates. Samme kildeøyeblikksbilde og koordinater som før; kun inkluderingen av de 13 sykkelrutene er endret.
-- Sykkelrutene bruker samme blå/gule/grønne appfarger, 61 m korridor, GPS og overlapp som øvrige stier. Gamle GIS-/Hvaler-segmenter blandes ikke inn ved noen zoomnivåer. Andre parker og hovedkartets appkode/data er uendret.
-- **Kode:** `27cf7816f64fc48f69998daf79b0d54aa20862fa`; [Verify POTA map 38174874917](https://github.com/apagg/pota-kart/actions/runs/38174874917) = completed/success. Import-/datasettkontroll, eksakt gang-/sykkelgeometri ved alle zoomnivåer, kart-/GPS-treff på alle 13 sykkelruter, 20/44 m GPS-grense og eksisterende overlapp-/PC-/mobil-/aktiveringstester består. Kyststi-klikk er responsive.
-- **Publisering:** `2117622d114cf401b5cf75b364e307da429cbf97`; [Pages 38175016119](https://github.com/apagg/pota-kart/actions/runs/38175016119) = completed/success. Cacheversjon 2 for app og datasett. Live HTML har cacheversjon 2; publisert datasett matcher nøyaktig den verifiserte 122-rutersfilen med alle 13 sykkelruter inkludert.
-- Varig bruksvilkårsnotat: [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/main/data/coastal/README.md) og PROJECT.md. Brukeren oppgir privat bruk og valgte vanlig offentlig tilgjengelig testlenke etter informasjon om dette. Ved annen/bredere/kommersiell bruk må rettighetene avklares med kildeeieren.
-- Brukeren godkjente den utvidede testen, har lest vilkårene og godkjent ikke-kommersiell bruk; sammenslåing bestilt 2026-10-11. Produksjonsmerking og integrering av siste main er under verifisering.
+## Oslofjorden-kyststiruter i hovedkartet
+- NO-2542 bruker 122 gang-/sykkelruter i Østfold, inkludert alle 31 Hvaler-rutene, fra KML-snapshot 2026-10-11. Ferger/ukjente kategorier utelates. Den gamle GIS-/Hvaler-kombinasjonen brukes ikke ved noen zoomnivåer.
+- Samme blå/gule/grønne appfarger, 61 m korridor, GPS og overlapp. Testene kontrollerer eksakt geometri ved alle zoomnivåer, kart-/GPS-treff på alle 13 sykkelruter, 20/44 m GPS-grense og responsive Kyststi-klikk. Andre parker/stier er bevart.
+- Brukeren har godkjent rutene og sammenslåingen. Kilden er nå i hovedkartet; testkopien https://apagg.github.io/pota-kart/test/oslofjorden-coast/ er et separat øyeblikksbilde.
+- Varig bruksvilkårsnotat: [data/coastal/README.md](https://github.com/apagg/pota-kart/blob/main/data/coastal/README.md), metadata og PROJECT.md. Brukeren har lest vilkårene og er komfortabel med ikke-kommersiell bruk. Ved annen/bredere/kommersiell bruk må rettighetene avklares med kildeeieren.
 
 ## Satt på vent: implementering av stisystemet
-**Unntak: den bestilte NO-2542-kildetesten ovenfor. Øvrig samlet stiomarbeiding er fortsatt utsatt.**
+**NO-2542-kildebyttet er ferdigstilt i hovedkartet. Øvrig samlet stiomarbeiding er fortsatt utsatt.**
 
-Historisk er `Hvaler-redigering.gpkg` og `hvaler_tillegg` undersøkt, og kode for eksport og integrasjon finnes i `data/hvaler/`, `scripts/export-hvaler.py` og `scripts/update-geometries.py`. Dette bekrefter ikke at alle geografiske grense-/overlappstilfeller er endelig validert. Tidligere analyser og mulige restfeil er bevart i [HISTORY.md](HISTORY.md). Ingen sti-/geometridata ble endret i disse sammenslåingene. Automatisk Export Hvaler trails 38163371384 fullførte med success uten ny commit.
+Historisk er `Hvaler-redigering.gpkg` og `hvaler_tillegg` undersøkt, og kode for eksport og integrasjon finnes i `data/hvaler/`, `scripts/export-hvaler.py` og `scripts/update-geometries.py`. Dette bekrefter ikke at alle geografiske grense-/overlappstilfeller er endelig validert. Tidligere analyser og mulige restfeil er bevart i [HISTORY.md](HISTORY.md). Tidligere UI-/aktiveringssammenslåinger endret ikke stidata; PR #6 har nå byttet kilden for NO-2542. Automatisk Export Hvaler trails 38163371384 fullførte med success uten ny commit.
 
 ## Start neste samtale
-«Fortsett POTA-kartet fra GitHub. Les PROJECT.md, STATUS.md og TODO.md først. Bruk HISTORY.md kun ved behov. Diskuter neste endring før du redigerer kode. NO-2542 har en separat Oslofjorden-test; øvrig stisystem er satt på vent.»
+«Fortsett POTA-kartet fra GitHub. Les PROJECT.md, STATUS.md og TODO.md først. Bruk HISTORY.md kun ved behov. Diskuter neste endring før du redigerer kode. NO-2542 bruker nå godkjente Oslofjorden-ruter i hovedkartet; øvrig stiomarbeiding er satt på vent.»

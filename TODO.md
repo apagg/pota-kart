@@ -2,8 +2,7 @@
 
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## Oslofjorden-kyststiruter – sammenslåing godkjent
-- [ ] Fullfør PR, tester og publisering i hovedkartet med de 122 godkjente gang-/sykkelrutene.
+## Videre bruk av Oslofjorden-kyststiruter
 - [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.
 
 ## Neste UI-trinn
@@ -21,7 +20,7 @@ Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** st�
 - [ ] Mål respons ved mange synlige geometrier og overlapp; verifiser GPS-følging og satellittkart når relevant.
 
 ## Utsatt etter brukerbeslutning – hele stisystemet
-- [ ] Planlegg senere **samlet redesign av stier** med brukeren. Ny kildeundersøkelse er gjennomført; NO-2542-kildetest er bestilt; øvrig redesign er fortsatt utsatt.
+- [ ] Planlegg senere **samlet redesign av stier** med brukeren. Ny kildeundersøkelse er gjennomført; NO-2542-kildebyttet er ferdigstilt i hovedkartet; øvrig redesign er fortsatt utsatt.
 - [ ] Ved gjenopptakelse: vurder Hvaler-datasettet `Hvaler-redigering.gpkg` / `hvaler_tillegg`, eksisterende `data/hvaler/`, import, runtime-reserve, kommunegrenseklipping, kryssende segmenter og beskyttelse ved regenerering.
 - [ ] Kontroller at stier utenfor Hvaler bevares og at ingen gamle eller dupliserte Hvaler-segmenter gjeninnføres. Bevar 61 m korridor og avtalt GPS-/fargeoppførsel.
 - [ ] Avtal testgren, validering og eventuell publisering når stioppgaven gjenopptas. Tidligere godkjenning for direkte arbeid på `main` er ikke en ny bestilling om stiendringer.
