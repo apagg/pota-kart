@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <title>POTA Kart 0.11.0 – Norge og Sverige</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="styles.css?v=ui-structure-1">
+<link rel="stylesheet" href="styles.css?v=point-colors-1">
 <link rel="stylesheet" href="mobile-ui.css?v=ui-structure-1">
 </head>
 <body>
@@ -31,10 +31,19 @@
       <div id="desktopCountrySlot"><div class="row" style="align-items:center"><label class="small" for="countryFilter"><b>Land:</b></label><select id="countryFilter" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="ALL">Norge + Sverige</option><option value="NO">Norge</option><option value="SE">Sverige</option></select></div></div>
       <div id="desktopBasemapSlot"><div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="osm">OpenStreetMap</option><option value="esri">Esri</option><option value="satellite">Satellitt</option></select></div></div>
       <div id="desktopMultiSlot"><div class="selectbar"><label><input type="checkbox" id="multiMode" checked> Flervalg</label><span class="small">Legg flere parker til utvalget</span></div></div>
+      <div id="desktopActivationSlot"><section id="activationSettings" class="activation-settings">
+        <h3>Mine kallesignaler</h3>
+        <p class="small">Aktiverte parker vises gule. Grønn GPS-markering har prioritet.</p>
+        <form id="activationForm"><label for="activationCallInput" class="small">Hovedkallesignal</label><div class="row"><input id="activationCallInput" placeholder="F.eks. LB6BK" maxlength="160" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="submit">Legg til</button></div></form>
+        <div id="activationInputError" class="activation-error small" role="alert"></div>
+        <div id="activationCalls" class="activation-calls"></div>
+        <button id="activationRefresh" type="button">Oppdater aktiveringer</button>
+        <p id="activationStatus" class="small" role="status" aria-live="polite"></p>
+      </section></div>
     </details>
     <details id="desktopLegend" class="desktop-section">
       <summary>Tegnforklaring</summary>
-      <div id="desktopLegendSlot"><div class="mapkey"><span><i class="dotkey"></i>Mangler geometri</span><span><i class="trailkey"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Sti uten geometri</span><span><i class="areakey"></i>Offisiell grense / geometri</span><span><i class="insidekey"></i>Innenfor med GPS</span><span><i class="overlapkey"></i>Overlapp mellom parker / 61 m stikorridor</span></div></div>
+      <div id="desktopLegendSlot"><div class="mapkey"><span><i class="dotkey"></i>Mangler geometri</span><span><i class="trailkey"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Sti uten geometri</span><span><i class="areakey"></i>Offisiell grense / geometri</span><span><i class="activatedkey"></i>Aktivert av dine kallesignaler</span><span><i class="insidekey"></i>Innenfor med GPS</span><span><i class="overlapkey"></i>Overlapp mellom parker / 61 m stikorridor</span></div></div>
       <div class="small" style="margin-top:4px">Overlapp vises automatisk i kartutsnittet. Stier behandles som en 61 meter bred korridor.</div>
     </details>
     <details id="desktopHelp" class="info-more">
@@ -59,6 +68,7 @@
     <div id="mobileParkSummary" class="mobile-park-summary" hidden>
       <div class="mobile-activations">Aktiveringer: <span id="mobileActivationCount" aria-live="polite">Henter …</span></div>
       <a id="mobilePotaLink" target="_blank" rel="noopener noreferrer">pota.app ↗</a>
+      <div id="mobilePersonalActivation" class="personal-activation" data-personal-activation="" hidden></div>
     </div></div>
   <div class="panel-content" id="mobilePanelContent">
     <section id="mobileParkDetails" class="mobile-park-details" data-mobile-section="details" hidden></section>
@@ -97,5 +107,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=park-style-2" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
+<script src="app.js?v=point-fill-1" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
 </body></html>

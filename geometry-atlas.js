@@ -20,12 +20,18 @@ async function atlasRecord(ref){
  return r;
 }
 const gpsInsideRefs=new Set();let gpsColorEpoch=0;
-function gpsParkColor(ref,selected=false){return gpsInsideRefs.has(ref)?'#15803d':selected?'#1d4ed8':'#3388ff'}
+function gpsParkColor(ref,selected=false){return gpsInsideRefs.has(ref)?'#15803d':typeof parkActivations!=='undefined'&&parkActivations.has(ref)?(selected?'#a16207':'#ca8a04'):selected?'#1d4ed8':'#3388ff'}
 function atlasAreaGeometry(g){return !!g&&(g.type==='Polygon'||g.type==='MultiPolygon'||(g.type==='GeometryCollection'&&g.geometries.some(atlasAreaGeometry)))}
 function atlasStyle(ref,geometry=geometryAtlas.byRef.get(ref)){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref,color=gpsParkColor(ref,selected);
  const area=atlasAreaGeometry(geometry)&&!isTrailLink(linkTable[ref]);
  return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,fillOpacity:area?(selected?.40:.25):(selected?.22:.09)};
+}
+const GPS_POINT_RADIUS_M=100;
+function gpsPointHit(p,ll){
+ if(!p||atlasHasGeometry(p.reference)||selectedParks.get(p.reference)?.geo||(!multiMode.checked&&lastSelectedRef===p.reference&&selectedGeo))return false;
+ const lat=Number(p.latitude),lon=Number(p.longitude);
+ return p.latitude!=null&&p.longitude!=null&&p.latitude!==''&&p.longitude!==''&&Number.isFinite(lat)&&Number.isFinite(lon)&&ll.distanceTo(L.latLng(lat,lon))<=GPS_POINT_RADIUS_M;
 }
 function gpsGeometryHit(g,ll){
  if(!g)return false;
@@ -45,6 +51,7 @@ async function updateGpsParkColors(){
  const epoch=++gpsColorEpoch,next=new Set(),position=lastGps;
  if(position&&gpsWatchId!==null){
   const ll=L.latLng(position.lat,position.lon),dy=TRAIL_BUFFER_M/111000,dx=dy/Math.max(.01,Math.cos(position.lat*Math.PI/180));
+  for(const p of pota)if(atlasInCountry(p.reference)&&gpsPointHit(p,ll))next.add(p.reference);
   const candidates=[];
   for(const [ref,g] of geometryAtlas.byRef){
    if(!atlasInCountry(ref))continue;const bb=atlasMeta(ref)?.bbox;
@@ -64,6 +71,7 @@ async function updateGpsParkColors(){
  for(const ref of changed)geometryAtlas.layers.get(ref)?.setStyle(f=>atlasStyle(ref,f?.geometry));
  paintGpsSelected();
  for(const x of atlasOverlapState.layers.values())if(x.refs.some(ref=>changed.has(ref)))x.layer.setStyle(gpsOverlapStyle(x.refs));
+ document.dispatchEvent(new CustomEvent('pota:gps-colors'));
 }
 function atlasBuildLayer(ref,geometry){
  const p=pota.find(x=>x.reference===ref);if(!p)return null;
@@ -114,7 +122,7 @@ async function atlasRefresh(){
  await Promise.all(Array.from({length:Math.min(4,jobs.length)},async()=>{
   while(cursor<jobs.length){const ref=jobs[cursor++];try{const r=await atlasRecord(ref);if(epoch!==geometryAtlas.epoch)return;geometryAtlas.records.set(ref,r);if(geometryAtlas.byRef.get(ref)!==r.geometry)atlasShow(ref,r.geometry)}catch(e){potaDiagnostics.report('atlas/'+ref,e)}}
  }));
- if(epoch===geometryAtlas.epoch){atlasReport();scheduleAtlasOverlaps();updateGpsParkColors()}
+ if(epoch===geometryAtlas.epoch){atlasReport();scheduleAtlasOverlaps();updateGpsParkColors();document.dispatchEvent(new CustomEvent('pota:atlas'))}
 }
 function atlasHit(geometry,ll){
  const pt=turf.point([ll.lng,ll.lat]);
