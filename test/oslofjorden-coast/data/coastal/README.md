@@ -5,10 +5,13 @@ Dette er en datakildeprøve for NO-2542 Kyststien Østfold. Filen inneholder
 testversjonen erstatter både den gamle GIS-kilden og vårt redigerte Hvaler-lag;
 ingen av dem blandes inn. Andre POTA-parker og stier er uendret.
 
-Gangruter (blå og turkise kildestiler) brukes i POTA-geometrien. Sykkelalternativer,
-ferger og ukjente kategorier beholdes som kildemetadata i filen, men inngår ikke
-i geometrien. Blått er ikke en garanti for offisiell POTA-avgrensning: kilden
-omfatter også andre merkede turveier. Testen må vurderes før sammenslåing.
+Gangruter (blå og turkise kildestiler) og sykkelalternativer (grønne kildestiler)
+brukes i POTA-geometrien. Brukeren godkjente gangrutetesten og ba 2026-10-11 om
+at sykkelrutene også tas med. 109 gangruter + 13 sykkelruter gir 122 ruter totalt,
+inkludert alle 31 Hvaler-rutene. Alle bruker de vanlige blå/gule/grønne appfargene
+og samme 61 m korridor, GPS- og overlappsregler. Ferger og ukjente kategorier
+beholdes som kildemetadata, men inngår ikke i geometrien. Kildens rutefarger er
+ikke en garanti for offisiell POTA-avgrensning. Testen må vurderes før sammenslåing.
 
 ## Husk ved annen eller utvidet bruk
 
