@@ -191,16 +191,28 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.evaluate(()=>{
   selectedParks.set('GPS-FIXTURE',{link:{},geo:L.geoJSON({type:'Polygon',coordinates:[[[10,60],[10.02,60],[10.02,60.02],[10,60.02],[10,60]]]})});
  });
- const gpsButton=page.locator('#mobileLocate');
+ const gpsButton=page.locator('#mobileLocate'),gpsLabel=page.locator('#mobileGpsLabel');
+ assert.equal(await gpsLabel.innerText(),'GPS av');
+ for(const viewport of [{width:320,height:740},{width:390,height:844},{width:640,height:390}]){
+  await page.setViewportSize(viewport);await page.waitForTimeout(150);
+  const zoom=await page.locator('.leaflet-control-zoom').boundingBox(),gps=await gpsButton.boundingBox(),search=await page.locator('#mobileSearch').boundingBox();
+  assert.ok(gps.y>=zoom.y+zoom.height+8,'GPS below zoom');
+  assert.ok(Math.abs(gps.x+gps.width/2-zoom.x-zoom.width/2)<3,'GPS aligned with zoom');
+  assert.ok(gps.width>=44&&gps.height>=44&&gps.x>search.x+search.width,'GPS touch target on right');
+  for(const selector of ['.leaflet-control-zoom-in','.leaflet-control-zoom-out']){const box=await page.locator(selector).boundingBox();assert.ok(box.width>=44&&box.height>=44,'zoom touch target');}
+ }
+ await page.setViewportSize({width:390,height:844});await page.waitForTimeout(150);
  await gpsButton.click();assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.equal(await gpsButton.getAttribute('aria-label'),'Stopp GPS');assert.equal(await gpsButton.isEnabled(),true);
  const emitGps=(id,latitude,longitude,accuracy)=>page.evaluate(({id,latitude,longitude,accuracy})=>testGps.watches.get(id).success({coords:{latitude,longitude,accuracy}}),{id,latitude,longitude,accuracy});
+ assert.equal(await gpsLabel.innerText(),'Søker');
  await emitGps(0,60.01,10.01,12);
  await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<10);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  assert.match(await page.locator('#gpsStatus').innerText(),/Innenfor valgt POTA: GPS-FIXTURE/);
  const firstMarker=await page.evaluate(()=>L.stamp(gpsMarker));
  await emitGps(0,60.0105,10.0105,9);await page.waitForFunction(()=>map.getCenter().distanceTo([60.0105,10.0105])<10);
- assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');await page.screenshot({path:'atlas-gps-following.png'});
+ assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');assert.equal(await gpsLabel.innerText(),'Følger');await page.screenshot({path:'atlas-gps-following.png'});
  await dragMap();assert.equal(await gpsButton.getAttribute('data-gps-state'),'paused');assert.equal(await gpsButton.getAttribute('aria-pressed'),'true');assert.equal(await gpsButton.getAttribute('aria-label'),'Følg posisjon');const panned=await page.evaluate(()=>({lat:map.getCenter().lat,lng:map.getCenter().lng}));
+ assert.equal(await gpsLabel.innerText(),'Pauset');
  await page.screenshot({path:'atlas-gps-paused.png'});
  await emitGps(0,60.011,10.011,7);
  assert.equal(await page.evaluate(()=>L.stamp(gpsMarker)),firstMarker,'reuse position marker');assert.equal(await page.evaluate(()=>gpsAccuracy.getRadius()),7);
@@ -213,7 +225,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.evaluate(()=>testGps.watches.size),1,'resume reuses the GPS watch');
  await page.evaluate(()=>{map.setZoom(map.getZoom()-1,{animate:false})});const followZoom=await page.evaluate(()=>map.getZoom());
  await emitGps(0,60.012,10.012,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.012,10.012])<10);assert.equal(await page.evaluate(()=>map.getZoom()),followZoom,'following preserves zoom');
- await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'off');assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0]);
+ await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'off');assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0]);assert.equal(await gpsLabel.innerText(),'GPS av');
  await emitGps(0,61,11,5);assert.equal(await page.evaluate(()=>gpsMarker),null);assert.match(await page.locator('#gpsStatus').innerText(),/slått av/);
  // Starting again follows new fixes and ignores callbacks from the old watch.
  await gpsButton.click();await emitGps(0,62,12,5);assert.equal(await page.evaluate(()=>gpsMarker),null);
