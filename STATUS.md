@@ -36,15 +36,17 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
 - Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkering og punktutseende er ferdigstilt i hovedkartet.
 
-## Ny undersøkelse: kyststidata fra Oslofjorden.com
-- Brukeren ba om ny kildeundersøkelse 2026-10-11. Kartet bruker offentlig tilgjengelig KML med 608 rutelinjer, hvorav 125 i Østfold og 31 på Hvaler. Filen kan teknisk konverteres til GeoJSON, men er et blandet turdatasett, ikke en komplett nasjonal kyststiliste.
-- Bruksvilkårene oppgir privat bruk; offentlig viderepublisering bør avklares med eieren. Rutetyper og POTA-tilknytning må kontrolleres før eventuell import.
-- Anbefalt neste trinn er rettighetsavklaring og separat sammenligning av Østfold/Hvaler med dagens data. Ingen appkode, sti-/Hvaler-data eller korridorregler er endret. Se PROJECT.md for eksakte kilde-URL-er og analyse.
+## Oslofjorden-kyststitest – under verifisering
+- Bestilt separat test 2026-10-11 på `test/oslofjorden-coast`: https://apagg.github.io/pota-kart/test/oslofjorden-coast/.
+- NO-2542 bruker 109 gangruter fra Østfold, inkludert 29 Hvaler. Kildeøyeblikksbilde 2026-10-11; ferger/sykkelalternativer utelates. Gammel GIS og redigert Hvaler erstattes ved alle zoomnivåer i denne testen. Andre parker/stier og korridor/GPS/farger bevares.
+- Lokale import-, datasett-, modul- og syntakskontroller består. Nettlesertester og publisering gjenstår; dette er ikke en ferdigmelding. Lokal Playwright mangler nettleserbinær, derfor kjøres full nettleserkontroll i GitHub Actions.
+- Varig bruksvilkårsnotat: `data/coastal/README.md` og PROJECT.md. Brukeren oppgir privat bruk og valgte vanlig offentlig tilgjengelig testlenke etter informasjon om dette. Ved annen/bredere/kommersiell bruk må rettighetene avklares med kildeeieren.
+- Sammenslåing av testkoden er ikke bestilt. Visuell POTA-avgrensning må vurderes av brukeren.
 
 ## Satt på vent: implementering av stisystemet
-**Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**
+**Unntak: den bestilte NO-2542-kildetesten ovenfor. Øvrig samlet stiomarbeiding er fortsatt utsatt.**
 
 Historisk er `Hvaler-redigering.gpkg` og `hvaler_tillegg` undersøkt, og kode for eksport og integrasjon finnes i `data/hvaler/`, `scripts/export-hvaler.py` og `scripts/update-geometries.py`. Dette bekrefter ikke at alle geografiske grense-/overlappstilfeller er endelig validert. Tidligere analyser og mulige restfeil er bevart i [HISTORY.md](HISTORY.md). Ingen sti-/geometridata ble endret i disse sammenslåingene. Automatisk Export Hvaler trails 38163371384 fullførte med success uten ny commit.
 
 ## Start neste samtale
-«Fortsett POTA-kartet fra GitHub. Les PROJECT.md, STATUS.md og TODO.md først. Bruk HISTORY.md kun ved behov. Diskuter neste endring før du redigerer kode. Stisystemet er satt på vent.»
+«Fortsett POTA-kartet fra GitHub. Les PROJECT.md, STATUS.md og TODO.md først. Bruk HISTORY.md kun ved behov. Diskuter neste endring før du redigerer kode. NO-2542 har en separat Oslofjorden-test; øvrig stisystem er satt på vent.»
