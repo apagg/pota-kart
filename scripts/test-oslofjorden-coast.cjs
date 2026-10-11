@@ -11,7 +11,7 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  const coords=expected.coordinates.flat(),bbox=[Math.min(...coords.map(c=>c[0])),Math.min(...coords.map(c=>c[1])),Math.max(...coords.map(c=>c[0])),Math.max(...coords.map(c=>c[1]))];
  assert.deepEqual(initial.bbox,bbox);
  // Other parks still come from the original atlas shard.
- const other=await page.evaluate(async()=>{const m=atlasMeta('NO-3198');return {shard:m.shard,record:await atlasRecord('NO-3198')}});
+ const other=JSON.parse(await page.evaluate(async()=>{const m=atlasMeta('NO-3198');return JSON.stringify({shard:m.shard,record:await atlasRecord('NO-3198')})}));
  assert.deepEqual(other.record,JSON.parse(fs.readFileSync('data/geometries/'+other.shard,'utf8'))['NO-3198']);
  const hvaler=data.features.find(f=>f.properties.includedInPota&&f.properties.folderPath.includes('Turer Hvaler kommune')).geometry.coordinates[0];
  for(const zoom of [5,14,5]){
@@ -40,7 +40,7 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  await page.waitForTimeout(500);assert.equal(await page.locator('#linkbox .park-reference').innerText(),'NO-2542');
  await page.screenshot({path:'atlas-coast-mobile.png'});
  assert.equal(requests.filter(u=>u.includes('/data/coastal/oslofjorden-ostfold-test.geojson')).length,1,'Snapshot memoized');
- assert.equal(requests.filter(u=>u.includes('hvaler-tillegg.geojson')||u.includes('Kyststi/MapServer')).length,0,'Former source not requested');
+ assert.equal(requests.filter(u=>u.includes('hvaler-tillegg.geojson')||u.includes('RegFriluft_innsyn/MapServer/15/query')).length,0,'Former source not requested');
  assert.deepEqual(errors,[]);console.log('PASS coastal replacement: exact geometry at every zoom, alias, memo, unchanged other park, real-route GPS 20/44m, desktop/mobile');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
