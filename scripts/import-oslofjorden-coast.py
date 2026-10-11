@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Import a reviewed Oslofjorden KML snapshot for the isolated coastal trail test.
+"""Import a reviewed Oslofjorden KML snapshot for Kyststien Østfold.
 
 The source permits private use; check data/coastal/README.md before reusing it.
-No remote downloads or replacement of the production trail dataset occur here.
+No remote downloads occur here; output retains route categories and provenance.
 """
 import argparse
 from datetime import date

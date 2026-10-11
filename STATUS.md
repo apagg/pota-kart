@@ -9,7 +9,7 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - **Verifisert kode:** [Verify POTA map 38171388125](https://github.com/apagg/pota-kart/actions/runs/38171388125) på `main` = `completed/success`. Geometri, overlapp, GPS, PC/mobil, oppstart, Kyststien og aktiveringstester består. PR-kjøring [38171232542](https://github.com/apagg/pota-kart/actions/runs/38171232542) = `completed/success`.
 - **Publisering:** [GitHub Pages 38171387679](https://github.com/apagg/pota-kart/actions/runs/38171387679) = `completed/success`. Live kontroll av hovedkartet bekreftet kallesignalinnstillinger og oppdatert punktfyll.
 - **Manuell kontroll:** Brukeren har testet og godkjent aktiveringsvisning, punktfarger, 100 m GPS-radius og punktfyll 90 % / 100 %. Fullføring/sammenslåing ble bestilt med «jeg er fornøyd vi kan fullføre» 2026-10-11. Tidligere mobil-/PC-grensesnitt og parkfyll 25 % / 40 % er også godkjent.
-- Ingen aktiv sammenslåingsoppgave gjenstår. PC-grensesnittet og Kyststien-rettingen fra PR #3 er bevart.
+- Aktiv oppgave: godkjent sammenslåing av Oslofjorden-kyststirutene til hovedkartet. PC-grensesnittet og Kyststien-rettingen fra PR #3 er bevart.
 
 ## Grensesnitt og parkutseende i hovedkartet
 - **PC:** Fast 350 px sidepanel med skjul/vis, kompakt parkinfo og utvidbare detaljer, klikkbar valgliste, ingen PC-popup og overlappliste i panelet. GPS/zoom øverst til høyre. Kartinnstillinger, tegnforklaring og hjelp/teknisk informasjon kan foldes sammen. Søke- og GPS-feil forblir synlige med lukkede seksjoner.
@@ -42,8 +42,8 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Sykkelrutene bruker samme blå/gule/grønne appfarger, 61 m korridor, GPS og overlapp som øvrige stier. Gamle GIS-/Hvaler-segmenter blandes ikke inn ved noen zoomnivåer. Andre parker og hovedkartets appkode/data er uendret.
 - **Kode:** `27cf7816f64fc48f69998daf79b0d54aa20862fa`; [Verify POTA map 38174874917](https://github.com/apagg/pota-kart/actions/runs/38174874917) = completed/success. Import-/datasettkontroll, eksakt gang-/sykkelgeometri ved alle zoomnivåer, kart-/GPS-treff på alle 13 sykkelruter, 20/44 m GPS-grense og eksisterende overlapp-/PC-/mobil-/aktiveringstester består. Kyststi-klikk er responsive.
 - **Publisering:** `2117622d114cf401b5cf75b364e307da429cbf97`; [Pages 38175016119](https://github.com/apagg/pota-kart/actions/runs/38175016119) = completed/success. Cacheversjon 2 for app og datasett. Live HTML har cacheversjon 2; publisert datasett matcher nøyaktig den verifiserte 122-rutersfilen med alle 13 sykkelruter inkludert.
-- Varig bruksvilkårsnotat: [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/test/oslofjorden-coast/data/coastal/README.md) og PROJECT.md. Brukeren oppgir privat bruk og valgte vanlig offentlig tilgjengelig testlenke etter informasjon om dette. Ved annen/bredere/kommersiell bruk må rettighetene avklares med kildeeieren.
-- Den utvidede testen venter på brukertest/POTA-avgrensning. Sammenslåing er ikke bestilt.
+- Varig bruksvilkårsnotat: [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/main/data/coastal/README.md) og PROJECT.md. Brukeren oppgir privat bruk og valgte vanlig offentlig tilgjengelig testlenke etter informasjon om dette. Ved annen/bredere/kommersiell bruk må rettighetene avklares med kildeeieren.
+- Brukeren godkjente den utvidede testen, har lest vilkårene og godkjent ikke-kommersiell bruk; sammenslåing bestilt 2026-10-11. Produksjonsmerking og integrering av siste main er under verifisering.
 
 ## Satt på vent: implementering av stisystemet
 **Unntak: den bestilte NO-2542-kildetesten ovenfor. Øvrig samlet stiomarbeiding er fortsatt utsatt.**
