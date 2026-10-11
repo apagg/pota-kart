@@ -18,11 +18,25 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(profileCalls.length,0);assert.equal(historyCalls.length,0,'No API calls before configuring a callsign');
  // Use a real catalog point without geometry so the visible marker path is exercised.
  const pointRef=await page.evaluate(()=>potaMarkers.find(x=>!atlasHasGeometry(x.reference)&&x.marker.setStyle).reference);
+ // Check actual 100 m membership and restore GPS state before API queue checks.
+ const radiusChecks=await page.evaluate(async ref=>{
+  const p=pota.find(x=>x.reference===ref),origin=L.latLng(Number(p.latitude),Number(p.longitude));
+  const at=metres=>{const d=turf.destination(turf.point([origin.lng,origin.lat]),metres/1000,0,{units:'kilometers'}).geometry.coordinates;return L.latLng(d[1],d[0]);};
+  gpsWatchId=-123;lastGps={lat:at(99).lat,lon:at(99).lng};await updateGpsParkColors();
+  const inside=gpsInsideRefs.has(ref);
+  lastGps={lat:at(101).lat,lon:at(101).lng};await updateGpsParkColors();const outside=gpsInsideRefs.has(ref);
+  const mapped=pota.find(x=>atlasHasGeometry(x.reference));
+  const noApproximation=gpsPointHit(mapped,L.latLng(Number(mapped.latitude),Number(mapped.longitude)));
+  gpsWatchId=null;lastGps=null;await updateGpsParkColors();
+  return {inside,outside,noApproximation};
+ },pointRef);
+ assert.deepEqual(radiusChecks,{inside:true,outside:false,noApproximation:false},'100 m GPS radius applies only to parks without geometry');
  const pointStyle=()=>page.evaluate(ref=>{const m=potaMarkers.find(x=>x.reference===ref).marker;return {color:m.options.color,fill:m.options.fillColor,radius:m.getRadius()};},pointRef);
  assert.deepEqual(await pointStyle(),{color:'#3388ff',fill:'#3388ff',radius:6},'Unactivated points use the same blue as park geometry');
  await page.evaluate(async ref=>{await showLink(pota.find(x=>x.reference===ref),false,false);},pointRef);
  await page.waitForFunction(ref=>selectedParks.get(ref)?.marker?.options.color==='#1d4ed8',pointRef);
  assert.equal(await page.evaluate(ref=>selectedParks.get(ref).marker.getRadius(),pointRef),6,'Selection never enlarges point markers');
+ assert.equal(await page.evaluate(ref=>{const p=pota.find(x=>x.reference===ref);return gpsInsideSelected(Number(p.latitude),Number(p.longitude)).includes(ref);},pointRef),true,'Selected point status uses the same radius');
  await page.evaluate(()=>{clearSelectedParks();clearSelection();document.dispatchEvent(new CustomEvent('pota:selection'));});
  await page.locator('#desktopSettings').evaluate(x=>x.open=true);
  pointRefForProfile=pointRef;
