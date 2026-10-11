@@ -25,7 +25,7 @@ function atlasAreaGeometry(g){return !!g&&(g.type==='Polygon'||g.type==='MultiPo
 function atlasStyle(ref,geometry=geometryAtlas.byRef.get(ref)){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref,color=gpsParkColor(ref,selected);
  const area=atlasAreaGeometry(geometry)&&!isTrailLink(linkTable[ref]);
- return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,fillOpacity:area?(selected?.26:.14):(selected?.22:.09)};
+ return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,fillOpacity:area?(selected?.40:.25):(selected?.22:.09)};
 }
 function gpsGeometryHit(g,ll){
  if(!g)return false;
