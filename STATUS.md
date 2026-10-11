@@ -10,8 +10,14 @@ Oppdatert: 2026-10-08. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - **Manuell kontroll:** Brukeren testet den isolerte kodeoppryddingsversjonen og meldte at alt så bra ut før sammenslåingen.
 - **Testvisning:** https://apagg.github.io/pota-kart/test/code-refactor/ (separat kopi; kan avvike fra senere `main`).
 
-## Aktiv prioritet
-Ingen ny funksjonsendring er avtalt etter PR #2. Neste mulige arbeid er feilhåndtering, målrettede tester eller ytterligere opprydding uten stiendringer; velg sammen med brukeren. Se [TODO.md](TODO.md).
+## Aktiv prioritet – PC-UI (2026-10-11)
+- Brukeren har godkjent oppsett og oppstart av trinn 1–2 på `test/pc-ui`, basert på `main` 94e6bcfa12b52c6656a8ccee46c0e36a8c16c9cd.
+- Implementert for verifisering: fast 350 px sidepanel, skjul/vis med kartstørrelse uten panorering, kompakt parkinfo med utvidbare detaljer, ingen PC-popup, overlappliste i panelet og klikkbar valgliste med antall.
+- PC-oppsettet ligger i et eget UI-lag. Mobilfilene og alle data-/GPS-/geometri-/overlappsberegninger er uendret.
+- Nettlesertesten er tilpasset avtalt PC-presentasjon og utvidet med bredder, skjul/vis, parkdetaljer og valg fra liste uten kartbevegelse. Eksisterende mobil-/GPS-/geometritester beholdes.
+- CI og publisering er ennå ikke bekreftet. Ikke regn oppgaven som ferdig før kjøringene har `completed/success`.
+- Testadresse etter vellykket publisering: https://apagg.github.io/pota-kart/test/pc-ui/.
+- Trinn 3 (GPS på kartet og sammenleggbare innstillinger) gjenstår til etter første brukertest. Hovedkartets UI er uendret.
 
 ## Satt på vent: stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**

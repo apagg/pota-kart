@@ -63,3 +63,12 @@ Automatiske arbeidsflyter ligger i `.github/workflows/`. `update-pota-data.yml` 
 
 ## Historikk og regresjonsreferanser
 Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [HISTORY.md](HISTORY.md). Kjente kontrollpunkter for senere arbeid omfatter Ramsvikslandet (SE-2071/SE-2073), Kosterhavet (SE-0016), Tofta (SE-0468), Marstrand (SE-0334), mobiloverlapp og ytelse. Tidligere rapporter er ikke automatisk dagens feilstatus.
+
+## Avtalt PC-grensesnitt (2026-10-11)
+- Egen UI-testgren: `test/pc-ui`; testkart under `test/pc-ui/`. Hovedkartet endres først etter brukertest og avtalt sammenslåing.
+- Fast venstre sidepanel, 350 px og full høyde; kartet fyller resten. Panelet kan skjules uten automatisk panorering eller zoom.
+- Søk øverst. Kompakt parkinfo med referanse, navn, aktiveringer, pota.app og «Vis flere detaljer». Tom parkboks skjules.
+- Valgte parker vises som liste med antall når minst én park er valgt; valg fra listen oppdaterer info uten å flytte kartet.
+- Ingen PC-popup ved parkvalg; valg ved overlapp vises i sidepanelet. Mouseover beholdes.
+- Neste trinn: GPS øverst til høyre på kartet og sammenleggbare innstillinger (land, bakgrunnskart, flervalg, tegnforklaring og teknisk informasjon).
+- Mobiloppsett, parkdata, geometrier, GPS-beregninger, overlapp og hele stisystemet bevares. `desktop-ui.js` styrer kun PC-presentasjonen over 700 px.

@@ -21,3 +21,9 @@ Sist gjennomgått: 2026-10-08. **Kun aktive eller bevisst utsatte oppgaver** st�
 
 ## Fast arbeidsregel (ikke en uferdig engangsoppgave)
 Kodeendringer skal committes og testes med endelig grønn GitHub Actions-status, inkludert relevante PC-/mobiltester, før ferdigmelding. Dokumentasjonsendringer alene krever ikke kodetest etter særskilt avtale. Se [PROJECT.md](PROJECT.md).
+
+## PC-UI – avtalt 2026-10-11
+- [ ] Verifiser trinn 1–2 på `test/pc-ui`: fast sidepanel, kompakt parkinfo og klikkbar valgliste; PC og mobil må ha grønn CI.
+- [ ] Brukeren tester https://apagg.github.io/pota-kart/test/pc-ui/ før videre finjustering.
+- [ ] Trinn 3: GPS på kartet øverst til høyre og sammenleggbare innstillinger.
+- [ ] Sluttkontroll og eventuell sammenslåing til `main` etter uttrykkelig godkjenning.
