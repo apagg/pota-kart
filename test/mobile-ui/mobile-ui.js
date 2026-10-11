@@ -10,8 +10,8 @@
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false">${svg('search')}</button>
       <button id="mobileLayers" aria-label="Velg karttype" aria-controls="infoPanel" aria-expanded="false">${svg('layers')}</button>
-      <button id="mobileLocate" aria-label="Min posisjon">${svg('locate')}</button>
     </div>
+    <div class="mobile-gps-control"><button id="mobileLocate" aria-label="Min posisjon">${svg('locate')}<span id="mobileGpsLabel" aria-hidden="true">GPS av</span></button></div>
     <div id="mobileSearchPopover" class="mobile-search-popover" hidden><button id="mobileSearchClose" aria-label="Lukk søk">×</button></div>
     <div id="mobileNotice" class="mobile-notice" role="status" hidden></div>
     <nav class="mobile-nav" aria-label="Hovedmeny">
@@ -123,7 +123,9 @@
   $('mobileLocate').onclick=()=>{$('locateBtn').click();};
   function syncMobileGps(){
     const active=$('locateBtn').getAttribute('aria-pressed')==='true',button=$('mobileLocate');
-    button.dataset.gpsState=$('locateBtn').dataset.gpsState;
+    const state=$('locateBtn').dataset.gpsState||'off',waiting=$('locateBtn').classList.contains('locating');
+    button.dataset.gpsState=state;button.classList.toggle('locating',waiting);
+    $('mobileGpsLabel').textContent=state==='paused'?'Pauset':state==='following'?(waiting?'Søker':'Følger'):'GPS av';
     button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',$('locateBtn').textContent);
     button.title=$('locateBtn').title;button.disabled=false;
   }
