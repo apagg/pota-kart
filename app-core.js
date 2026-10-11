@@ -332,27 +332,28 @@ async function resolveKartverketTrail(link,p){
   const label=trailField(best.c,/^rutenavn$|rute.?navn|route.?name|navn/)||link.officialName;
   return {source:'notrail',geometry:{type:'MultiLineString',coordinates:lines},name:label,id:'Kartverket Turrutebase',officialType:'National Recreation Trail',segmentCount:lines.length,potaSourceUrls:hints.urls,aliasCount:hints.aliases.length};
 }
+// Isolated Oslofjorden source test: never blend the old GIS/Hvaler sources.
+let oslofjordenTrailPromise=null;
 async function resolveKyststienFallback(link,p){
-  if(p.reference!=='NO-2542' && !/kyststien\s*[øo]stfold/i.test(p.name||''))throw Error('Ingen verifisert fallback for denne ruten');
-  const params=new URLSearchParams({f:'geojson',where:'1=1',outFields:'OBJECTID,Kommune,Navn,Navn_pa_turrute,Rutebeskrivelse',returnGeometry:'true',outSR:'4326',resultRecordCount:'2000'});
-  const d=await getJSON(`${NO_KYSTSTI}?${params}`), fs=(d&&d.features)||[];
-  if(!fs.length)throw Error('Kyststien-laget returnerte ingen linjegeometri');
-  const hvaler=await getJSON('data/hvaler/hvaler-tillegg.geojson').catch(()=>null);
-  const hvalerReady=!!(hvaler?.features?.length);
-  const lines=[];for(const f of fs){
-    // Hvaler is entirely replaced by the locally edited layer.
-    if(hvalerReady && /hvaler/i.test(String(f?.properties?.Kommune||'')))continue;
-    const g=f&&f.geometry;if(!g)continue;
-    if(g.type==='LineString'&&g.coordinates?.length>1)lines.push(g.coordinates);
-    else if(g.type==='MultiLineString')for(const a of g.coordinates||[])if(a?.length>1)lines.push(a)
-  }
-  for(const f of hvaler?.features||[]){
-    const g=f.geometry;if(!g)continue;
-    if(g.type==='LineString'&&g.coordinates?.length>1)lines.push(g.coordinates);
-    else if(g.type==='MultiLineString')for(const a of g.coordinates||[])if(a?.length>1)lines.push(a);
-  }
-  if(!lines.length)throw Error('Kyststien-laget inneholdt ingen gyldige linjesegmenter');
-  return {source:'notrail',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 fallback',officialType:'National Recreation Trail'};
+  if(!['NO-2542','LA-2542'].includes(p.reference)&&!/kyststien\s*[øo]stfold/i.test(p.name||''))throw Error('Ingen testgeometri for denne ruten');
+  if(!oslofjordenTrailPromise)oslofjordenTrailPromise=(async()=>{
+    const d=await getJSON('data/coastal/oslofjorden-ostfold-test.geojson?v=2');
+    if(d.type!=='FeatureCollection'||d.metadata?.reference!=='NO-2542'||d.metadata?.schemaVersion!==1||!Array.isArray(d.features))throw Error('Ugyldig Oslofjorden-testdatasett');
+    const lines=[];
+    for(const f of d.features){
+      if(!f.properties?.includedInPota)continue;
+      if(!['marked-walking-route','walking-suggestion','cycling-alternative'].includes(f.properties.category)||f.properties.reference!=='NO-2542')throw Error('Ugyldig rutekategori');
+      const g=f.geometry,parts=g?.type==='LineString'?[g.coordinates]:g?.type==='MultiLineString'?g.coordinates:null;
+      if(!parts?.length)throw Error('Mangler rutegeometri');
+      for(const line of parts){
+        if(!Array.isArray(line)||line.length<2||line.some(c=>!Array.isArray(c)||c.length<2||!Number.isFinite(c[0])||!Number.isFinite(c[1])||Math.abs(c[0])>180||Math.abs(c[1])>90))throw Error('Ugyldige rutekoordinater');
+        lines.push(line);
+      }
+    }
+    if(!lines.length)throw Error('Oslofjorden-testen mangler gangruter');
+    return {source:'notrail',sourceLabel:'Oslofjorden.com – Østfold gang- og sykkelruter',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 Oslofjorden',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,snapshotSource:true};
+  })().catch(e=>{oslofjordenTrailPromise=null;throw e});
+  return oslofjordenTrailPromise;
 }
 async function resolveNorwayTrail(link,p){
   const ref=(p&&p.reference)||'';

@@ -2,10 +2,9 @@
 
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## Oslofjorden-kyststitest – gang- og sykkelruter klare for brukertest
-- [ ] Brukertest den utvidede NO-2542 på Østfold/Hvaler; vurder hvilke gang- og sykkelruter som faktisk inngår i POTA-parken før eventuell sammenslåing.
-- [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se varig notat i PROJECT.md og [kildens bruksvilkårsnotat](https://github.com/apagg/pota-kart/blob/test/oslofjorden-coast/data/coastal/README.md).
-- [ ] Avtal sammenslåing separat. Hovedkartets eksisterende data er bevart.
+## Oslofjorden-kyststiruter – sammenslåing godkjent
+- [ ] Fullfør PR, tester og publisering i hovedkartet med de 122 godkjente gang-/sykkelrutene.
+- [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.
 
 ## Neste UI-trinn
 - [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.
