@@ -26,7 +26,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const initialLayout=await layout();assert.equal(initialLayout.panel,350);assert.equal(initialLayout.map,350);assert.equal(initialLayout.size,930);assert.equal(await page.locator('#linkbox').isVisible(),false);
  await page.click('#hidePanel');const hiddenLayout=await layout();assert.equal(hiddenLayout.map,0);assert.equal(hiddenLayout.size,1280);assert.deepEqual(hiddenLayout.center,initialLayout.center);assert.equal(hiddenLayout.zoom,initialLayout.zoom);
  await page.click('#showPanel');assert.equal((await layout()).map,350);
- for(const width of [701,1024,1600]){await page.setViewportSize({width,height:900});assert.equal((await layout()).panel,350);assert.equal((await layout()).size,width-350);}
+ for(const width of [701,1024,1600]){await page.setViewportSize({width,height:900});await page.waitForFunction(w=>map.getSize().x===w-350,width);assert.equal((await layout()).panel,350);assert.equal((await layout()).size,width-350);}
  await page.setViewportSize({width:1280,height:900});
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
  console.log('Restored Swedish national parks');
