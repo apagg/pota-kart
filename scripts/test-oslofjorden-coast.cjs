@@ -37,7 +37,7 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  assert.deepEqual(gps,{width:61,inside:true,outside:false});
  await page.screenshot({path:'atlas-coast-desktop.png'});
  await page.setViewportSize({width:390,height:844});await page.waitForFunction(()=>document.body.classList.contains('mobile-layout'));
- await page.waitForTimeout(500);assert.equal(await page.locator('#linkbox .park-reference').innerText(),'NO-2542');
+ await page.waitForTimeout(500);assert.equal(await page.locator('#mobileParkRef').innerText(),'NO-2542');
  await page.screenshot({path:'atlas-coast-mobile.png'});
  assert.equal(requests.filter(u=>u.includes('/data/coastal/oslofjorden-ostfold-test.geojson')).length,1,'Snapshot memoized');
  assert.equal(requests.filter(u=>u.includes('hvaler-tillegg.geojson')||u.includes('RegFriluft_innsyn/MapServer/15/query')).length,0,'Former source not requested');
