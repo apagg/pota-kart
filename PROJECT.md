@@ -33,7 +33,7 @@ Statisk webapp med Leaflet, Turf og polygon-clipping; ingen egen appserver. `app
 
 | Område | Viktige filer |
 | --- | --- |
-| Grensesnitt og oppstart | `index.html`, `styles.css`, `app.js`, `pota-startup.js`, `mobile-ui.js`, `mobile-ui.css` |
+| Grensesnitt og oppstart | `index.html`, `styles.css`, `app.js`, `pota-startup.js`, `desktop-ui.js`, `mobile-ui.js`, `mobile-ui.css` |
 | Kart og GPS | `map-setup.js`, `map-layers.js`, `gps-controller.js` |
 | Parker og register | `norway-park-registry.js`, `sweden-park-registry.js`, `sweden-heritage-registry.js`, `pota-park-loader.js` |
 | Parkvalg og informasjon | `park-selection-state.js`, `park-selection-controller.js`, `park-info-ui.js`, `park-diagnostics.js`, `pota-activation.js` |
@@ -65,7 +65,7 @@ Automatiske arbeidsflyter ligger i `.github/workflows/`. `update-pota-data.yml` 
 Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [HISTORY.md](HISTORY.md). Kjente kontrollpunkter for senere arbeid omfatter Ramsvikslandet (SE-2071/SE-2073), Kosterhavet (SE-0016), Tofta (SE-0468), Marstrand (SE-0334), mobiloverlapp og ytelse. Tidligere rapporter er ikke automatisk dagens feilstatus.
 
 ## Avtalt PC-grensesnitt (2026-10-11)
-- Egen UI-testgren: `test/pc-ui`; testkart under `test/pc-ui/`. Hovedkartet endres først etter brukertest og avtalt sammenslåing.
+- PC-grensesnittet er brukertestet og godkjent for `main` 2026-10-11. UI-testgren: `test/pc-ui`; separat testkopi under `test/pc-ui/`. Fremtidige appendringer følger samme test-/godkjenningsflyt.
 - Fast venstre sidepanel, 350 px og full høyde; kartet fyller resten. Panelet kan skjules uten automatisk panorering eller zoom.
 - Søk øverst. Kompakt parkinfo med referanse, navn, aktiveringer, pota.app og «Vis flere detaljer». Tom parkboks skjules.
 - Valgte parker vises som liste med antall når minst én park er valgt; valg fra listen oppdaterer info uten å flytte kartet.
