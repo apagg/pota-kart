@@ -65,10 +65,9 @@ const parkActivations=(()=>{
  }
  function markerPaint(marker,ref,selected=false){
   if(!marker)return;
-  const inside=gpsInsideRefs.has(ref),activated=has(ref);
-  const color=inside?'#15803d':activated?(selected?'#a16207':'#ca8a04'):null;
-  if(marker.setStyle){const style={color:color||(selected?'#b45309':'#e67e22'),fillColor:color||(selected?'#d97706':'#f39c12')};if(marker.options.color!==style.color||marker.options.fillColor!==style.fillColor)marker.setStyle(style);}
-  else if(marker.getElement){const el=marker.getElement()?.querySelector('.trail-pota-icon');if(el)el.style.color=color||'';}
+  const color=gpsParkColor(ref,selected);
+  if(marker.setStyle){const style={color,fillColor:color};if(marker.options.color!==style.color||marker.options.fillColor!==style.fillColor)marker.setStyle(style);}
+  else if(marker.getElement){const el=marker.getElement()?.querySelector('.trail-pota-icon');if(el)el.style.color=color;}
  }
  function paint(){
   if(paintPending)return;paintPending=true;
