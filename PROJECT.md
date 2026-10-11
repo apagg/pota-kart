@@ -1,6 +1,6 @@
 # POTA-kart – prosjektkunnskap
 
-Sist gjennomgått: 2026-10-08. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
+Sist gjennomgått: 2026-10-11. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
 
 ## Start en ny arbeidsøkt
 1. Les `PROJECT.md`, `STATUS.md` og `TODO.md` på GitHub. Kontroller faktisk `main`/arbeidsgren og relevante filer før endring.
@@ -65,7 +65,7 @@ Automatiske arbeidsflyter ligger i `.github/workflows/`. `update-pota-data.yml` 
 Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [HISTORY.md](HISTORY.md). Kjente kontrollpunkter for senere arbeid omfatter Ramsvikslandet (SE-2071/SE-2073), Kosterhavet (SE-0016), Tofta (SE-0468), Marstrand (SE-0334), mobiloverlapp og ytelse. Tidligere rapporter er ikke automatisk dagens feilstatus.
 
 ## Avtalt PC-grensesnitt (2026-10-11)
-- Egen UI-testgren: `test/pc-ui`; testkart under `test/pc-ui/`. Hovedkartet endres først etter brukertest og avtalt sammenslåing.
+- Egen UI-testgren: `test/pc-ui`; planlagt testkart under `test/pc-ui/`. Hovedkartet endres først etter brukertest og avtalt sammenslåing.
 - Fast venstre sidepanel, 350 px og full høyde; kartet fyller resten. Panelet kan skjules uten automatisk panorering eller zoom.
 - Søk øverst. Kompakt parkinfo med referanse, navn, aktiveringer, pota.app og «Vis flere detaljer». Tom parkboks skjules.
 - Valgte parker vises som liste med antall når minst én park er valgt; valg fra listen oppdaterer info uten å flytte kartet.
