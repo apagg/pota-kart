@@ -36,7 +36,12 @@ Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
 - Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkering og punktutseende er ferdigstilt i hovedkartet.
 
-## Satt på vent: stisystemet
+## Ny undersøkelse: kyststidata fra Oslofjorden.com
+- Brukeren ba om ny kildeundersøkelse 2026-10-11. Kartet bruker offentlig tilgjengelig KML med 608 rutelinjer, hvorav 125 i Østfold og 31 på Hvaler. Filen kan teknisk konverteres til GeoJSON, men er et blandet turdatasett, ikke en komplett nasjonal kyststiliste.
+- Bruksvilkårene oppgir privat bruk; offentlig viderepublisering bør avklares med eieren. Rutetyper og POTA-tilknytning må kontrolleres før eventuell import.
+- Anbefalt neste trinn er rettighetsavklaring og separat sammenligning av Østfold/Hvaler med dagens data. Ingen appkode, sti-/Hvaler-data eller korridorregler er endret. Se PROJECT.md for eksakte kilde-URL-er og analyse.
+
+## Satt på vent: implementering av stisystemet
 **Ikke endre Hvaler eller øvrige stier før brukeren ber om en samlet omarbeiding.**
 
 Historisk er `Hvaler-redigering.gpkg` og `hvaler_tillegg` undersøkt, og kode for eksport og integrasjon finnes i `data/hvaler/`, `scripts/export-hvaler.py` og `scripts/update-geometries.py`. Dette bekrefter ikke at alle geografiske grense-/overlappstilfeller er endelig validert. Tidligere analyser og mulige restfeil er bevart i [HISTORY.md](HISTORY.md). Ingen sti-/geometridata ble endret i disse sammenslåingene. Automatisk Export Hvaler trails 38163371384 fullførte med success uten ny commit.

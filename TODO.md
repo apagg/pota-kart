@@ -2,6 +2,10 @@
 
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
+## Kyststikilde – undersøkt, avtal videre arbeid
+- [ ] Avklar bruk av Oslofjorden.com-rutekoordinater i offentlig POTA-kart. Kilden oppgir privat bruk, ingen åpen gjenbrukslisens er funnet.
+- [ ] Avtal separat sammenligning av Østfold/Hvaler mot dagens geometri, kategorifiltrering og POTA-kobling før eventuell import. KML inneholder 608 blandede rutelinjer, 125 i Østfold og 31 på Hvaler; dagens data er bevart.
+
 ## Neste UI-trinn
 - [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.
 
@@ -17,7 +21,7 @@ Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** st�
 - [ ] Mål respons ved mange synlige geometrier og overlapp; verifiser GPS-følging og satellittkart når relevant.
 
 ## Utsatt etter brukerbeslutning – hele stisystemet
-- [ ] Planlegg senere **samlet redesign av stier** med brukeren. Ikke begynn nå.
+- [ ] Planlegg senere **samlet redesign av stier** med brukeren. Ny kildeundersøkelse er gjennomført; implementering/redesign er fortsatt ikke bestilt.
 - [ ] Ved gjenopptakelse: vurder Hvaler-datasettet `Hvaler-redigering.gpkg` / `hvaler_tillegg`, eksisterende `data/hvaler/`, import, runtime-reserve, kommunegrenseklipping, kryssende segmenter og beskyttelse ved regenerering.
 - [ ] Kontroller at stier utenfor Hvaler bevares og at ingen gamle eller dupliserte Hvaler-segmenter gjeninnføres. Bevar 61 m korridor og avtalt GPS-/fargeoppførsel.
 - [ ] Avtal testgren, validering og eventuell publisering når stioppgaven gjenopptas. Tidligere godkjenning for direkte arbeid på `main` er ikke en ny bestilling om stiendringer.
