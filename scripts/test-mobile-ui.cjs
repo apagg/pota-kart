@@ -12,7 +12,6 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   assert.equal(await probe.locator('html').evaluate(el=>el.classList.contains('ui-loading')),true);
   assert.equal(await probe.locator('#infoPanel').isVisible(),false,'Legacy panel must stay hidden while UI loads');
   assert.equal(await probe.locator('#showPanel').isVisible(),false);
-  await probe.screenshot({path:'atlas-startup-pending-'+viewport.width+'.png'});
   release();await probe.waitForFunction(()=>!document.documentElement.classList.contains('ui-loading'));
   assert.equal(await probe.locator('#infoPanel').isVisible(),true,'Ready responsive panel must be visible');
   assert.equal(await probe.locator('body').evaluate((el,width)=>el.classList.contains(width>700?'desktop-layout':'mobile-layout'),viewport.width),true);
