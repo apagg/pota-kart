@@ -2,17 +2,7 @@
 
 Sist gjennomgått: 2026-10-11. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## Mobil-UI – første trinn (2026-10-11)
-- Parkboks/detaljer og klikkbar valgliste er implementert på `test/mobile-ui`; brukerens godkjenning gjelder første trinn.
-- Parkboksen og valgtlisten er manuelt testet og bekreftet av brukeren 2026-10-11.
-- Brukeren har bekreftet samlet opptrekksfane og plasseringen av Innstillinger med «dette ble mye bedre» 2026-10-11.
-- Brukeren har bekreftet at UI for både mobil og PC er tilfredsstillende 2026-10-11.
-- Brukeren bekreftet at oppstartsblinkingen var borte 2026-10-11 og bestilte opprydding av den gamle UI-grunnstrukturen.
-- Brukeren har godkjent det nye grensesnittet etter UI-oppryddingen 2026-10-11.
-- [ ] Brukeren vurderer parkfyll 25 % / 40 % og kantbredde 2 / 3,5 px på https://apagg.github.io/pota-kart/test/mobile-ui/. Overlapp og stier beholdes.
-- [ ] Sluttkontroll og eventuell sammenslåing etter uttrykkelig godkjenning.
-- GPS-delen er bestilt 2026-10-11: GPS under zoom til høyre, større zoomknapper og synlig GPS-status. Eksisterende GPS-logikk beholdes.
-- Brukeren har bekreftet GPS-presentasjonen med «ser bra ut» 2026-10-11.
+## Neste UI-trinn
 - [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.
 
 ## Neste oppgaver – avtal prioritet før implementering

@@ -108,6 +108,10 @@ Tidligere test-ID-er, refaktorering, Hvaler-analyse og feilrapporter ligger i [H
 - Gammelt flytende panel og gammel mobil reserveboks er fjernet fra CSS. Godkjent utseende og kart-/GPS-/geometrilogikk skal bevares.
 
 ## Avtalt parkutseende (2026-10-11)
-- Test vanlige parkpolygoner med 25 % fyll og 2 px kant, og valgte parkpolygoner med 40 % fyll og 3,5 px kant. Kantens synlighet er fortsatt 90 % i atlaslaget.
+- Vanlige parkpolygoner har 25 % fyll og 2 px kant, og valgte parkpolygoner har 40 % fyll og 3,5 px kant. Kantens synlighet er fortsatt 90 % i atlaslaget.
 - Overlapp beholder 48 % lilla fyll / 25 % grønt fyll og 1 px kant. Stier, stikorridorer og punktmarkører beholder egne innstillinger. GPS-fargene beholdes.
-- Endringen testes på `test/mobile-ui` før sammenslåing, sammen med det godkjente mobil-/PC-grensesnittet.
+- Brukeren har testet og godkjent parkutseendet og hele mobil-/PC-grensesnittet, og uttrykkelig godkjent sammenslåing til `main` 2026-10-11.
+
+## Godkjent sammenslåing (2026-10-11)
+- Mobil-/PC-grensesnitt, samlet mobilfane, GPS-presentasjon, direkte UI-struktur og parkfyll 25 % / 40 % er brukertestet og godkjent for `main` via PR #4.
+- Hovedkartet bruker nå denne løsningen. Tidligere trinnbeskrivelser over dokumenterer avtalene; testkopiene er bare øyeblikksbilder. Nye appendringer avtales og testes separat.
