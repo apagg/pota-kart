@@ -2,9 +2,6 @@
 
 Sist gjennomgått: 2026-10-12. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## GPS-kompass – bestilt
-- [ ] Fullfør sensor-/GPS-tester, PC-/mobilkontroll og publisering i main.
-
 ## Videre bruk av Oslofjorden-kyststiruter
 - [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.
 
