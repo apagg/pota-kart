@@ -1,6 +1,6 @@
 # POTA-kart – prosjektkunnskap
 
-Sist gjennomgått: 2026-10-11. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
+Sist gjennomgått: 2026-10-12. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
 
 ## Start en ny arbeidsøkt
 1. Les `PROJECT.md`, `STATUS.md` og `TODO.md` på GitHub. Kontroller faktisk `main`/arbeidsgren og relevante filer før endring.
@@ -155,3 +155,9 @@ Brukeren bestilte en separat test med ny kilde 2026-10-11 og oppgir privat bruk.
 
 ### Fullført sammenslåing av kyststikilden
 [PR #6](https://github.com/apagg/pota-kart/pull/6) er slått sammen med merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`. Main-kontroll `38175857227` og Pages `38175857211` fullførte med success. Live hovedkart laster cacheversjon 3 og nøyaktig den verifiserte 122-rutersfilen. `data/coastal/oslofjorden-ostfold-test.geojson` er produksjonssnapshotet (historisk filnavn beholdt), importert av `scripts/import-oslofjorden-coast.py`. Runtime erstatter NO-2542 i både oversikt, full geometri og bbox; eksisterende GIS-/Hvaler-kilder blandes ikke inn. Generell geometriregenerering bytter ikke automatisk dette manuelt kontrollerte KML-snapshotet. Andre stier og bredere redesign er fortsatt utsatt.
+
+## GPS-retning (bestilt 2026-10-12)
+- Brukeren bestilte retningsmarkør på GPS-prikken og ga uttrykkelig tillatelse til denne endringen direkte i main. Dette er et avgrenset unntak fra normal testgrenflyt.
+- Pil viser `GeolocationCoordinates.heading`: bevegelsesretning med klokken fra geografisk nord, ikke telefonens kompassretning. Finite verdier 0–359,999° brukes; ukjent/ugyldig retning og rapportert fart 0 skjuler pilen. Null fartinformasjon alene blokkerer ikke gyldig retning.
+- Vanlig 18 px GPS-prikk og nøyaktighetssirkel beholdes. Kun et indre pilelement roteres, så Leaflets posisjonstransform og markørinstansen bevares. GPS av fjerner markøren; nye ukjente målinger fjerner gammel pilretning. Ingen orienteringssensor eller ekstra tillatelsesdialog innføres.
+- Følging, pausing ved dra, park-/GPS-farger og 61 m stikorridor bevares. PC-/mobiltestene kontrollerer faktisk pilretning, ugyldige verdier, stillstand, gjenbruk, pauset følging og opprydding.

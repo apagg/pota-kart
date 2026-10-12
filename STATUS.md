@@ -1,8 +1,9 @@
 # POTA-kart – gjeldende status
 
-Oppdatert: 2026-10-11. GitHub `main` er fasiten. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
+Oppdatert: 2026-10-12. GitHub `main` er fasiten. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
+- **Aktivt arbeid:** GPS-retningspil direkte i main etter brukerens bestilling 2026-10-12. Implementert med GPS-bevegelsesretning; syntaks-/modulkontroll og nettleserverifisering gjenstår. Tidligere kilde-/UI-validering nedenfor gjelder forrige appkode.
 - **Kart:** https://apagg.github.io/pota-kart/
 - **Appversjon:** 0.11.0.
 - **Siste sammenslåing:** [PR #6](https://github.com/apagg/pota-kart/pull/6), merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`: NO-2542 bruker Oslofjorden.coms 109 gangruter + 13 sykkelruter, inkludert alle 31 Hvaler-rutene. Tidligere GIS-/Hvaler-kombinasjon erstattes. Mobil/PC, GPS, overlapp og aktiveringsfarger fra PR #4/#5 er bevart.

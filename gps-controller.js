@@ -1,6 +1,14 @@
 // GPS controller: extracted without changing GPS follow, membership or trail rules.
 let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0,gpsFollowing=false;
-function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-marker" aria-label="Min posisjon"></div>',iconSize:[18,18],iconAnchor:[9,9]})}
+function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-position"><span class="gps-heading" hidden aria-hidden="true"><svg viewBox="0 0 16 20" focusable="false"><path d="M8 2 L14 17 L8 14 L2 17 Z" fill="#2563eb" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></span><div class="gps-marker" aria-label="Min posisjon"></div></div>',iconSize:[18,18],iconAnchor:[9,9]})}
+function gpsHeadingValue(coords){
+  // Geolocation heading is travel direction clockwise from true north, not device orientation.
+  return Number.isFinite(coords.heading)&&coords.heading>=0&&coords.heading<360&&coords.speed!==0?coords.heading:null;
+}
+function updateGpsHeading(heading){
+  const arrow=gpsMarker?.getElement()?.querySelector('.gps-heading');if(!arrow)return;
+  arrow.hidden=heading===null;arrow.style.transform=heading===null?'':`rotate(${heading}deg)`;
+}
 function gpsInsideSelected(lat,lon){
   if(typeof turf==='undefined')return[];const pt=turf.point([lon,lat]),hits=[];
   const entries=[...selectedParks];
@@ -50,12 +58,13 @@ function locateUser(){
   try{
     gpsWatchId=navigator.geolocation.watchPosition(pos=>{
       if(generation!==gpsGeneration)return;
-      const {latitude:lat,longitude:lon,accuracy}=pos.coords;lastGps={lat,lon,accuracy};
+      const {latitude:lat,longitude:lon,accuracy}=pos.coords,heading=gpsHeadingValue(pos.coords);lastGps={lat,lon,accuracy,heading};
       const radius=Number.isFinite(accuracy)?Math.max(0,accuracy):0;
       if(gpsAccuracy)gpsAccuracy.setLatLng([lat,lon]).setRadius(radius);
       else gpsAccuracy=L.circle([lat,lon],{pane:'overlapPane',radius,color:'#2563eb',weight:1,fillColor:'#60a5fa',fillOpacity:.08,interactive:false}).addTo(map);
       if(gpsMarker)gpsMarker.setLatLng([lat,lon]);
       else gpsMarker=L.marker([lat,lon],{pane:'gpsPane',icon:gpsIcon(),zIndexOffset:1000}).addTo(map).bindTooltip('Min posisjon',{pane:'topTooltipPane',direction:'top',offset:[0,-8],className:'pota-hover-tooltip'});
+      updateGpsHeading(heading);
       if(gpsFollowing){if(firstPosition&&map.getZoom()<12)map.setView([lat,lon],14);else map.panTo([lat,lon],{animate:false})}
       firstPosition=false;
       syncGpsControl();updateGpsStatus(lat,lon,accuracy);updateGpsParkColors();
