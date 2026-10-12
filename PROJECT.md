@@ -159,5 +159,5 @@ Brukeren bestilte en separat test med ny kilde 2026-10-11 og oppgir privat bruk.
 ## GPS-retning (bestilt 2026-10-12)
 - Brukeren bestilte retningsmarkør på GPS-prikken og ga uttrykkelig tillatelse til denne endringen direkte i main. Dette er et avgrenset unntak fra normal testgrenflyt.
 - Pil viser `GeolocationCoordinates.heading`: bevegelsesretning med klokken fra geografisk nord, ikke telefonens kompassretning. Finite verdier 0–359,999° brukes; ukjent/ugyldig retning og rapportert fart 0 skjuler pilen. Null fartinformasjon alene blokkerer ikke gyldig retning.
-- Vanlig 18 px GPS-prikk og nøyaktighetssirkel beholdes. Kun et indre pilelement roteres, så Leaflets posisjonstransform og markørinstansen bevares. GPS av fjerner markøren; nye ukjente målinger fjerner gammel pilretning. Ingen orienteringssensor eller ekstra tillatelsesdialog innføres.
+- Vanlig GPS-prikk (18 px innhold + 3 px kant på hver side) og nøyaktighetssirkel beholdes. Kun et indre pilelement roteres, så Leaflets posisjonstransform og markørinstansen bevares. GPS av fjerner markøren; nye ukjente målinger fjerner gammel pilretning. Ingen orienteringssensor eller ekstra tillatelsesdialog innføres.
 - Følging, pausing ved dra, park-/GPS-farger og 61 m stikorridor bevares. PC-/mobiltestene kontrollerer faktisk pilretning, ugyldige verdier, stillstand, gjenbruk, pauset følging og opprydding.

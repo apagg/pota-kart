@@ -1,6 +1,6 @@
 // GPS controller: extracted without changing GPS follow, membership or trail rules.
 let gpsMarker=null,gpsAccuracy=null,lastGps=null,gpsWatchId=null,gpsGeneration=0,gpsFollowing=false;
-function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-position"><span class="gps-heading" hidden aria-hidden="true"><svg viewBox="0 0 16 20" focusable="false"><path d="M8 2 L14 17 L8 14 L2 17 Z" fill="#2563eb" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></span><div class="gps-marker" aria-label="Min posisjon"></div></div>',iconSize:[18,18],iconAnchor:[9,9]})}
+function gpsIcon(){return L.divIcon({className:'',html:'<div class="gps-position"><span class="gps-heading" hidden aria-hidden="true"><svg viewBox="0 0 16 20" focusable="false"><path d="M8 2 L14 17 L8 14 L2 17 Z" fill="#2563eb" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></span><div class="gps-marker" aria-label="Min posisjon"></div></div>',iconSize:[24,24],iconAnchor:[12,12]})}
 function gpsHeadingValue(coords){
   // Geolocation heading is travel direction clockwise from true north, not device orientation.
   return Number.isFinite(coords.heading)&&coords.heading>=0&&coords.heading<360&&coords.speed!==0?coords.heading:null;

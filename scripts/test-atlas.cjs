@@ -216,6 +216,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  console.log('GPS travel arrow: actual SVG direction, missing/stationary headings and marker reuse');
  const arrow=page.locator('.gps-heading');assert.equal(await arrow.isVisible(),false,'No heading must keep the plain position dot');
  const markerTransform=await page.evaluate(()=>gpsMarker.getElement().style.transform);
+ assert.deepEqual(await page.locator('.gps-marker').evaluate(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height}}),{width:24,height:24},'Preserve original GPS dot size including borders');
  for(const [heading,axis,sign] of [[0,'y',-1],[90,'x',1],[180,'y',1],[270,'x',-1]]){
   await emitGps(0,60.01,10.01,12,heading,2);
   assert.equal(await arrow.isVisible(),true);
