@@ -12,6 +12,7 @@ on:
       - 'scripts/update-geometries.py'
       - 'scripts/test-geometries.py'
       - 'scripts/test-atlas.cjs'
+      - 'scripts/test-gps-compass.cjs'
       - 'scripts/test-kyst-ui.cjs'
       - 'scripts/test-mobile-ui.cjs'
       - 'scripts/test-park-activations.cjs'
@@ -59,6 +60,7 @@ jobs:
           node --check map-setup.js
           node --check map-layers.js
           node --check gps-controller.js
+          node --check scripts/test-gps-compass.cjs
           node scripts/test-module-wiring.cjs
           node scripts/test-geojson-utils.cjs
           node --check polygon-layer-utils.js
@@ -114,6 +116,7 @@ jobs:
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
           node scripts/test-overlap-engine.cjs
           timeout 300 node scripts/test-atlas.cjs
+          timeout 180 node scripts/test-gps-compass.cjs
           timeout 180 node scripts/test-kyst-ui.cjs
           if [ -f scripts/test-mobile-ui.cjs ]; then timeout 180 node scripts/test-mobile-ui.cjs; fi
           timeout 180 node scripts/test-park-activations.cjs

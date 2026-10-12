@@ -3,6 +3,7 @@
 Oppdatert: 2026-10-12. GitHub `main` er fasiten. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
+- **Aktivt arbeid:** Kompass på GPS-prikken, bestilt 2026-10-12 som videreføring direkte i main. Implementering og syntaks-/modulkontroll er gjort; nettleserkontroll og publisering gjenstår. Verifisert kode nedenfor gjelder forrige GPS-pil.
 - **Siste endring:** GPS-prikk med retningspil direkte i main etter uttrykkelig godkjenning 2026-10-12. Kode `9fe9f1cf46999622f0925beea9d23fb6725ef242`. Pil viser bevegelsesretning når GPS-en oppgir den; skjules ved ukjent/ugyldig retning eller rapportert fart 0. Prikkstørrelse, nøyaktighetssirkel, følging og parkregler bevares.
 - **Kart:** https://apagg.github.io/pota-kart/
 - **Appversjon:** 0.11.0.

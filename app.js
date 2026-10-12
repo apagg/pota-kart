@@ -15,7 +15,7 @@
     await load('geometry-atlas.js?v=oslofjorden-coast-3');
     await load('map-setup.js?v=011-release');
     await load('map-layers.js?v=011-release');
-    await load('gps-controller.js?v=gps-heading-2');
+    await load('gps-controller.js?v=gps-compass-1');
     await load('polygon-layer-utils.js?v=011-release');
     await load('pota-activation.js?v=011-release');
     await load('park-info-ui.js?v=activated-parks-1');
