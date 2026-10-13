@@ -125,7 +125,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('#mobileHelp').isVisible(),false);
  assert.equal(await page.locator('.desktop-map-controls').count(),1);
  for(const width of [390,1280,390,1280]){
-  await page.setViewportSize({width,height:900});await page.waitForTimeout(100);
+  await page.setViewportSize({width,height:900});
+  await page.locator(width>700?'#desktopCountrySlot #countryFilter':'#mobileSettingsContent #countryFilter').waitFor({state:'attached'});
+  await page.locator(width>700?'#desktopBasemapSlot #baseMapSelect':'#mobileLayersContent #baseMapSelect').waitFor({state:'attached'});
   for(const id of ['q','countryFilter','baseMapSelect','multiMode','locateBtn','gpsStatus'])assert.equal(await page.locator('#'+id).count(),1,'One shared field: '+id);
   assert.equal(await page.locator(width>700?'#desktopCountrySlot #countryFilter':'#mobileSettingsContent #countryFilter').count(),1,'Country field returns to the correct static slot');
   assert.equal(await page.locator(width>700?'#desktopBasemapSlot #baseMapSelect':'#mobileLayersContent #baseMapSelect').count(),1,'Basemap field returns to the correct static slot');
