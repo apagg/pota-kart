@@ -83,7 +83,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('#baseMapSelect').isVisible(),false);
  for(const selector of ['#countryFilter','#multiMode','.mapkey','#mobileHelp'])assert.equal(await page.locator(selector).isVisible(),true,'Settings must include '+selector);
  const beforeLayers=await view(),beforeLayersSelection=await page.evaluate(()=>[...selectedParks].map(([ref,x])=>[ref,L.stamp(x.geo)]));
- await page.click('#mobileLayers');
+ await page.click('#mobileSheetClose');await page.click('#mobileLayers');
  assert.equal(await page.locator('#mobileParkTitle').innerText(),'Karttype');
  assert.equal(await page.locator('#mobileLayers').getAttribute('aria-expanded'),'true');
  assert.equal(await page.locator('#baseMapSelect').isVisible(),true);

@@ -61,7 +61,7 @@
     const isPark=view==='park';
     $('mobileParkRef').textContent=isPark&&current?current.p.reference:'';
     $('mobileParkTitle').textContent=isPark?(current?current.p.name:'Velg en POTA-park'):view==='overlap'?'Velg POTA-park':view==='layers'?'Karttype':'Innstillinger';
-    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='layers'?'Velg bakgrunnskart':'Land, flervalg og hjelp';
+    $('mobileParkType').textContent=isPark?'Trykk på et område, en sti eller et punkt':view==='overlap'?'Flere parker her – trykk på parken du ønsker':view==='layers'?'Velg bakgrunnskart':'Land, visning, flervalg og hjelp';
     $('mobileParkType').hidden=!!(isPark&&current);
     $('mobileParkSummary').hidden=!isPark||!current;
     renderParkDetails();

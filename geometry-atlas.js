@@ -5,7 +5,13 @@ const geometryAtlas={indexes:{},overviews:{},records:new Map(),shards:new Map(),
 const parkDisplayMode=document.getElementById('parkDisplayMode');
 try{parkDisplayMode.value=localStorage.getItem('pota-park-display')==='points'?'points':'geometry'}catch(e){}
 function parkGeometryVisible(){return parkDisplayMode.value!=='points'}
+function syncParkDisplayLegend(){
+ document.getElementById('pointLegendLabel').textContent=parkGeometryVisible()?'Mangler geometri':'POTA-park';
+ document.getElementById('trailLegendLabel').textContent=parkGeometryVisible()?'Sti uten geometri':'POTA-sti';
+}
+syncParkDisplayLegend();
 function syncParkDisplayLayers(){
+ syncParkDisplayLegend();
  const geometry=parkGeometryVisible();
  for(const [ref,layer] of geometryAtlas.layers){if(geometry&&atlasInCountry(ref))layer.addTo(map);else map.removeLayer(layer)}
  const sync=(ref,marker,geo)=>{for(const layer of [marker,geo])if(layer){if(geometry&&atlasInCountry(ref))layer.addTo(map);else map.removeLayer(layer)}};

@@ -10,10 +10,14 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.locator('#desktopSettings').evaluate(e=>e.open=true);
  await page.selectOption('#parkDisplayMode','points');
  await page.waitForFunction(()=>!map.hasLayer(overlapLayer)&&[...geometryAtlas.layers.values()].every(l=>!map.hasLayer(l)));
+ assert.equal(await page.locator('#pointLegendLabel').textContent(),'POTA-park');
  const points=await page.evaluate(()=>({visible:potaMarkers.filter(x=>layers.pts.hasLayer(x.marker)).length,total:potaMarkers.length,selectedHidden:[...selectedParks.values()].every(x=>!x.geo||!map.hasLayer(x.geo)),refs:[...selectedParks.keys()],lat:map.getCenter().lat,lng:map.getCenter().lng,zoom:map.getZoom()}));
  assert.equal(points.visible,points.total);assert(points.selectedHidden);for(const key of Object.keys(before))assert.deepEqual(points[key],before[key]);
  await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-2641'),false,false);map.setZoom(12,{animate:false});await atlasRefresh()});
  assert(await page.evaluate(()=>[...selectedParks.values()].every(x=>!x.geo||!map.hasLayer(x.geo))&&[...geometryAtlas.layers.values()].every(l=>!map.hasLayer(l))));
+ await page.evaluate(()=>potaMarkers.find(x=>x.reference==='NO-3374').marker.fire('click'));
+ await page.waitForFunction(()=>selectedParks.has('NO-3374'));
+ assert(await page.evaluate(()=>!map.hasLayer(selectedParks.get('NO-3374').geo)));
  const selected=await page.evaluate(()=>[...selectedParks.keys()]);
  await page.evaluate(()=>atlasPick(L.latLng(59,10),null));assert.deepEqual(await page.evaluate(()=>[...selectedParks.keys()]),selected,'Hidden geometry cannot be picked');
  const colors=await page.evaluate(async()=>{
