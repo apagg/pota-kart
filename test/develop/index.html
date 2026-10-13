@@ -9,8 +9,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <title>POTA Kart 0.12.0 – Utvikling – Norge og Sverige</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="styles.css?v=3dc3c895fe482d3ffbd60c79731d908acfbf54db">
-<link rel="stylesheet" href="mobile-ui.css?v=3dc3c895fe482d3ffbd60c79731d908acfbf54db">
+<link rel="stylesheet" href="styles.css?v=ad6503b3b1695320c0a310c37d102234acd945bb">
+<link rel="stylesheet" href="mobile-ui.css?v=ad6503b3b1695320c0a310c37d102234acd945bb">
 </head>
 <body>
 <div id="map"></div>
@@ -30,6 +30,7 @@
       <summary>Kartinnstillinger</summary>
       <div id="desktopCountrySlot"><div class="row" style="align-items:center"><label class="small" for="countryFilter"><b>Land:</b></label><select id="countryFilter" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="ALL">Norge + Sverige</option><option value="NO">Norge</option><option value="SE">Sverige</option></select></div></div>
       <div id="desktopBasemapSlot"><div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="osm">OpenStreetMap</option><option value="esri">Esri</option><option value="satellite">Satellitt</option></select></div></div>
+      <div id="desktopDisplaySlot"><div class="row" style="align-items:center"><label class="small" for="parkDisplayMode"><b>Visning:</b></label><select id="parkDisplayMode" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="geometry">Geometri</option><option value="points">Bare punkter</option></select></div></div>
       <div id="desktopMultiSlot"><div class="selectbar"><label><input type="checkbox" id="multiMode" checked> Flervalg</label><span class="small">Legg flere parker til utvalget</span></div></div>
       <div id="desktopActivationSlot"><section id="activationSettings" class="activation-settings">
         <h3>Mine kallesignaler</h3>
@@ -43,12 +44,12 @@
     </details>
     <details id="desktopLegend" class="desktop-section">
       <summary>Tegnforklaring</summary>
-      <div id="desktopLegendSlot"><div class="mapkey"><span><i class="dotkey"></i>Mangler geometri</span><span><i class="trailkey"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>Sti uten geometri</span><span><i class="areakey"></i>Offisiell grense / geometri</span><span><i class="activatedkey"></i>Aktivert av dine kallesignaler</span><span><i class="insidekey"></i>Innenfor med GPS</span><span><i class="overlapkey"></i>Overlapp mellom parker / 61 m stikorridor</span></div></div>
+      <div id="desktopLegendSlot"><div class="mapkey"><span><i class="dotkey"></i><span id="pointLegendLabel">Mangler geometri</span></span><span><i class="trailkey"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.1" cy="4.6" r="2.2" fill="currentColor"/><path d="M11.3 7.2l-2.1 4.1 2.5 2.3-1.8 5.2M11.3 7.2l3.3 2.4 2.9-.4M11.8 13.4l3.8 5.2M9.2 11.3l-2.5 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span id="trailLegendLabel">Sti uten geometri</span></span><span><i class="areakey"></i>Offisiell grense / geometri</span><span><i class="activatedkey"></i>Aktivert av dine kallesignaler</span><span><i class="insidekey"></i>Innenfor med GPS</span><span><i class="overlapkey"></i>Overlapp mellom parker / 61 m stikorridor</span></div></div>
       <div class="small" style="margin-top:4px">Overlapp vises automatisk i kartutsnittet. Stier behandles som en 61 meter bred korridor.</div>
     </details>
     <details id="desktopHelp" class="info-more">
       <summary>Hjelp og teknisk informasjon</summary>
-      <p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Den offisielle områdegrensen vises.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk i lilla, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
+      <p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Velg <b>Geometri</b> eller <b>Bare punkter</b> under Kartinnstillinger.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk i lilla, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
     <p><b>Datakilder</b><br>POTA-referanser: Parks on the Air.<br>Områdegrenser: Naturvårdsverket / svenske myndighetsdata og Miljødirektoratet / Naturbase og Riksantikvarens kulturminneregister.</p>
     <p class="small"><b>Merk:</b> POTA-punktet er en referanseposisjon. Registergeometrien viser kildens avgrensning. Kulturminnegeometri dekker ikke nødvendigvis hele POTA-området.</p>
       <div class="small">Trykk på en parkgrense eller sti, eller søk etter POTA-ID eller navn. Parker uten tilgjengelig geometri vises som punkt.</div>
@@ -75,7 +76,7 @@
     <p id="mobileGeometryNote" class="mobile-geometry-note" data-mobile-section="details" hidden>Geometri mangler – parken vises som punkt</p>
     <div id="mobileOverlapChoices" class="mobile-overlap-list" data-mobile-section="overlap" hidden></div>
     <section id="mobileSettingsContent" data-mobile-section="settings" hidden>
-      <details id="mobileHelp" class="mobile-help"><summary>Hjelp og datakilder</summary><p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Den offisielle områdegrensen vises.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk i lilla, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
+      <details id="mobileHelp" class="mobile-help"><summary>Hjelp og datakilder</summary><p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Velg <b>Geometri</b> eller <b>Bare punkter</b> under Kartinnstillinger.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk i lilla, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
     <p><b>Datakilder</b><br>POTA-referanser: Parks on the Air.<br>Områdegrenser: Naturvårdsverket / svenske myndighetsdata og Miljødirektoratet / Naturbase og Riksantikvarens kulturminneregister.</p>
     <p class="small"><b>Merk:</b> POTA-punktet er en referanseposisjon. Registergeometrien viser kildens avgrensning. Kulturminnegeometri dekker ikke nødvendigvis hele POTA-området.</p></details>
     </section>
@@ -107,5 +108,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=3dc3c895fe482d3ffbd60c79731d908acfbf54db" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
+<script src="app.js?v=ad6503b3b1695320c0a310c37d102234acd945bb" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
 </body></html>
