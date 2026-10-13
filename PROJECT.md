@@ -169,3 +169,5 @@ Brukeren bestilte en separat test med ny kilde 2026-10-11 og oppgir privat bruk.
 
 ## Versjon 0.12.0 (godkjent 2026-10-13)
 Brukeren godkjente 0.12.0 som ny versjon etter UI, aktiveringsmarkering, Oslofjorden-kildesnapshot og GPS/kompass. Nummeret vises i sidetittel, PC-header og mobilheader. Bootstrap og dokumentasjon følger samme versjon; README har et kort versjonsnotat. Dette er et versjonsløft av godkjente funksjoner, uten nye kart-/sensor-/geometriregler. Tidligere testkopier er egne øyeblikksbilder.
+
+Versjon 0.12.0 er publisert og verifisert: kode `d8ef89bd7a546eeef029d17e553e1600b7950a58`, Verify POTA map `38361099823` og Pages `38361099225` = completed/success. Live kontroll bekrefter 0.12.0 i sidetittel og PC-/mobilheader, samt 012-release-bootstrap.

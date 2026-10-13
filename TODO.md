@@ -2,9 +2,6 @@
 
 Sist gjennomgått: 2026-10-13. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
-## Versjon 0.12.0 – godkjent
-- [ ] Fullfør verifisering og publisering av versjonsnummer og versjonsnotat.
-
 ## Videre bruk av Oslofjorden-kyststiruter
 - [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.
 
