@@ -18,7 +18,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
-- Norge og Sverige støttes. Alle tilgjengelige verifiserte parkgeometrier vises; parker uten verifisert geometri beholdes som punkt.
+- Norge og Sverige støttes. Geometri er standard: alle tilgjengelige verifiserte parkgeometrier vises, og parker uten geometri beholdes som punkt. Kartinnstillinger kan bytte til Bare punkter for alle parker; GPS følger fortsatt tilgjengelig geometri.
 - Flervalg er på ved oppstart. Parkvalg skal ikke gi automatisk zoom; nytt klikk på valgt park åpner informasjon igjen.
 - Musepekerinformasjon på geometri og punkt; overlapp skal vise alle berørte parker (også flere enn to), med mobilvalg ved overlappende trykk.
 - Stier: **61 m total korridorbredde** (30,5 m på hver side). Blå som grunnfarge; stier og parker blir grønne når GPS-posisjonen er innenfor. Valg gjør ikke symbolene større; valgt parkpunkt kan markeres mørkere.
