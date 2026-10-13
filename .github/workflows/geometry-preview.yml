@@ -16,6 +16,7 @@ on:
       - 'scripts/test-kyst-ui.cjs'
       - 'scripts/test-mobile-ui.cjs'
       - 'scripts/test-park-display.cjs'
+      - 'scripts/test-startup-position.cjs'
       - 'scripts/test-park-activations.cjs'
       - 'scripts/test-overlap-engine.cjs'
       - 'scripts/import-oslofjorden-coast.py'
@@ -123,6 +124,7 @@ jobs:
           timeout 180 node scripts/test-park-activations.cjs
           timeout 180 node scripts/test-oslofjorden-coast.cjs
           timeout 180 node scripts/test-park-display.cjs
+          timeout 180 node scripts/test-startup-position.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

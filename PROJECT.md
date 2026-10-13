@@ -221,3 +221,15 @@ skal ikke treffe skjult geometri. Geometri/data beholdes uavhengig av visningen;
 GPS følger fortsatt ekte grenser eller 61 m stikorridor, og bruker 100 m bare
 for parker uten geometri. Bare develop er endret; main/ny versjon avventer avtale.
 Brukeren godkjente Vestfold-/Telemark-rutene visuelt med «ser bra ut» før dette.
+
+## Oppstartsutsnitt (bestilt 2026-10-13)
+Kartet starter med et utsnitt rundt brukerens tilgjengelige posisjon, omtrent
+30 km radius (60 km diameter tilpasset kartets bredde/høyde). Fredrikstad
+(59.2181, 10.9298) vises umiddelbart som reserve. Ett getCurrentPosition-oppslag
+etter responsivt UI er klart bruker timeout 8 s og maks 60 s gammel posisjon;
+manglende støtte, avslag, feil, ugyldig posisjon eller uteblitt svar beholder
+Fredrikstad. Egen grense 10 s ignorerer svært sene svar. Oppstart aktiverer ikke
+GPS-watch, kompass eller følging. Kartbruk/parkvalg før svaret hindrer sen
+automatisk sentrering. GPS-knappen beholder avtalt av/på/følg-funksjon.
+Bare develop er endret; ingen ny versjon eller main-sammenslåing er bestilt.
+Brukeren godkjente visningsvalget Geometri/Bare punkter med «Bra» før dette.

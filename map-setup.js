@@ -1,5 +1,5 @@
 // Map panes, base layers and UI references. Loaded before app-core.js.
-const map=L.map('map',{zoomControl:false,preferCanvas:false}).setView([62.0,13.0],5);L.control.zoom({position:'bottomright'}).addTo(map);
+const map=L.map('map',{zoomControl:false,preferCanvas:false,zoomSnap:.25}).setView([59.2181,10.9298],9);L.control.zoom({position:'bottomright'}).addTo(map);
 // POTA-punkter ligger i en egen pane over områdepolygonene, men under popup-vinduene.
 map.createPane('potaPane');
 map.getPane('potaPane').style.zIndex='650';
@@ -36,3 +36,32 @@ for(const layer of Object.values(baseLayers))layer.on('tileerror',()=>{st.innerH
 let initialBase='osm';try{initialBase=localStorage.getItem('potaBaseMap')||'osm'}catch(e){}
 setBaseMap(initialBase);
 baseMapSelect.addEventListener('change',e=>setBaseMap(e.target.value));
+
+// One startup fix chooses the initial area; the GPS button still owns tracking.
+const STARTUP_RADIUS_M=30000,STARTUP_FALLBACK=L.latLng(59.2181,10.9298);
+const startupViewState={source:'fallback',settled:false,interacted:false};
+let startupViewApplying=false,startupViewTimer=null;
+function applyStartupView(center){
+ startupViewApplying=true;
+ try{map.invalidateSize({pan:false});map.fitBounds(center.toBounds(STARTUP_RADIUS_M*2),{animate:false,padding:[16,16]});map.setView(center,map.getZoom(),{animate:false})}
+ finally{startupViewApplying=false}
+}
+function initializeStartupPosition(){
+ // Wait for the responsive layout to settle before fitting the 60 km diameter.
+ requestAnimationFrame(()=>{
+  applyStartupView(STARTUP_FALLBACK);
+  map.on('movestart',()=>{if(!startupViewApplying)startupViewState.interacted=true});
+  document.addEventListener('pota:park',()=>{startupViewState.interacted=true});
+  const geo=navigator.geolocation;
+  if(!window.isSecureContext||typeof geo?.getCurrentPosition!=='function'){startupViewState.settled=true;return}
+  const finish=position=>{
+   if(startupViewState.settled)return;
+   startupViewState.settled=true;clearTimeout(startupViewTimer);
+   const lat=position?.coords?.latitude,lon=position?.coords?.longitude;
+   if(startupViewState.interacted||gpsWatchId!==null||!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return;
+   applyStartupView(L.latLng(lat,lon));startupViewState.source='position';
+  };
+  startupViewTimer=setTimeout(()=>finish(null),10000);
+  try{geo.getCurrentPosition(finish,()=>finish(null),{enableHighAccuracy:false,timeout:8000,maximumAge:60000})}catch(e){finish(null)}
+ });
+}

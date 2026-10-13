@@ -7,7 +7,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   Object.defineProperty(navigator,'geolocation',{configurable:true,value:{
    watchPosition(success,error,options){const id=state.next++;state.watches.set(id,{success,error,options});return id},
    clearWatch(id){state.cleared.push(id)},
-   getCurrentPosition(){state.oneShotCalls++;throw Error('Expected continuous GPS')}
+   getCurrentPosition(success,error){state.oneShotCalls++;error({code:1,message:'Denied for deterministic startup'})}
   }});
  });
  // Deterministic POTA responses verify zero, caching, failures and stale replies.
@@ -255,7 +255,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await emitGps(1,60.01,10.01,5);await page.waitForFunction(()=>map.getCenter().distanceTo([60.01,10.01])<10);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
  await page.evaluate(()=>{selectedParks.delete('GPS-FIXTURE');document.dispatchEvent(new CustomEvent('pota:selection'))});assert.match(await page.locator('#gpsStatus').innerText(),/Ikke innenfor/);
  await page.evaluate(()=>testGps.watches.get(1).error({code:1,message:'Denied'}));assert.equal(await gpsButton.getAttribute('aria-pressed'),'false');assert.match(await page.locator('#gpsStatus').innerText(),/Posisjonstilgang er avslått/);assert.equal(await page.locator('#mobileNotice').isVisible(),false);
- assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0,1]);assert.equal(await page.evaluate(()=>testGps.oneShotCalls),0);
+ assert.deepEqual(await page.evaluate(()=>testGps.cleared),[0,1]);assert.equal(await page.evaluate(()=>testGps.oneShotCalls),1);
  // Pausing before the first fix keeps the watch and does not move the map.
  await gpsButton.click();await dragMap();assert.equal(await gpsButton.getAttribute('data-gps-state'),'paused');
  await gpsButton.click();assert.equal(await gpsButton.getAttribute('data-gps-state'),'following');assert.equal(await page.evaluate(()=>testGps.watches.size),3);

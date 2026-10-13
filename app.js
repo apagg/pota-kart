@@ -33,6 +33,7 @@
     await load('mobile-ui.js?v=activated-parks-1');
     await load('desktop-ui.js?v=ui-structure-1');
     await load('park-activations.js?v=point-colors-1');
+    initializeStartupPosition();
   }catch(e){
     const el=document.getElementById('status');
     if(el)el.textContent='Oppstartsfeil: '+e.message;
