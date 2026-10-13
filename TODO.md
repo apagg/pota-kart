@@ -3,8 +3,7 @@
 Sist gjennomgått: 2026-10-13. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
 ## Develop og neste kyststiundersøkelse
-- [ ] Verifiser develop/testkart og registrer fast arbeidsflyt.
-- [ ] Undersøk samme Oslofjorden-løsning for Kyststien Vestfold og Kyststien Telemark: kildefoldere, kategorier, POTA-referanser og avgrensning. Ingen import til appen er bestilt ennå.
+- [ ] Se undersøkelsen av Vestfold/Telemark og videre oppgaver i develop. Import av nye ruter er ikke bestilt ennå.
 
 ## Videre bruk av Oslofjorden-kyststiruter
 - [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.

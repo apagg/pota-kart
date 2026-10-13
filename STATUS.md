@@ -3,7 +3,7 @@
 Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop er aktiv arbeidsgren. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
-- **Arbeidsflyt:** 0.12.0 er stabil på main. Ny gren develop med separat testkart settes opp etter brukerens bestilling 2026-10-13. Nye app-/dataendringer gjøres i develop til brukeren godkjenner en ny versjon. Archive/v0.12.0 bevarer utgangspunktet. Infrastruktur/publisering er under verifisering.
+- **Arbeidsflyt:** 0.12.0 er stabil på main. Develop og separat testkart er opprettet etter brukerens bestilling 2026-10-13. Nye app-/dataendringer gjøres i develop til brukeren godkjenner en ny versjon. Archive/v0.12.0 bevarer utgangspunktet. Main-infrastrukturkontroll 38369531888 og develop-kontroll 38369752436 = completed/success. Previewpublisering 1641d1c080fc8752462c4f5f8bea9a4192562ef8 og Pages 38369999678 = completed/success. Live hovedkart forblir 0.12.0, og test/develop viser Utvikling med commit-ID i lokale asset-URL-er.
 - **Siste endring:** Versjon 0.12.0, kode `d8ef89bd7a546eeef029d17e553e1600b7950a58`, bestilt 2026-10-13. Nummeret er oppdatert i sidetittel, PC-/mobilheader, bootstrap og dokumentasjon. README har et kort versjonsnotat for UI, aktiveringsfarger, kyststidata og GPS/kompass. Ingen kart-/GPS-/geometriregler er endret ved versjonsløftet.
 - **Siste sammenslåing:** [PR #6](https://github.com/apagg/pota-kart/pull/6), merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`: NO-2542 bruker Oslofjorden.coms 109 gangruter + 13 sykkelruter, inkludert alle 31 Hvaler-rutene. Tidligere GIS-/Hvaler-kombinasjon erstattes. Mobil/PC, GPS, overlapp og aktiveringsfarger fra PR #4/#5 er bevart.
 - **Verifisert kode:** [Verify POTA map 38361099823](https://github.com/apagg/pota-kart/actions/runs/38361099823) = completed/success. Versjonskontroll og eksisterende geometri-, Kyststi-, overlapps-, PC-/mobil-, GPS-/kompass- og aktiveringstester består. Mobiltesten forventer og viser 0.12.0.
@@ -33,6 +33,7 @@ Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop e
 - Hele testversjonen er brukertestet og godkjent. PR #5 er slått sammen; ingen implementerings-, publiserings- eller sammenslåingsoppgave gjenstår for denne funksjonen.
 
 ## Neste arbeid
+- Les pågående kildeundersøkelser og oppgaver fra develop. Vestfold/Telemark undersøkes der; nye ruter er ikke lagt inn i hovedkartet.
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
 - Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkering og punktutseende er ferdigstilt i hovedkartet.
 

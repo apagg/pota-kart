@@ -179,3 +179,5 @@ Versjon 0.12.0 er publisert og verifisert: kode `d8ef89bd7a546eeef029d17e553e160
 - Utviklingskartet merkes i sidetittelen. Det begynner med 0.12.0-funksjonene; nytt versjonsnummer velges først ved avtalt utgivelse. Tidligere testgrener/kopier er historiske og er ikke ny arbeidsgren.
 - Dokumentasjon om pågående utvikling oppdateres i develop. Main-dokumentasjon oppdateres ved avtalt utgivelse eller nødvendig drifts-/arbeidsflytoppdatering. Integrer siste main før utgivelse slik at data-/testpubliseringer bevares.
 - Vestfold/Telemark er foreløpig en kildeundersøkelse bestilt etter oppsettet, ikke en bestilling om å importere nye ruter eller omarbeide hele stisystemet.
+
+Develop er etablert fra oppsett `74573aa3018b1494e75fab1e8f52fe1034652ac1`; første appkontroll `809ed67f3766a8b9c852620bf72d3e855d8b847c`, Verify `38369752436` og Pages `38369999678` fullførte med success. Main-infrastrukturkontroll `38369531888` består. Live hovedapp er fortsatt stabil 0.12.0; testkart: https://apagg.github.io/pota-kart/test/develop/.
