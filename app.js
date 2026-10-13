@@ -1,4 +1,4 @@
-// POTA Kart 0.11.0 bootstrap loader
+// POTA Kart 0.12.0 bootstrap loader
 (async()=>{
   const load=src=>new Promise((resolve,reject)=>{
     const s=document.createElement('script');
@@ -9,24 +9,24 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('diagnostics.js?v=011-release');
-    await load('geojson-utils.js?v=011-release');
-    await load('geometry-topology.js?v=011-release');
+    await load('diagnostics.js?v=012-release');
+    await load('geojson-utils.js?v=012-release');
+    await load('geometry-topology.js?v=012-release');
     await load('geometry-atlas.js?v=oslofjorden-coast-3');
-    await load('map-setup.js?v=011-release');
-    await load('map-layers.js?v=011-release');
+    await load('map-setup.js?v=012-release');
+    await load('map-layers.js?v=012-release');
     await load('gps-controller.js?v=gps-compass-1');
-    await load('polygon-layer-utils.js?v=011-release');
-    await load('pota-activation.js?v=011-release');
+    await load('polygon-layer-utils.js?v=012-release');
+    await load('pota-activation.js?v=012-release');
     await load('park-info-ui.js?v=activated-parks-1');
-    await load('app-text-utils.js?v=011-release');
-    await load('norway-park-registry.js?v=011-release');
-    await load('sweden-park-registry.js?v=011-release');
-    await load('geometry-format-utils.js?v=011-release');
-    await load('sweden-heritage-registry.js?v=011-release');
+    await load('app-text-utils.js?v=012-release');
+    await load('norway-park-registry.js?v=012-release');
+    await load('sweden-park-registry.js?v=012-release');
+    await load('geometry-format-utils.js?v=012-release');
+    await load('sweden-heritage-registry.js?v=012-release');
     await load('app-core.js?v=oslofjorden-coast-3');
-    await load('park-diagnostics.js?v=011-release');
-    await load('park-selection-state.js?v=011-release');
+    await load('park-diagnostics.js?v=012-release');
+    await load('park-selection-state.js?v=012-release');
     await load('pota-park-loader.js?v=point-fill-1');
     await load('park-selection-controller.js?v=point-fill-1');
     await load('pota-startup.js?v=oslofjorden-coast-3');

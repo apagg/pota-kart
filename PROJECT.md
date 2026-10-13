@@ -1,6 +1,6 @@
 # POTA-kart – prosjektkunnskap
 
-Sist gjennomgått: 2026-10-12. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
+Sist gjennomgått: 2026-10-13. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
 
 ## Start en ny arbeidsøkt
 1. Les `PROJECT.md`, `STATUS.md` og `TODO.md` på GitHub. Kontroller faktisk `main`/arbeidsgren og relevante filer før endring.
@@ -14,7 +14,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
 - Publisering: GitHub Pages fra `main`.
-- Sist dokumentert appversjon: **0.11.0** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
+- Sist dokumentert appversjon: **0.12.0** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
@@ -166,3 +166,6 @@ Brukeren bestilte en separat test med ny kilde 2026-10-11 og oppgir privat bruk.
 - W3C-grunnlag: https://www.w3.org/TR/orientation-event/. Første GPS-pil uten kompass ble verifisert i kode `9fe9f1cf46999622f0925beea9d23fb6725ef242`, Verify `38251517480` og Pages `38251517203`.
 
 - Kompassimplementering `0ec419624807e8bc60b9593a3d032818511cd971`, Verify POTA map `38253810271` = completed/success. Simulatorer tester iPhone-/Android-data, skjerm-/telefonvinkel, stillstand, GPS-reserve, tillatelse og opprydding. PC-/mobilbilder er kontrollert. Pages `38254637963` = completed/success; live hovedkart bruker gps-compass-1. Publiseringsstatus står i STATUS.md.
+
+## Versjon 0.12.0 (godkjent 2026-10-13)
+Brukeren godkjente 0.12.0 som ny versjon etter UI, aktiveringsmarkering, Oslofjorden-kildesnapshot og GPS/kompass. Nummeret vises i sidetittel, PC-header og mobilheader. Bootstrap og dokumentasjon følger samme versjon; README har et kort versjonsnotat. Dette er et versjonsløft av godkjente funksjoner, uten nye kart-/sensor-/geometriregler. Tidligere testkopier er egne øyeblikksbilder.

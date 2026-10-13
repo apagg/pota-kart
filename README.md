@@ -1,6 +1,19 @@
-# POTA Kart 0.11.0
+# POTA Kart 0.12.0
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.0 – 2026-10-13
+
+Denne versjonen samler de godkjente forbedringene:
+
+- Nytt PC-panel og samlet mobilfane med innstillinger til venstre og GPS/zoom til høyre.
+- Automatisk aktiveringsmarkering for flere kallesignaler: blå, gule og grønne parkflater og punkter.
+- Kyststien Østfold med 122 gang-/sykkelruter fra Oslofjorden.com, inkludert alle 31 Hvaler-rutene. Ferger utelates; 61 m korridor og overlapp beholdes.
+- GPS med følging/pausing og kompasspil også ved stillstand. GPS-bevegelsesretning er reserve hvis kompasset ikke er tilgjengelig.
+
+Versjonsløftet endrer nummer og dokumentasjon; funksjonene er allerede
+implementert og godkjent. [Bruksvilkårsnotatet for kyststikilden](data/coastal/README.md)
+følger fortsatt dataene. Hovedkart: https://apagg.github.io/pota-kart/.
 
 ## Prosjektdokumentasjon
 

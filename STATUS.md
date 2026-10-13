@@ -1,8 +1,9 @@
 # POTA-kart – gjeldende status
 
-Oppdatert: 2026-10-12. GitHub `main` er fasiten. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
+Oppdatert: 2026-10-13. GitHub `main` er fasiten. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
+- **Aktivt arbeid:** Godkjent versjonsløft til 0.12.0 på hovedkartet. Sidetittel, PC-/mobilnummer, bootstrap og dokumentasjon er oppdatert. Lokal versjons-/syntaks-/modulkontroll og CI/publisering gjenstår; valideringen nedenfor gjelder forrige appkode.
 - **Siste endring:** Kompassretning på GPS-prikken direkte i main, kode `0ec419624807e8bc60b9593a3d032818511cd971`, bestilt 2026-10-12. Kompass har prioritet, også ved stillstand; GPS-bevegelsesretning er reserve ved manglende/avslått kompass. Sensortillatelse forespørres fra GPS-knappen der nettleseren krever det. Prikk, nøyaktighetssirkel, følging og parkregler bevares.
 - **Siste sammenslåing:** [PR #6](https://github.com/apagg/pota-kart/pull/6), merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`: NO-2542 bruker Oslofjorden.coms 109 gangruter + 13 sykkelruter, inkludert alle 31 Hvaler-rutene. Tidligere GIS-/Hvaler-kombinasjon erstattes. Mobil/PC, GPS, overlapp og aktiveringsfarger fra PR #4/#5 er bevart.
 - **Verifisert kode:** [Verify POTA map 38253810271](https://github.com/apagg/pota-kart/actions/runs/38253810271) = completed/success. Safari-/Android-data, telefonvinkel, skjermrotasjon, stillstand, GPS-reserve, tillatelsesavslag/feil, brukeraktivering, gamle tillatelsessvar, pauset følging, bakgrunn, stopp/omstart og manglende sensor-API består. Eksisterende geometri-, Kyststi-, overlapps-, PC-/mobil- og aktiveringstester består.
