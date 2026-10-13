@@ -2,7 +2,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
 (async()=>{
  const browser=await chromium.launch();
  for(const [scenario,width] of [['success',1280],['success',390],['denied',1280],['missing',390],['invalid',1280],['late',390],['no-response',1280]]){
-  const page=await browser.newPage({viewport:{width,height:844}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const page=await browser.newPage({viewport:{width,height:width===1280?900:844}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(scenario=>{
    const state=window.startupTest={requests:0,watches:0};
    const geo={getCurrentPosition(success,error,options){state.requests++;state.options=options;state.success=success;state.error=error;

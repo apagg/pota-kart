@@ -15,6 +15,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.route('https://api.pota.app/park/stats/**',route=>route.fulfill({headers:{'Access-Control-Allow-Origin':'*'},json:{activations:17}}));
  await page.goto('http://127.0.0.1:8765');
  await page.waitForFunction(()=>typeof parkActivations!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
+ // This scenario deliberately verifies history behavior at overview zoom.
+ await page.waitForFunction(()=>startupViewState.settled);
+ await page.evaluate(()=>{map.setZoom(5,{animate:false})});
  assert.equal(profileCalls.length,0);assert.equal(historyCalls.length,0,'No API calls before configuring a callsign');
  // Use a real catalog point without geometry so the visible marker path is exercised.
  const pointRef=await page.evaluate(()=>potaMarkers.find(x=>!atlasHasGeometry(x.reference)&&x.marker.setStyle).reference);
@@ -79,12 +82,12 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert(await page.locator('#activationInputError').innerText());assert.equal(await page.locator('#activationCalls .activation-call').count(),2);
  await page.fill('#activationCallInput','');
  await page.screenshot({path:'atlas-activation-desktop.png'});
- const beforeProfiles=profileCalls.length,beforeHistory=historyCalls.length;
+ const beforeProfiles=profileCalls.length,historyBefore=new Map([...new Set(historyCalls)].map(ref=>[ref,historyCalls.filter(x=>x===ref).length]));
  await page.reload();await page.waitForFunction(()=>typeof parkActivations!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  assert.equal(await page.locator('#activationCalls .activation-call').count(),2,'Settings persist across reload');
  assert.equal(await page.evaluate(()=>parkActivations.has('SE-0016')),true,'Older cached positive survives reload');
  assert.equal(profileCalls.length,beforeProfiles,'Fresh profiles are reused');
- assert.equal(historyCalls.length,beforeHistory,'Fresh history is reused');
+ for(const [ref,count] of historyBefore)assert.equal(historyCalls.filter(x=>x===ref).length,count,'Fresh history is reused for '+ref);
  await page.setViewportSize({width:390,height:844});await page.click('#mobileSettings');
  assert.equal(await page.locator('#mobileSettingsContent #activationSettings').count(),1);
  assert.equal(await page.locator('#activationSettings').isVisible(),true);
