@@ -33,6 +33,7 @@ async function showParkLink(p,openPopup=true,centerOnSearch=false,popupLatLng=nu
     lastSelectedRef=p.reference;selectedMarker=null;selectedGeo=null;
     renderSelectedList();updateOverlaps();
   } else {lastSelectedRef=p.reference}
+  syncParkDisplayLayers();
   document.dispatchEvent(new CustomEvent('pota:selection'));
 }
 

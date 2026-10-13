@@ -3,6 +3,7 @@
 Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop er aktiv arbeidsgren. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
+- **Pågående develop-endring:** Valg Geometri/Bare punkter i Kartinnstillinger, felles på PC/mobil og lagret lokalt. Punktmodus skjuler atlas/valgt geometri/overlapp; GPS beholder geometri og farger. Målrettede tester, full CI og publisering pågår.
 - **Develop-import:** Brukeren bestilte 2026-10-13 gang- og sykkelrutene. NO-2590 Vestfold: 197 segmenter (10 sykkel); NO-2641 Telemark: 26 (3 sykkel). Ferger/stengte ruter utelatt; Østfolds 122 ruter er uendret. Kildeomfanget inkluderer turforslag og historiske kommunegrupper, se data/coastal/README.md.
 - **Verifisert develop-kode:** `3dc3c895fe482d3ffbd60c79731d908acfbf54db`; Verify POTA map `38374153434` = completed/success. Tester dekker eksakte ruter ved alle zoomnivåer, sykkel-GPS, 61 m/20–44 m grense, fjerning av gamle punktmarkører, gul/grønn prioritet, gjentatte PC-/mobilvalg samt eksisterende geometri-, overlapps-, UI-, GPS-/kompass- og aktiveringstester. Den responsive testen venter på faktisk feltplassering ved størrelsesbytte. Første to CI-kjøringer stoppet på testkode og er erstattet av den grønne kjøringen.
 - **Develop-publisering:** Isolert previewcommit `ff9f8bfe2e022d0859136f44faa3a3f60315051f` endrer bare test/develop. Pages `38374461934` = completed/success. Live test/develop viser riktig commit i asset-URL, og begge rutefiler samt app-core.js/geometry-atlas.js er byte-identiske med verifisert kode. Live main viser fortsatt 0.12.0. Ny versjon og sammenslåing av app/data til main er ikke bestilt; main-root forblir 0.12.0.
@@ -36,8 +37,8 @@ Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop e
 - Hele testversjonen er brukertestet og godkjent. PR #5 er slått sammen; ingen implementerings-, publiserings- eller sammenslåingsoppgave gjenstår for denne funksjonen.
 
 ## Importert i develop: Vestfold og Telemark
-- Samme KML/snapshotløsning er teknisk mulig. Kandidater med samme kategoriutvalg: NO-2590 Vestfold 197 linjer (199 minus 2 ferger), NO-2641 Telemark 26 (28 minus 1 ferge og 1 Stengt). Begge mangler atlasgeometri i dag.
-- Kildeomfanget inkluderer turforslag og historiske kommunegrupper. Import er bestilt og implementert i develop, inkludert sykkelruter. Detaljer og kilder står i PROJECT.md. Importen er verifisert i develop; brukerens visuelle gjennomgang gjenstår.
+- Samme KML/snapshotløsning er teknisk mulig. Kandidater med samme kategoriutvalg: NO-2590 Vestfold 197 linjer (199 minus 2 ferger), NO-2641 Telemark 26 (28 minus 1 ferge og 1 Stengt). Begge har nå runtime-atlasgeometri i develop.
+- Kildeomfanget inkluderer turforslag og historiske kommunegrupper. Import er bestilt og implementert i develop, inkludert sykkelruter. Detaljer og kilder står i PROJECT.md. Importen er verifisert i develop; brukeren godkjente visningen med «ser bra ut» 2026-10-13.
 
 ## Neste arbeid
 - Les pågående kildeundersøkelser og oppgaver fra develop. Vestfold/Telemark er importert i develop og klare for brukertest; nye ruter er ikke lagt inn i hovedkartet.

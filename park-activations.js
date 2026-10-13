@@ -75,7 +75,7 @@ const parkActivations=(()=>{
    paintPending=false;
    for(const [ref,layer] of geometryAtlas.layers){const color=gpsParkColor(ref,selectedParks.has(ref)||lastSelectedRef===ref);if(painted.get(layer)!==color){layer.setStyle({color,fillColor:color});painted.set(layer,color);}}
    paintGpsSelected();
-   for(const x of potaMarkers)markerPaint(x.marker,x.reference);
+   for(const x of potaMarkers){const selected=selectedParks.has(x.reference)||lastSelectedRef===x.reference;markerPaint(x.marker,x.reference,selected);if(x.marker.setStyle)x.marker.setStyle({fillOpacity:selected?1:.9});}
    for(const [ref,x] of selectedParks)markerPaint(x.marker,ref,true);
    if(!multiMode.checked&&lastSelectedRef)markerPaint(selectedMarker,lastSelectedRef,true);
    render();
@@ -169,6 +169,7 @@ const parkActivations=(()=>{
   };
   document.addEventListener('pota:park',()=>{render();schedule();});
   document.addEventListener('pota:selection',()=>{paint();schedule();});
+  document.addEventListener('pota:display',paint);
   document.addEventListener('pota:atlas',()=>{paint();schedule();});
   document.addEventListener('pota:gps',paint);
   document.addEventListener('pota:gps-colors',paint);

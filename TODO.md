@@ -3,13 +3,13 @@
 Sist gjennomgått: 2026-10-13. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
 ## Develop: Vestfold og Telemark
-- [ ] Brukertest importerte gang-/sykkelruter i test/develop, inkludert kildens historiske Vestfold-gruppering og turforslag. Avtal eventuelle justeringer.
 - [ ] Ny versjon og main-sammenslåing først når brukeren er fornøyd og godkjenner det.
 
 ## Videre bruk av Oslofjorden-kyststiruter
 - [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.
 
 ## Neste UI-trinn
+- [ ] Brukertest valget Geometri/Bare punkter i develop når kontrollene er grønne.
 - [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.
 
 ## Neste oppgaver – avtal prioritet før implementering

@@ -10,6 +10,7 @@
   const shared=[
     {node:searchRow,desktop:$('desktopSearchSlot'),mobile:$('mobileSearchPopover')},
     {node:$('countryFilter').closest('.row'),desktop:$('desktopCountrySlot'),mobile:$('mobileSettingsContent')},
+    {node:$('parkDisplayMode').closest('.row'),desktop:$('desktopDisplaySlot'),mobile:$('mobileSettingsContent')},
     {node:$('baseMapSelect').closest('.row'),desktop:$('desktopBasemapSlot'),mobile:$('mobileLayersContent')},
     {node:$('multiMode').closest('.selectbar'),desktop:$('desktopMultiSlot'),mobile:$('mobileSettingsContent')},
     {node:$('activationSettings'),desktop:$('desktopActivationSlot'),mobile:$('mobileSettingsContent')},

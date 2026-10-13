@@ -210,3 +210,14 @@ Runtime velger snapshot og memoiserer per referanse; atlaset setter eksakt
 linjeoversikt/bbox før oppstart, også for tidligere punktparker. Alle bruker
 61 m korridor og eksisterende GPS-/overlapps-/aktiveringsfarger. Østfold bevares.
 Ny versjon/main-sammenslåing avventer brukertest og uttrykkelig godkjenning.
+
+## Visning som punkter eller geometri (bestilt 2026-10-13)
+Kartinnstillinger har ett delt visningsvalg på PC/mobil: Geometri (standard)
+eller Bare punkter. Valget lagres lokalt som `pota-park-display` og overlever
+ny innlasting og bytte av skjermbredde. Punktmodus viser katalogmarkører for
+alle parker i valgt land og skjuler atlas, valgte geometrier og overlappsflater.
+Parkvalg, informasjon, flervalg og blå/gul/grønn markering beholdes. Kartklikk
+skal ikke treffe skjult geometri. Geometri/data beholdes uavhengig av visningen;
+GPS følger fortsatt ekte grenser eller 61 m stikorridor, og bruker 100 m bare
+for parker uten geometri. Bare develop er endret; main/ny versjon avventer avtale.
+Brukeren godkjente Vestfold-/Telemark-rutene visuelt med «ser bra ut» før dette.

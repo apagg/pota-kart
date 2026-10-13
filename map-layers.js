@@ -11,3 +11,5 @@ let selectedMarker=null, selectedGeo=null, pota=[], linkTable={}, potaMarkers=[]
 const selectedParks=new Map();
 let lastSelectedRef=null;
 const overlapLayer=L.layerGroup().addTo(map);
+
+if(!parkGeometryVisible())map.removeLayer(overlapLayer);

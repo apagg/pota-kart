@@ -1,0 +1,51 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch(),page=await browser.newPage({viewport:{width:1280,height:900}}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:8765');
+ await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
+ assert.equal(await page.locator('#parkDisplayMode').inputValue(),'geometry');
+ await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-3198'),false,false);await showLink(pota.find(p=>p.reference==='NO-2590'),false,false)});
+ const before=await page.evaluate(()=>({refs:[...selectedParks.keys()],lat:map.getCenter().lat,lng:map.getCenter().lng,zoom:map.getZoom()}));
+ await page.locator('#desktopSettings').evaluate(e=>e.open=true);
+ await page.selectOption('#parkDisplayMode','points');
+ await page.waitForFunction(()=>!map.hasLayer(overlapLayer)&&[...geometryAtlas.layers.values()].every(l=>!map.hasLayer(l)));
+ const points=await page.evaluate(()=>({visible:potaMarkers.filter(x=>layers.pts.hasLayer(x.marker)).length,total:potaMarkers.length,selectedHidden:[...selectedParks.values()].every(x=>!x.geo||!map.hasLayer(x.geo)),refs:[...selectedParks.keys()],lat:map.getCenter().lat,lng:map.getCenter().lng,zoom:map.getZoom()}));
+ assert.equal(points.visible,points.total);assert(points.selectedHidden);for(const key of Object.keys(before))assert.deepEqual(points[key],before[key]);
+ await page.evaluate(async()=>{await showLink(pota.find(p=>p.reference==='NO-2641'),false,false);map.setZoom(12,{animate:false});await atlasRefresh()});
+ assert(await page.evaluate(()=>[...selectedParks.values()].every(x=>!x.geo||!map.hasLayer(x.geo))&&[...geometryAtlas.layers.values()].every(l=>!map.hasLayer(l))));
+ const selected=await page.evaluate(()=>[...selectedParks.keys()]);
+ await page.evaluate(()=>atlasPick(L.latLng(59,10),null));assert.deepEqual(await page.evaluate(()=>[...selectedParks.keys()]),selected,'Hidden geometry cannot be picked');
+ const colors=await page.evaluate(async()=>{
+  const ref='NO-3198',p=pota.find(x=>x.reference===ref),m=potaMarkers.find(x=>x.reference===ref).marker;
+  const old=parkActivations.has;parkActivations.has=r=>r===ref;
+  document.dispatchEvent(new CustomEvent('pota:display'));await new Promise(requestAnimationFrame);
+  const yellow=m.options.color;
+  const g=(await atlasRecord(ref)).geometry;
+  const feature={type:'Feature',properties:{},geometry:g},inside=turf.pointOnFeature(feature).geometry.coordinates;
+  gpsWatchId=123;lastGps={lat:inside[1],lon:inside[0]};await updateGpsParkColors();await new Promise(requestAnimationFrame);
+  const green=m.options.color,geometryUsed=gpsInsideRefs.has(ref),pointRule=gpsPointHit(p,L.latLng(+p.latitude,+p.longitude));
+  gpsWatchId=null;lastGps=null;parkActivations.has=old;await updateGpsParkColors();
+  return {yellow,green,geometryUsed,pointRule};
+ });
+ assert.deepEqual(colors,{yellow:'#a16207',green:'#15803d',geometryUsed:true,pointRule:false});
+ await page.selectOption('#countryFilter','SE');await page.waitForFunction(()=>potaMarkers.filter(x=>layers.pts.hasLayer(x.marker)).every(x=>x.country==='SE'));
+ assert(await page.evaluate(()=>potaMarkers.some(x=>x.country==='SE'&&layers.pts.hasLayer(x.marker))));
+ await page.selectOption('#countryFilter','ALL');
+ await page.screenshot({path:'atlas-display-points-desktop.png'});
+ for(const width of [390,1280,390]){
+  await page.setViewportSize({width,height:844});
+  await page.locator(width>700?'#desktopDisplaySlot #parkDisplayMode':'#mobileSettingsContent #parkDisplayMode').waitFor({state:'attached'});
+  assert.equal(await page.locator('#parkDisplayMode').count(),1);assert.equal(await page.locator('#parkDisplayMode').inputValue(),'points');
+ }
+ await page.click('#mobileSettings');await page.screenshot({path:'atlas-display-points-mobile.png'});
+ await page.reload();await page.waitForFunction(()=>geometryAtlas.ready,null,{timeout:120000});
+ assert.equal(await page.locator('#parkDisplayMode').inputValue(),'points');
+ assert(await page.evaluate(()=>!map.hasLayer(overlapLayer)&&[...geometryAtlas.layers.values()].every(l=>!map.hasLayer(l))));
+ await page.click('#mobileSettings');await page.selectOption('#parkDisplayMode','geometry');
+ await page.waitForFunction(()=>map.hasLayer(overlapLayer)&&[...geometryAtlas.layers.values()].some(l=>map.hasLayer(l)));
+ assert(await page.evaluate(()=>!layers.pts.hasLayer(potaMarkers.find(x=>x.reference==='NO-2590').marker)));
+ await page.reload();await page.waitForFunction(()=>geometryAtlas.ready,null,{timeout:120000});assert.equal(await page.locator('#parkDisplayMode').inputValue(),'geometry');
+ assert.deepEqual(errors,[]);console.log('PASS display modes: default, all catalog points, hidden selected/atlas/overlap geometry, no hidden picks, GPS geometry and color priority, country filter, selection preservation, PC/mobile slots and persistent reload in both modes');
+ await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});
