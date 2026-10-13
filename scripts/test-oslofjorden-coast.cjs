@@ -54,7 +54,7 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
   assert.equal(routes.length,count);assert.equal(routes.filter(f=>f.properties.category==='cycling-alternative').length,bikes);
   const c=geo.coordinates[0][0];
   for(const zoom of [5,14,5]){
-   await page.evaluate(({c,zoom})=>map.setView([c[1],c[0]],zoom,{animate:false}),{c,zoom});
+   await page.evaluate(({c,zoom})=>{map.setView([c[1],c[0]],zoom,{animate:false})},{c,zoom});
    await page.waitForTimeout(600);
    assert.deepEqual(await page.evaluate(ref=>geometryAtlas.byRef.get(ref),ref),geo);
   }
@@ -89,6 +89,6 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
   }
   assert.equal(requests.filter(u=>u.includes('/data/coastal/oslofjorden-'+region+'.geojson')).length,1);
  }
- assert.deepEqual(errors,[]);console.log('PASS coastal replacement: exact walking/cycling geometry at every zoom, cycling map/GPS hits, alias, memo, unchanged other park, real-route GPS 20/44m, desktop/mobile');
+ assert.deepEqual(errors,[]);console.log('PASS coastal replacement: exact walking/cycling geometry at every zoom, cycling map/GPS hits, alias, memo, unchanged other park, real-route GPS 20/44m, desktop/mobile; Vestfold/Telemark exact geometry, cycling hits, 61m GPS boundary, point removal, colors and repeated desktop/mobile selections');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
