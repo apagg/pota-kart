@@ -1,0 +1,10 @@
+{
+  "name": "POTA Kart",
+  "short_name": "POTA Kart",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#155eef",
+  "lang": "nb-NO",
+  "description": "Mobilvennlig kart for POTA-parker i Norge og Sverige."
+}
