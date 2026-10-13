@@ -3,9 +3,9 @@
 Sist gjennomgått: 2026-10-13. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
 
 ## Start en ny arbeidsøkt
-1. Les `PROJECT.md`, `STATUS.md` og `TODO.md` på GitHub. Kontroller faktisk `main`/arbeidsgren og relevante filer før endring.
+1. Les `PROJECT.md`, `STATUS.md` og `TODO.md` fra `develop` på GitHub. Kontroller også stabil main og relevante filer før endring. GitHub er fasiten for begge grenene.
 2. Diskuter forslag og avtal omfang før app- eller dataendringer. Les bare relevante filer; unngå store kodeutdrag i chatten.
-3. Gjør små commits på GitHub, normalt i testgren for app- og dataendringer; avtal sammenslåing med `main`.
+3. Gjør alle nye app-/dataendringer og undersøkelser i `develop`. Jobb der til brukeren er fornøyd. Opprett ny versjon og slå sammen til main først etter uttrykkelig godkjenning; grønne tester kreves før ferdigmelding.
 4. Dokumenter varige beslutninger i PROJECT, oppgaver i TODO, siste faktiske resultat i STATUS og historikk i HISTORY ved behov. Oppsummer kort i chatten.
 
 ## Formål og publisering
@@ -13,7 +13,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
-- Publisering: GitHub Pages fra `main`.
+- Hovedversjon: 0.12.0 på `main`, GitHub Pages fra main. Utviklingsgren: `develop`; separat testkart: https://apagg.github.io/pota-kart/test/develop/.
 - Sist dokumentert appversjon: **0.12.0** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
@@ -171,3 +171,11 @@ Brukeren bestilte en separat test med ny kilde 2026-10-11 og oppgir privat bruk.
 Brukeren godkjente 0.12.0 som ny versjon etter UI, aktiveringsmarkering, Oslofjorden-kildesnapshot og GPS/kompass. Nummeret vises i sidetittel, PC-header og mobilheader. Bootstrap og dokumentasjon følger samme versjon; README har et kort versjonsnotat. Dette er et versjonsløft av godkjente funksjoner, uten nye kart-/sensor-/geometriregler. Tidligere testkopier er egne øyeblikksbilder.
 
 Versjon 0.12.0 er publisert og verifisert: kode `d8ef89bd7a546eeef029d17e553e1600b7950a58`, Verify POTA map `38361099823` og Pages `38361099225` = completed/success. Live kontroll bekrefter 0.12.0 i sidetittel og PC-/mobilheader, samt 012-release-bootstrap.
+
+## Fast develop-arbeidsflyt (avtalt 2026-10-13)
+- Brukeren ønsker at 0.12.0 er hovedversjonen, og at alt videre funksjons-/dataarbeid skjer i develop til han er fornøyd og godkjenner en ny versjon. Tidligere direkte-main-tillatelser for GPS/kompass er historiske og gjelder ikke som generell fullmakt for nye endringer.
+- `archive/v0.12.0` peker på `e2e2472dae4979ee3b62b2f9eab50009c0e60dff` som fast tilbakeføringspunkt. Main beholder stabil appkode og versjon under utviklingen. Vanlige planlagte POTA-dataoppdateringer er fortsatt drift, ikke nye funksjonsutgivelser.
+- Verify POTA map kjører på develop. Først etter grønne tester kopieres utviklingsappen til `test/develop/` på main, og Pages publiserer testmappen. Dette er forhåndsvisning; hovedappens filer erstattes ikke. Publisert develop bruker commit-ID i lokale asset-URL-er for å unngå gamle testressurser i nettlesercache.
+- Utviklingskartet merkes i sidetittelen. Det begynner med 0.12.0-funksjonene; nytt versjonsnummer velges først ved avtalt utgivelse. Tidligere testgrener/kopier er historiske og er ikke ny arbeidsgren.
+- Dokumentasjon om pågående utvikling oppdateres i develop. Main-dokumentasjon oppdateres ved avtalt utgivelse eller nødvendig drifts-/arbeidsflytoppdatering. Integrer siste main før utgivelse slik at data-/testpubliseringer bevares.
+- Vestfold/Telemark er foreløpig en kildeundersøkelse bestilt etter oppsettet, ikke en bestilling om å importere nye ruter eller omarbeide hele stisystemet.

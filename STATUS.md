@@ -1,8 +1,9 @@
 # POTA-kart – gjeldende status
 
-Oppdatert: 2026-10-13. GitHub `main` er fasiten. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
+Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop er aktiv arbeidsgren. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
+- **Arbeidsflyt:** 0.12.0 er stabil på main. Ny gren develop med separat testkart settes opp etter brukerens bestilling 2026-10-13. Nye app-/dataendringer gjøres i develop til brukeren godkjenner en ny versjon. Archive/v0.12.0 bevarer utgangspunktet. Infrastruktur/publisering er under verifisering.
 - **Siste endring:** Versjon 0.12.0, kode `d8ef89bd7a546eeef029d17e553e1600b7950a58`, bestilt 2026-10-13. Nummeret er oppdatert i sidetittel, PC-/mobilheader, bootstrap og dokumentasjon. README har et kort versjonsnotat for UI, aktiveringsfarger, kyststidata og GPS/kompass. Ingen kart-/GPS-/geometriregler er endret ved versjonsløftet.
 - **Siste sammenslåing:** [PR #6](https://github.com/apagg/pota-kart/pull/6), merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`: NO-2542 bruker Oslofjorden.coms 109 gangruter + 13 sykkelruter, inkludert alle 31 Hvaler-rutene. Tidligere GIS-/Hvaler-kombinasjon erstattes. Mobil/PC, GPS, overlapp og aktiveringsfarger fra PR #4/#5 er bevart.
 - **Verifisert kode:** [Verify POTA map 38361099823](https://github.com/apagg/pota-kart/actions/runs/38361099823) = completed/success. Versjonskontroll og eksisterende geometri-, Kyststi-, overlapps-, PC-/mobil-, GPS-/kompass- og aktiveringstester består. Mobiltesten forventer og viser 0.12.0.
@@ -47,4 +48,4 @@ Oppdatert: 2026-10-13. GitHub `main` er fasiten. Dette dokumentet er et **øyebl
 Historisk er `Hvaler-redigering.gpkg` og `hvaler_tillegg` undersøkt, og kode for eksport og integrasjon finnes i `data/hvaler/`, `scripts/export-hvaler.py` og `scripts/update-geometries.py`. Dette bekrefter ikke at alle geografiske grense-/overlappstilfeller er endelig validert. Tidligere analyser og mulige restfeil er bevart i [HISTORY.md](HISTORY.md). Tidligere UI-/aktiveringssammenslåinger endret ikke stidata; PR #6 har nå byttet kilden for NO-2542. Automatisk Export Hvaler trails 38163371384 fullførte med success uten ny commit.
 
 ## Start neste samtale
-«Fortsett POTA-kartet fra GitHub. Les PROJECT.md, STATUS.md og TODO.md først. Bruk HISTORY.md kun ved behov. Diskuter neste endring før du redigerer kode. NO-2542 bruker nå godkjente Oslofjorden-ruter i hovedkartet; øvrig stiomarbeiding er satt på vent.»
+«Fortsett POTA-kartet på develop fra GitHub. Les PROJECT.md, STATUS.md og TODO.md fra develop først. Main er stabil 0.12.0; ny versjon/sammenslåing krever min godkjenning. Bruk HISTORY.md kun ved behov. Diskuter neste endring før du redigerer kode. NO-2542 bruker nå godkjente Oslofjorden-ruter i hovedkartet; øvrig stiomarbeiding er satt på vent.»

@@ -1,7 +1,7 @@
 name: Verify POTA map
 on:
   push:
-    branches: ['main', 'feature/all-park-geometries', 'refactor/core-geometry-helpers', 'test/pc-ui', 'test/mobile-ui', 'test/activated-parks', 'test/oslofjorden-coast']
+    branches: ['main', 'develop', 'feature/all-park-geometries', 'refactor/core-geometry-helpers', 'test/pc-ui', 'test/mobile-ui', 'test/activated-parks', 'test/oslofjorden-coast']
     paths:
       - '*.js'
       - 'scripts/test-diagnostics.cjs'
@@ -127,14 +127,15 @@ jobs:
           name: geometry-browser-checks
           path: candidate/atlas-*.png
       - uses: actions/checkout@v4
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui' || github.ref == 'refs/heads/test/mobile-ui' || github.ref == 'refs/heads/test/activated-parks' || github.ref == 'refs/heads/test/oslofjorden-coast'
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui' || github.ref == 'refs/heads/test/mobile-ui' || github.ref == 'refs/heads/test/activated-parks' || github.ref == 'refs/heads/test/oslofjorden-coast'
         with:
           ref: main
           path: stable
       - name: Publish isolated test directory
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui' || github.ref == 'refs/heads/test/mobile-ui' || github.ref == 'refs/heads/test/activated-parks' || github.ref == 'refs/heads/test/oslofjorden-coast'
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui' || github.ref == 'refs/heads/test/mobile-ui' || github.ref == 'refs/heads/test/activated-parks' || github.ref == 'refs/heads/test/oslofjorden-coast'
         run: |
           DEST=all-geometries
+          if [ "${{ github.ref }}" = 'refs/heads/develop' ]; then DEST=develop; fi
           if [ "${{ github.ref }}" = 'refs/heads/refactor/core-geometry-helpers' ]; then DEST=code-refactor; fi
           if [ "${{ github.ref }}" = 'refs/heads/test/pc-ui' ]; then DEST=pc-ui; fi
           if [ "${{ github.ref }}" = 'refs/heads/test/mobile-ui' ]; then DEST=mobile-ui; fi
@@ -146,6 +147,18 @@ jobs:
           done
           if [ -f candidate/desktop-ui.js ]; then cp candidate/desktop-ui.js "stable/test/$DEST/"; fi
           cp -R candidate/data "stable/test/$DEST/"
+          if [ "${{ github.ref }}" = 'refs/heads/develop' ]; then
+            python3 - "stable/test/$DEST" "${{ github.sha }}" <<'PYDEV'
+          import pathlib, re, sys
+          folder, revision = pathlib.Path(sys.argv[1]), sys.argv[2]
+          html = folder / 'index.html'
+          text = html.read_text()
+          text = re.sub(r'((?:app\.js|styles\.css|mobile-ui\.css)\?v=)[^"\s]+', lambda m: m.group(1) + revision, text)
+          html.write_text(text)
+          script = folder / 'app.js'
+          script.write_text(re.sub(r'(\.js\?v=)[^\x27"\s]+', lambda m: m.group(1) + revision, script.read_text()))
+          PYDEV
+          fi
           cd stable
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -154,7 +167,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Request GitHub Pages publication
-        if: github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui' || github.ref == 'refs/heads/test/mobile-ui' || github.ref == 'refs/heads/test/activated-parks' || github.ref == 'refs/heads/test/oslofjorden-coast'
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/feature/all-park-geometries' || github.ref == 'refs/heads/refactor/core-geometry-helpers' || github.ref == 'refs/heads/test/pc-ui' || github.ref == 'refs/heads/test/mobile-ui' || github.ref == 'refs/heads/test/activated-parks' || github.ref == 'refs/heads/test/oslofjorden-coast'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
