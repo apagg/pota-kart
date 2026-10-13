@@ -179,3 +179,23 @@ Versjon 0.12.0 er publisert og verifisert: kode `d8ef89bd7a546eeef029d17e553e160
 - Utviklingskartet merkes i sidetittelen. Det begynner med 0.12.0-funksjonene; nytt versjonsnummer velges først ved avtalt utgivelse. Tidligere testgrener/kopier er historiske og er ikke ny arbeidsgren.
 - Dokumentasjon om pågående utvikling oppdateres i develop. Main-dokumentasjon oppdateres ved avtalt utgivelse eller nødvendig drifts-/arbeidsflytoppdatering. Integrer siste main før utgivelse slik at data-/testpubliseringer bevares.
 - Vestfold/Telemark er foreløpig en kildeundersøkelse bestilt etter oppsettet, ikke en bestilling om å importere nye ruter eller omarbeide hele stisystemet.
+
+Develop er etablert fra oppsett `74573aa3018b1494e75fab1e8f52fe1034652ac1`; første appkontroll `809ed67f3766a8b9c852620bf72d3e855d8b847c`, Verify `38369752436` og Pages `38369999678` fullførte med success. Main-infrastrukturkontroll `38369531888` består. Live hovedapp er fortsatt stabil 0.12.0; testkart: https://apagg.github.io/pota-kart/test/develop/.
+
+## Undersøkelse: Kyststiene i Vestfold og Kyststien i Telemark (2026-10-13)
+**Konklusjon:** Samme tekniske løsning som Østfold er mulig. Dette er kildeanalyse, ikke en importbestilling. Ingen nye ruter er lagt inn i appen.
+
+| Område | POTA | KML-mappe | Blå gangruter | Turkise turforslag | Sykkel | Utelates | Kandidater |
+| --- | --- | --- | ---: | ---: | ---: | --- | ---: |
+| Vestfold | NO-2590 | turer_vestfold | 108 | 79 | 10 | 2 ferger | 197 |
+| Telemark | NO-2641 | turer_telemark | 19 | 4 | 3 | 1 ferge + 1 rute merket Stengt | 26 |
+
+- Kartets JavaScript peker fortsatt på https://www.oslofjorden.com/geodata/turer_oslofjorden_plain82.kml. Hentet på nytt 2026-10-13; SHA256 `cdfb490ce5a4b9b79de9d92b2d5402ccef9a8d9531c247ed80a69cce849775c6`, samme filinnhold som Østfold-snapshotet. 199 Vestfold-linjer / 14 750 koordinater og 28 Telemark-linjer / 3 165 koordinater. Alle kontrollerte linjer har minst to gyldige, finite lon/lat-koordinater.
+- Vestfold har foldere for Stokke, Tønsberg, Horten, Svelvik, Sande, Sandefjord, Re, Holmestrand (kildens stavemåte holmesrand), Larvik og Færder. Dette er historisk organisering, ikke en automatisk godkjent POTA-avgrensning. Særlig Svelvik-ruten og turforslag uten tydelig kyststi må vurderes mot parkens egen kilde.
+- Telemark har Kragerø (8 kandidater), Bamble (10 kandidater etter Stengt utelates) og Porsgrunn (8 kandidater). POTA-notatet sier tre deler; dette er forenelig med kommunegruppene, men dokumenterer ikke alene nøyaktig POTA-avgrensning. Red Stengt har 19 koordinater; ingen eksakt like koordinater ble funnet i de andre Telemark-linjene, men geografisk overlapp/omkjøring er ikke fullstendig verifisert.
+- POTA-listen i repositoryet: NO-2590 peker til https://www.visitvestfold.com/no/artikler/KyststieneiVestfold og ber om kontroll av nøyaktige steder; NO-2641 peker til https://www.oslofjorden.com/kyststi/kyststi_telemark.html. Begge mangler lagret verifisert atlasgeometri (No verified source ID), så de vises i dag som punkter.
+- Andre primærkilder: https://www.oslofjorden.com/kyststi/kyststi_vestfold.html; https://www.oslofjorden.com/kyststi/forklaring_turkart.html; https://www.telemarkfylke.no/no/meny/tjenester/idrett-friluftsliv/pa-tur-i-vestfold-og-telemark/kyststi/. Forklaringen sier blått også omfatter andre merkede turer, grønt også rene sykkelturer og turkis turforslag. Kommune-/fylkestekster erstatter ikke POTA-avgrensning.
+- Anbefalt utvikling etter avtale: generaliser Oslofjorden-importen til navngitt kildemappe og POTA-ref, med separate snapshots/metadata per ref. Bruk samme gang-/tur-/sykkelfilter som Østfold, med ferger og røde/stengte ruter utelatt. Bevar Østfolds 122 ruter uendret.
+- Runtime må generaliseres fra NO-2542 til et oppslag per POTA-ref. Registrer nye records, oversiktsgeometri og bbox før atlaset blir klart, siden NO-2590/NO-2641 mangler index/shard i dag. Det eksisterende kyststinavn-oppslaget støtter allerede kyststinavn, og korridor-/GPS-/overlappsmotoren bruker 61 m. Verifiser at punktmarkørene forsvinner når geometri finnes, og at 100 m punktregelen ikke brukes på de nye stiene.
+- Bevar blå/gul/grønn stil, GPS/kompass, 61 m korridor og overlapp. Test zoom ut/inn, gjentatte parkvalg, aktiveringsfarger, faktisk GPS-grense og PC/mobil før testpublisering. Arbeid bare i develop; neste hovedversjon krever brukerens godkjenning.
+- Bruksvilkårsnotatet for Oslofjorden-data følger også eventuell ny import. Brukeren har allerede vurdert ikke-kommersiell bruk; annen/bredere/kommersiell bruk må avklares med kildeeieren som tidligere dokumentert.
