@@ -332,17 +332,24 @@ async function resolveKartverketTrail(link,p){
   const label=trailField(best.c,/^rutenavn$|rute.?navn|route.?name|navn/)||link.officialName;
   return {source:'notrail',geometry:{type:'MultiLineString',coordinates:lines},name:label,id:'Kartverket Turrutebase',officialType:'National Recreation Trail',segmentCount:lines.length,potaSourceUrls:hints.urls,aliasCount:hints.aliases.length};
 }
-// Isolated Oslofjorden source test: never blend the old GIS/Hvaler sources.
-let oslofjordenTrailPromise=null;
+// Reviewed local snapshots; never blend former GIS/Hvaler sources.
+const COASTAL_TRAILS={
+ 'NO-2542':{file:'oslofjorden-ostfold-test.geojson?v=2',region:'Østfold'},
+ 'NO-2590':{file:'oslofjorden-vestfold.geojson?v=1',region:'Vestfold'},
+ 'NO-2641':{file:'oslofjorden-telemark.geojson?v=1',region:'Telemark'}
+};
+const oslofjordenTrailPromises=new Map();
+function coastalTrailRef(ref){return String(ref||'').replace(/^LA-/,'NO-')}
 async function resolveKyststienFallback(link,p){
-  if(!['NO-2542','LA-2542'].includes(p.reference)&&!/kyststien\s*[øo]stfold/i.test(p.name||''))throw Error('Ingen testgeometri for denne ruten');
-  if(!oslofjordenTrailPromise)oslofjordenTrailPromise=(async()=>{
-    const d=await getJSON('data/coastal/oslofjorden-ostfold-test.geojson?v=2');
-    if(d.type!=='FeatureCollection'||d.metadata?.reference!=='NO-2542'||d.metadata?.schemaVersion!==1||!Array.isArray(d.features))throw Error('Ugyldig Oslofjorden-testdatasett');
+ const ref=coastalTrailRef(p.reference),config=COASTAL_TRAILS[ref];
+ if(!config)throw Error('Ingen kyststigeometri for denne ruten');
+ if(!oslofjordenTrailPromises.has(ref))oslofjordenTrailPromises.set(ref,(async()=>{
+    const d=await getJSON('data/coastal/'+config.file);
+    if(d.type!=='FeatureCollection'||d.metadata?.reference!==ref||d.metadata?.schemaVersion!==1||!Array.isArray(d.features))throw Error('Ugyldig Oslofjorden-datasett');
     const lines=[];
     for(const f of d.features){
       if(!f.properties?.includedInPota)continue;
-      if(!['marked-walking-route','walking-suggestion','cycling-alternative'].includes(f.properties.category)||f.properties.reference!=='NO-2542')throw Error('Ugyldig rutekategori');
+      if(!['marked-walking-route','walking-suggestion','cycling-alternative'].includes(f.properties.category)||f.properties.reference!==ref)throw Error('Ugyldig rutekategori');
       const g=f.geometry,parts=g?.type==='LineString'?[g.coordinates]:g?.type==='MultiLineString'?g.coordinates:null;
       if(!parts?.length)throw Error('Mangler rutegeometri');
       for(const line of parts){
@@ -350,16 +357,13 @@ async function resolveKyststienFallback(link,p){
         lines.push(line);
       }
     }
-    if(!lines.length)throw Error('Oslofjorden-testen mangler gangruter');
-    return {source:'notrail',sourceLabel:'Oslofjorden.com – Østfold gang- og sykkelruter',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien Østfold',id:'NO-2542 Oslofjorden',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,snapshotSource:true};
-  })().catch(e=>{oslofjordenTrailPromise=null;throw e});
-  return oslofjordenTrailPromise;
+    if(!lines.length)throw Error('Oslofjorden-datasettet mangler ruter');
+    return {source:'notrail',sourceLabel:'Oslofjorden.com – '+config.region+' gang- og sykkelruter',geometry:{type:'MultiLineString',coordinates:lines},name:'Kyststien '+config.region,id:ref+' Oslofjorden',officialType:'National Recreation Trail',sourceWebsite:d.metadata.source,sourceSha256:d.metadata.sourceSha256,segmentCount:lines.length,snapshotSource:true};
+  })().catch(e=>{oslofjordenTrailPromises.delete(ref);throw e}));
+  return oslofjordenTrailPromises.get(ref);
 }
 async function resolveNorwayTrail(link,p){
-  const ref=(p&&p.reference)||'';
-  if(ref==='NO-2542'||ref==='LA-2542'||/kyststien\s*[øo]stfold/i.test((p&&p.name)||'')){
-    return await resolveKyststienFallback(link,p);
-  }
+  if(COASTAL_TRAILS[coastalTrailRef(p?.reference)])return resolveKyststienFallback(link,p);
   throw Error('Denne norske stien har foreløpig ingen verifisert geometri i POTA Kart.');
 }
 function inferLink(p){
