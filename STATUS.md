@@ -3,7 +3,9 @@
 Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop er aktiv arbeidsgren. Dette dokumentet er et **øyeblikksbilde**, ikke en kronologisk logg.
 
 ## Nå
-- **Develop-import:** NO-2590 Vestfold 197 segmenter, inkludert 10 sykkelruter; NO-2641 Telemark 26, inkludert 3 sykkelruter. Ferger og stengte ruter utelatt. Østfold uendret. Lokal snapshot-/modulvalidering og nettlesertest består: eksakte ruter/zoom, sykkel-GPS, 20/44 m grense, punktfjerning, gul/grønn prioritet og gjentatte PC-/mobilvalg. Første CI 38373292434 stoppet på serialisering av et Leaflet-returobjekt i den nye testen; testrettingen er lokalt verifisert. CI 38373721334 traff den gamle 100 ms-ventingen ved responsive feltskift; testen venter nå på riktig DOM-plassering og består lokalt. Ny full CI og testpublisering pågår. Ingen ny hovedversjon eller sammenslåing.
+- **Develop-import:** Brukeren bestilte 2026-10-13 gang- og sykkelrutene. NO-2590 Vestfold: 197 segmenter (10 sykkel); NO-2641 Telemark: 26 (3 sykkel). Ferger/stengte ruter utelatt; Østfolds 122 ruter er uendret. Kildeomfanget inkluderer turforslag og historiske kommunegrupper, se data/coastal/README.md.
+- **Verifisert develop-kode:** `3dc3c895fe482d3ffbd60c79731d908acfbf54db`; Verify POTA map `38374153434` = completed/success. Tester dekker eksakte ruter ved alle zoomnivåer, sykkel-GPS, 61 m/20–44 m grense, fjerning av gamle punktmarkører, gul/grønn prioritet, gjentatte PC-/mobilvalg samt eksisterende geometri-, overlapps-, UI-, GPS-/kompass- og aktiveringstester. Den responsive testen venter på faktisk feltplassering ved størrelsesbytte. Første to CI-kjøringer stoppet på testkode og er erstattet av den grønne kjøringen.
+- **Develop-publisering:** Isolert previewcommit `ff9f8bfe2e022d0859136f44faa3a3f60315051f` endrer bare test/develop. Pages `38374461934` = completed/success. Live test/develop viser riktig commit i asset-URL, og begge rutefiler samt app-core.js/geometry-atlas.js er byte-identiske med verifisert kode. Live main viser fortsatt 0.12.0. Ny versjon og sammenslåing av app/data til main er ikke bestilt; main-root forblir 0.12.0.
 - **Arbeidsflyt:** 0.12.0 er stabil på main. Develop og separat testkart er opprettet etter brukerens bestilling 2026-10-13. Nye app-/dataendringer gjøres i develop til brukeren godkjenner en ny versjon. Archive/v0.12.0 bevarer utgangspunktet. Main-infrastrukturkontroll 38369531888 og develop-kontroll 38369752436 = completed/success. Previewpublisering 1641d1c080fc8752462c4f5f8bea9a4192562ef8 og Pages 38369999678 = completed/success. Live hovedkart forblir 0.12.0, og test/develop viser Utvikling med commit-ID i lokale asset-URL-er.
 - **Siste endring:** Versjon 0.12.0, kode `d8ef89bd7a546eeef029d17e553e1600b7950a58`, bestilt 2026-10-13. Nummeret er oppdatert i sidetittel, PC-/mobilheader, bootstrap og dokumentasjon. README har et kort versjonsnotat for UI, aktiveringsfarger, kyststidata og GPS/kompass. Ingen kart-/GPS-/geometriregler er endret ved versjonsløftet.
 - **Siste sammenslåing:** [PR #6](https://github.com/apagg/pota-kart/pull/6), merge `7ef44ec4a540c976e66bb9b86e03c3f6c7fc9bd2`: NO-2542 bruker Oslofjorden.coms 109 gangruter + 13 sykkelruter, inkludert alle 31 Hvaler-rutene. Tidligere GIS-/Hvaler-kombinasjon erstattes. Mobil/PC, GPS, overlapp og aktiveringsfarger fra PR #4/#5 er bevart.
@@ -33,12 +35,12 @@ Oppdatert: 2026-10-13. GitHub er fasiten: main er stabil hovedversjon, develop e
 - **Live kontroll:** LB6BK fant 9 aktiverte parker; NO-3198 Enhusvidda viste gul geometri og «Aktivert av LB6BK». Automatisk historikkø startet ved innzooming. Ingen innlogging eller passord brukes.
 - Hele testversjonen er brukertestet og godkjent. PR #5 er slått sammen; ingen implementerings-, publiserings- eller sammenslåingsoppgave gjenstår for denne funksjonen.
 
-## Undersøkt i develop: Vestfold og Telemark
+## Importert i develop: Vestfold og Telemark
 - Samme KML/snapshotløsning er teknisk mulig. Kandidater med samme kategoriutvalg: NO-2590 Vestfold 197 linjer (199 minus 2 ferger), NO-2641 Telemark 26 (28 minus 1 ferge og 1 Stengt). Begge mangler atlasgeometri i dag.
-- Avgrensning må gjennomgås: kilden har også turforslag og historiske kommunegrupper. Import er nå bestilt og implementert i develop, inkludert sykkelruter. Detaljer og kilder står i PROJECT.md. Testpublisering og verifisering pågår.
+- Kildeomfanget inkluderer turforslag og historiske kommunegrupper. Import er bestilt og implementert i develop, inkludert sykkelruter. Detaljer og kilder står i PROJECT.md. Importen er verifisert i develop; brukerens visuelle gjennomgang gjenstår.
 
 ## Neste arbeid
-- Les pågående kildeundersøkelser og oppgaver fra develop. Vestfold/Telemark undersøkes der; nye ruter er ikke lagt inn i hovedkartet.
+- Les pågående kildeundersøkelser og oppgaver fra develop. Vestfold/Telemark er importert i develop og klare for brukertest; nye ruter er ikke lagt inn i hovedkartet.
 - Avtal eventuell markering av allerede valgte parker i mobilens overlappsliste. Dette er fortsatt utsatt.
 - Andre mulige forbedringer og senere regresjonskontroller står i [TODO.md](TODO.md). Aktiveringsmarkering og punktutseende er ferdigstilt i hovedkartet.
 

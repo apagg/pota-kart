@@ -183,7 +183,7 @@ Versjon 0.12.0 er publisert og verifisert: kode `d8ef89bd7a546eeef029d17e553e160
 Develop er etablert fra oppsett `74573aa3018b1494e75fab1e8f52fe1034652ac1`; første appkontroll `809ed67f3766a8b9c852620bf72d3e855d8b847c`, Verify `38369752436` og Pages `38369999678` fullførte med success. Main-infrastrukturkontroll `38369531888` består. Live hovedapp er fortsatt stabil 0.12.0; testkart: https://apagg.github.io/pota-kart/test/develop/.
 
 ## Undersøkelse: Kyststiene i Vestfold og Kyststien i Telemark (2026-10-13)
-**Konklusjon:** Samme tekniske løsning som Østfold er mulig. Dette er kildeanalyse, ikke en importbestilling. Ingen nye ruter er lagt inn i appen.
+**Konklusjon ved undersøkelsen:** Samme tekniske løsning som Østfold er mulig. Brukeren bestilte senere samme dag import inkludert sykkelruter; se den implementerte develop-testimporten nedenfor.
 
 | Område | POTA | KML-mappe | Blå gangruter | Turkise turforslag | Sykkel | Utelates | Kandidater |
 | --- | --- | --- | ---: | ---: | ---: | --- | ---: |
