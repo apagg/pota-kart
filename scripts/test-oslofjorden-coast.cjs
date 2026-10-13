@@ -46,6 +46,49 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
  await page.waitForTimeout(500);await page.screenshot({path:'atlas-coast-mobile.png'});
  assert.equal(requests.filter(u=>u.includes('/data/coastal/oslofjorden-ostfold-test.geojson')).length,1,'Snapshot memoized');
  assert.equal(requests.filter(u=>u.includes('hvaler-tillegg.geojson')||u.includes('RegFriluft_innsyn/MapServer/15/query')).length,0,'Former source not requested');
+
+ for(const [ref,region,count,bikes] of [['NO-2590','vestfold',197,10],['NO-2641','telemark',26,3]]){
+  const snapshot=JSON.parse(fs.readFileSync('data/coastal/oslofjorden-'+region+'.geojson','utf8'));
+  const routes=snapshot.features.filter(f=>f.properties.includedInPota);
+  const geo={type:'MultiLineString',coordinates:routes.flatMap(f=>f.geometry.type==='LineString'?[f.geometry.coordinates]:f.geometry.coordinates)};
+  assert.equal(routes.length,count);assert.equal(routes.filter(f=>f.properties.category==='cycling-alternative').length,bikes);
+  const c=geo.coordinates[0][0];
+  for(const zoom of [5,14,5]){
+   await page.evaluate(({c,zoom})=>map.setView([c[1],c[0]],zoom,{animate:false}),{c,zoom});
+   await page.waitForTimeout(600);
+   assert.deepEqual(await page.evaluate(ref=>geometryAtlas.byRef.get(ref),ref),geo);
+  }
+  const state=await page.evaluate(async ({ref,points})=>{
+   const g=geometryAtlas.byRef.get(ref),coords=g.coordinates.flat(),m=atlasMeta(ref);
+   const ll=c=>L.latLng(c[1],c[0]);
+   const marker=potaMarkers.find(p=>p.reference===ref);
+   let boundary=null;
+   for(const a of g.coordinates){for(let i=1;i<a.length;i++){
+    const p=turf.point(a[i-1]),q=turf.point(a[i]);if(turf.distance(p,q,{units:'meters'})<80)continue;
+    const mid=turf.midpoint(p,q),bearing=turf.bearing(p,q)+90;
+    const inside=turf.destination(mid,20,bearing,{units:'meters'}).geometry.coordinates;
+    const outside=turf.destination(mid,44,bearing,{units:'meters'}).geometry.coordinates;
+    if(gpsGeometryHit(g,ll(inside))&&!gpsGeometryHit(g,ll(outside))){boundary=true;break}
+   }if(boundary)break}
+   const originalHas=parkActivations.has;parkActivations.has=r=>r===ref||originalHas(r);
+   const yellow=gpsParkColor(ref);gpsInsideRefs.add(ref);const green=gpsParkColor(ref);
+   gpsInsideRefs.delete(ref);parkActivations.has=originalHas;
+   return {record:(await atlasRecord(ref)).geometry,overview:geometryAtlas.overviewByRef.get(ref),bbox:m.bbox,
+    expectedBbox:[Math.min(...coords.map(c=>c[0])),Math.min(...coords.map(c=>c[1])),Math.max(...coords.map(c=>c[0])),Math.max(...coords.map(c=>c[1]))],
+    hits:points.every(c=>atlasHit(g,ll(c))&&gpsGeometryHit(g,ll(c))),boundary,yellow,green,hasGeometry:atlasHasGeometry(ref),markerVisible:marker?map.hasLayer(marker.marker):false};
+  },{ref,points:routes.filter(f=>f.properties.category==='cycling-alternative').map(f=>f.geometry.coordinates[0])});
+  assert.deepEqual(state.record,geo);assert.deepEqual(state.overview,geo);assert.deepEqual(state.bbox,state.expectedBbox);
+  assert(state.hits&&state.boundary&&state.hasGeometry);assert.equal(state.markerVisible,false);assert.equal(state.yellow,'#ca8a04');assert.equal(state.green,'#15803d');
+  for(const width of [1280,390]){
+   await page.setViewportSize({width,height:844});
+   await page.evaluate(async({ref,c})=>{map.setView([c[1],c[0]],13,{animate:false});for(let i=0;i<2;i++)await showLink(pota.find(p=>p.reference===ref),false,false)},{ref,c});
+   await page.waitForTimeout(500);
+   assert.equal(await page.evaluate(()=>lastSelectedRef),ref);
+   if(width===390)assert.equal(await page.locator('#mobileParkRef').innerText(),ref);
+   await page.screenshot({path:'atlas-coast-'+region+'-'+width+'.png'});
+  }
+  assert.equal(requests.filter(u=>u.includes('/data/coastal/oslofjorden-'+region+'.geojson')).length,1);
+ }
  assert.deepEqual(errors,[]);console.log('PASS coastal replacement: exact walking/cycling geometry at every zoom, cycling map/GPS hits, alias, memo, unchanged other park, real-route GPS 20/44m, desktop/mobile');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

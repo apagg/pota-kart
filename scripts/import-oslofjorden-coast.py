@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Import a reviewed Oslofjorden KML snapshot for Kyststien Østfold.
+"""Import a reviewed Oslofjorden KML snapshot for Norwegian coastal trails.
 
 The source permits private use; check data/coastal/README.md before reusing it.
 No remote downloads occur here; output retains route categories and provenance.
@@ -28,14 +28,14 @@ COLORS = {
 }
 
 
-def convert(raw, snapshot_date=None, source_last_modified=None):
+def convert(raw, snapshot_date=None, source_last_modified=None, reference="NO-2542", folder_name="turer_oestfold"):
     root = ET.fromstring(raw)
     styles = {s.get('id'): s for s in root.findall('.//k:Style', NS)}
     maps = {s.get('id'): s for s in root.findall('.//k:StyleMap', NS)}
     folders = [f for f in root.findall('.//k:Folder', NS)
-               if f.findtext('k:name', '', NS) == 'turer_oestfold']
+               if f.findtext('k:name', '', NS) == folder_name]
     if len(folders) != 1:
-        raise ValueError('Expected exactly one Østfold folder')
+        raise ValueError('Expected exactly one source folder: ' + folder_name)
     features = []
 
     def walk(folder, path):
@@ -67,18 +67,18 @@ def convert(raw, snapshot_date=None, source_last_modified=None):
                 'name': name, 'folderPath': path, 'sourceUrl': source_url,
                 'sourceColor': color, 'category': category,
                 'includedInPota': category in ('marked-walking-route', 'walking-suggestion', 'cycling-alternative'),
-                'reference': 'NO-2542',
+                'reference': reference,
             }, 'geometry': geometry})
         for child in folder.findall('k:Folder', NS):
             walk(child, path)
 
     walk(folders[0], [])
     if not features or not any(f['properties']['includedInPota'] for f in features):
-        raise ValueError('No usable Østfold walking/cycling routes')
+        raise ValueError('No usable walking/cycling routes')
     return {'type': 'FeatureCollection', 'metadata': {
         'schemaVersion': 1, 'source': SOURCE, 'sourceSha256': hashlib.sha256(raw).hexdigest(),
         'snapshotDate': snapshot_date or date.today().isoformat(), 'sourceLastModified': source_last_modified,
-        'reference': 'NO-2542', 'sourceFeatureCount': len(features),
+        'reference': reference, 'sourceFeatureCount': len(features),
         'includedFeatureCount': sum(f['properties']['includedInPota'] for f in features),
         'usage': 'Private use according to source. Reassess permission before wider or commercial use.',
         'termsUrl': 'https://www.oslofjorden.com/om_oss.html',
@@ -91,8 +91,10 @@ if __name__ == '__main__':
     parser.add_argument('--snapshot-date', default=date.today().isoformat())
     parser.add_argument('--source-last-modified')
     parser.add_argument('--output', type=Path, default=ROOT / 'data/coastal/oslofjorden-ostfold-test.geojson')
+    parser.add_argument('--reference', default='NO-2542', choices=['NO-2542', 'NO-2590', 'NO-2641'])
+    parser.add_argument('--folder', default='turer_oestfold')
     args = parser.parse_args()
-    data = convert(args.input.read_bytes(), args.snapshot_date, args.source_last_modified)
+    data = convert(args.input.read_bytes(), args.snapshot_date, args.source_last_modified, args.reference, args.folder)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')))
-    print('Østfold:', data['metadata']['includedFeatureCount'], 'walking/cycling routes of', len(data['features']))
+    print(args.reference + ':', data['metadata']['includedFeatureCount'], 'walking/cycling routes of', len(data['features']))

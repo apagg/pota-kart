@@ -4,13 +4,9 @@ const geometryAtlas={indexes:{},overviews:{},records:new Map(),shards:new Map(),
 function atlasMeta(ref){return geometryAtlas.indexes[ref.split('-')[0]]?.parks?.[ref]||null}
 function atlasHasGeometry(ref){return !!atlasMeta(ref)&&geometryAtlas.byRef.has(ref)}
 async function atlasRecord(ref){
- // Oslofjorden snapshot overrides the former GIS and edited Hvaler route at every zoom.
- if(ref==='NO-2542'||ref==='LA-2542'){
-   if(!geometryAtlas.coastalTrailPromise){
-     geometryAtlas.coastalTrailPromise=resolveKyststienFallback(null,{reference:'NO-2542'})
-       .catch(e=>{geometryAtlas.coastalTrailPromise=null;throw e});
-   }
-   try{return await geometryAtlas.coastalTrailPromise}catch(e){potaDiagnostics.report('atlas/trail',e);throw e}
+ // Local coastal snapshots apply at every zoom, including former point parks.
+ if(COASTAL_TRAILS[coastalTrailRef(ref)]){
+   try{return await resolveKyststienFallback(null,{reference:ref})}catch(e){potaDiagnostics.report('atlas/trail',e);throw e}
  }
  const meta=atlasMeta(ref);if(!meta)return null;
  const key=ref.split('-')[0]+'/'+meta.shard;
@@ -170,13 +166,16 @@ async function initializeGeometryAtlas(){
    for(const f of overview.features||[]){const ref=f.properties?.reference;if(index.parks[ref]&&f.geometry)geometryAtlas.overviewByRef.set(ref,f.geometry)}
   }catch(e){console.warn(cc+' geometrioversikt:',e.message)}
  }));
- // Replace the overview too, so zooming out cannot restore the old route.
- const coastal=await atlasRecord('NO-2542');
- geometryAtlas.records.set('NO-2542',coastal);
- geometryAtlas.overviewByRef.set('NO-2542',coastal.geometry);
- const bbox=[Infinity,Infinity,-Infinity,-Infinity];
- for(const line of coastal.geometry.coordinates)for(const c of line){bbox[0]=Math.min(bbox[0],c[0]);bbox[1]=Math.min(bbox[1],c[1]);bbox[2]=Math.max(bbox[2],c[0]);bbox[3]=Math.max(bbox[3],c[1]);}
- geometryAtlas.indexes.NO.parks['NO-2542']={...atlasMeta('NO-2542'),...Object.fromEntries(Object.entries(coastal).filter(([key])=>key!=='geometry')),bbox};
+ // Install exact line overviews and bounds before any point/geometry rendering.
+ if(!geometryAtlas.indexes.NO)throw Error('Mangler norsk geometrioversikt');
+ for(const ref of Object.keys(COASTAL_TRAILS)){
+  const coastal=await atlasRecord(ref);
+  geometryAtlas.records.set(ref,coastal);
+  geometryAtlas.overviewByRef.set(ref,coastal.geometry);
+  const bbox=[Infinity,Infinity,-Infinity,-Infinity];
+  for(const line of coastal.geometry.coordinates)for(const c of line){bbox[0]=Math.min(bbox[0],c[0]);bbox[1]=Math.min(bbox[1],c[1]);bbox[2]=Math.max(bbox[2],c[0]);bbox[3]=Math.max(bbox[3],c[1]);}
+  geometryAtlas.indexes.NO.parks[ref]={...atlasMeta(ref),...Object.fromEntries(Object.entries(coastal).filter(([key])=>key!=='geometry')),bbox};
+ }
  geometryAtlas.ready=true;await atlasRefresh();
  let timer;map.on('moveend',()=>{clearTimeout(timer);timer=setTimeout(atlasRefresh,100)});
  document.addEventListener('pota:selection',()=>requestAnimationFrame(()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(f=>atlasStyle(ref,f?.geometry))}));

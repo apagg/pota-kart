@@ -199,3 +199,14 @@ Develop er etablert fra oppsett `74573aa3018b1494e75fab1e8f52fe1034652ac1`; før
 - Runtime må generaliseres fra NO-2542 til et oppslag per POTA-ref. Registrer nye records, oversiktsgeometri og bbox før atlaset blir klart, siden NO-2590/NO-2641 mangler index/shard i dag. Det eksisterende kyststinavn-oppslaget støtter allerede kyststinavn, og korridor-/GPS-/overlappsmotoren bruker 61 m. Verifiser at punktmarkørene forsvinner når geometri finnes, og at 100 m punktregelen ikke brukes på de nye stiene.
 - Bevar blå/gul/grønn stil, GPS/kompass, 61 m korridor og overlapp. Test zoom ut/inn, gjentatte parkvalg, aktiveringsfarger, faktisk GPS-grense og PC/mobil før testpublisering. Arbeid bare i develop; neste hovedversjon krever brukerens godkjenning.
 - Bruksvilkårsnotatet for Oslofjorden-data følger også eventuell ny import. Brukeren har allerede vurdert ikke-kommersiell bruk; annen/bredere/kommersiell bruk må avklares med kildeeieren som tidligere dokumentert.
+
+## Bestilt testimport Vestfold/Telemark (2026-10-13)
+Brukeren godkjente import av rutene inkludert sykkelruter i develop.
+NO-2590: 197 segmenter (10 sykkel), NO-2641: 26 (3 sykkel).
+Hele kildefolderen beholdes, inkludert historisk Vestfold-gruppering/Svelvik;
+ferger, stengte og ukjente kategorier inngår ikke i POTA-geometrien.
+Avgrensningen er kildens, og turforslag er ikke individuelt POTA-verifisert.
+Runtime velger snapshot og memoiserer per referanse; atlaset setter eksakt
+linjeoversikt/bbox før oppstart, også for tidligere punktparker. Alle bruker
+61 m korridor og eksisterende GPS-/overlapps-/aktiveringsfarger. Østfold bevares.
+Ny versjon/main-sammenslåing avventer brukertest og uttrykkelig godkjenning.

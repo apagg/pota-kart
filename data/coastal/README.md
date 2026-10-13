@@ -36,3 +36,16 @@ Vilkår: https://www.oslofjorden.com/om_oss.html
 Hentet 2026-10-11. Kildens Last-Modified var 2026-05-26 21:53 UTC. KML-hash og
 filterkategori er lagret i GeoJSON-filen. Importer en kontrollert lokal KML med
 `python3 scripts/import-oslofjorden-coast.py --input /path/to/source.kml --snapshot-date 2026-10-11 --source-last-modified 2026-05-26T21:53:00Z`.
+
+## Develop: Vestfold og Telemark (2026-10-13)
+Brukeren bestilte import inkludert sykkelruter. NO-2590 bruker hele
+`turer_vestfold`: 187 gangruter/turforslag + 10 sykkelruter = 197 segmenter.
+NO-2641 bruker `turer_telemark`: 23 gangruter/turforslag + 3 sykkelruter = 26.
+To ferger i Vestfold, én ferge og én Stengt-linje i Telemark utelates.
+Kildens historiske Vestfold-gruppering, inkludert Svelvik, beholdes som valgt
+kildeomfang i denne testen. Dette er en testimport av kildens ruter, ikke en
+bekreftelse på offisiell POTA-avgrensning for hvert turforslag. Østfold er uendret.
+Begge snapshots har samme kildehash som Østfold, kontrollert 2026-10-13.
+Bruksvilkårsnotatet over gjelder også disse filene.
+Reproduser med importskriptets `--reference NO-2590 --folder turer_vestfold`
+eller `--reference NO-2641 --folder turer_telemark` og `--output` til aktuell fil.

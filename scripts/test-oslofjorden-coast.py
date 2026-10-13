@@ -51,3 +51,13 @@ for f in data['features']:
         assert len(line) >= 2
         assert all(len(c) == 2 and all(math.isfinite(v) for v in c) and -180 <= c[0] <= 180 and -90 <= c[1] <= 90 for c in line)
 print('PASS coastal importer: scope, style maps, invalid input, 122 walking/cycling routes, 31 Hvaler routes')
+for ref, region, count, bikes, source_count in [('NO-2590','vestfold',197,10,199), ('NO-2641','telemark',26,3,28)]:
+    d = json.loads((ROOT / f'data/coastal/oslofjorden-{region}.geojson').read_text())
+    assert d['metadata']['reference'] == ref
+    assert len(d['features']) == source_count
+    routes = [f for f in d['features'] if f['properties']['includedInPota']]
+    assert len(routes) == d['metadata']['includedFeatureCount'] == count
+    assert sum(f['properties']['category'] == 'cycling-alternative' for f in routes) == bikes
+    assert all(f['properties']['reference'] == ref and f['properties']['folderPath'][0] == 'turer_'+region for f in d['features'])
+    assert all(f['properties']['category'] not in ('ferry','closed-or-warning') for f in routes)
+print('PASS Vestfold/Telemark snapshots: 197/26 segments including 10/3 cycling; ferries/closed excluded')
