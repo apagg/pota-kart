@@ -187,35 +187,35 @@
       "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=json",
       "rel": "self",
       "type": "application/geo+json",
-      "title": "This document"
-    },
-    {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=fgb",
-      "rel": "alternate",
-      "type": "application/flatgeobuf",
-      "title": "This document as FlatGeobuf"
+      "title": "Dieses Dokument"
     },
     {
       "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=html",
       "rel": "alternate",
       "type": "text/html",
-      "title": "This document as HTML"
+      "title": "Dieses Dokument als HTML"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=fgb",
+      "rel": "alternate",
+      "type": "application/flatgeobuf",
+      "title": "Dieses Dokument als FlatGeobuf"
     },
     {
       "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=csv",
       "rel": "alternate",
       "type": "text/csv",
-      "title": "This document as CSV"
+      "title": "Dieses Dokument als CSV"
     },
     {
       "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter?f=json",
       "rel": "collection",
       "type": "application/json",
-      "title": "The collection the feature belongs to"
+      "title": "Die Datensammlung, zu der das Objekt gehört"
     }
   ],
   "cacheMetadata": {
-    "verifiedDate": "2026-11-07",
+    "verifiedDate": "2026-11-08",
     "sourceUrl": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=json",
     "sourceUrls": [
       "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/86063?f=json"
