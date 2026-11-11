@@ -138,16 +138,16 @@
       "title": "This document"
     },
     {
-      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=html",
-      "rel": "alternate",
-      "type": "text/html",
-      "title": "This document as HTML"
-    },
-    {
       "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=fgb",
       "rel": "alternate",
       "type": "application/flatgeobuf",
       "title": "This document as FlatGeobuf"
+    },
+    {
+      "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=html",
+      "rel": "alternate",
+      "type": "text/html",
+      "title": "This document as HTML"
     },
     {
       "href": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=csv",
@@ -163,7 +163,7 @@
     }
   ],
   "cacheMetadata": {
-    "verifiedDate": "2026-11-10",
+    "verifiedDate": "2026-11-11",
     "sourceUrl": "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=json",
     "sourceUrls": [
       "https://api.ra.no/LokaliteterEnkeltminnerOgSikringssoner/collections/lokaliteter/items/226593?f=json"
