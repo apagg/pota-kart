@@ -40,7 +40,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
 
  for(const width of [701,1024,1600]){await page.setViewportSize({width,height:900});await page.waitForFunction(w=>map.getSize().x===w-350,width);assert.equal((await layout()).panel,350);assert.equal((await layout()).size,width-350);}
  await page.setViewportSize({width:1280,height:900});
- const topoConfig=await page.evaluate(()=>({low:baseLayers.topo.getTileUrl({x:1,y:2,z:3}),native:baseLayers.topo.options.maxNativeZoom,credit:baseLayers.topo.options.attribution}));assert.match(topoConfig.low,/webmercator\/\d{2}\/2\/1\.png$/);assert.equal(topoConfig.native,18);assert.match(topoConfig.credit,/Kartverket/);
+ const topoConfig=await page.evaluate(()=>{setBaseMap('topo');const result={low:baseLayers.topo.getTileUrl({x:1,y:2,z:3}),native:baseLayers.topo.options.maxNativeZoom,credit:baseLayers.topo.options.attribution};setBaseMap('osm');return result});assert.match(topoConfig.low,/webmercator\/\d{2}\/2\/1\.png$/);assert.equal(topoConfig.native,18);assert.match(topoConfig.credit,/Kartverket/);
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
  console.log('Restored Swedish national parks');
  const restored={'SE-0006':'2001223','SE-0011':'2000934','SE-0016':'2014914','SE-0021':'2001214','SE-0026':'2049265','SE-0028':'2001828','SE-0030':'2001830'};
