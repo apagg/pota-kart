@@ -449,3 +449,6 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 ## Refaktorering av parkvalg og oppstart 2026-10-08
 - Fem moduler skilt ut fra app-core.js. Actions 37837436277: completed/success for kodecommit eb87927df0a3bedece0479bffa844bc5575311c2, inkludert geometri/JS og desktop/mobil.
 - Stier er uendret. PR #2 er fortsatt testgren.
+
+## 2026-11-14 – Topografisk Norge, develop 0.12.1
+Kartverkets Topo WMTS lagt til som ekstra kartvalg med kreditering. Brukeren bestilte økning av siste versjonstall ved publisering. Første CI stoppet på Ubuntu 26.04/Playwright-kompatibilitet; workflow låst til Ubuntu 24.04. Nye URL-tester ble tilpasset aktivt Leaflet-lag, versjonsforventning oppdatert og eksisterende GPS-fargefixture gjort uavhengig av første asynkrone restyle. Endelig Verify 43581891141 og Pages 43582107032 fullførte med success. Verifisert kode 3ca8beeeb07f10e425d8a5cc5eaf396c9e4d40f6, preview 7d95131e686ac9f1a83bc6bdb7966c734205c4b0. Live testkart har 0.12.1 og nytt kartvalg; main-root beholdt 0.12.0. Ingen main-sammenslåing. Brukertest av lesbarhet gjenstår.
