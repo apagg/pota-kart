@@ -1,6 +1,10 @@
-# POTA Kart 0.12.0
+# POTA Kart 0.12.1
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.1 – 2026-11-14 (develop)
+
+Nytt bakgrunnskart: «Topografisk Norge» fra Kartverket, med kildekreditering. Eksisterende kartvalg og standardvalg beholdes. Stabil main er fortsatt 0.12.0.
 
 ## Versjon 0.12.0 – 2026-10-13
 

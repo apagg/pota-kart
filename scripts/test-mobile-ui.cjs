@@ -88,7 +88,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('#mobileLayers').getAttribute('aria-expanded'),'true');
  assert.equal(await page.locator('#baseMapSelect').isVisible(),true);
  for(const selector of ['#countryFilter','#multiMode','.mapkey','#mobileHelp','#locateBtn'])assert.equal(await page.locator(selector).isVisible(),false,'Karttype must exclude '+selector);
- await page.selectOption('#baseMapSelect','satellite');
+ await page.selectOption('#baseMapSelect','topo');assert.equal(await page.evaluate(()=>activeBase===baseLayers.topo),true);assert.equal(await page.evaluate(()=>localStorage.getItem('potaBaseMap')),'topo');await page.selectOption('#baseMapSelect','satellite');
  assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.selectOption('#baseMapSelect','esri');
  assert.equal(await page.evaluate(()=>activeBase===baseLayers.esri),true);

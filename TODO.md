@@ -8,6 +8,9 @@ Sist gjennomgått: 2026-10-13. **Kun aktive eller bevisst utsatte oppgaver** st�
 ## Videre bruk av Oslofjorden-kyststiruter
 - [ ] Ved annen, bredere eller kommersiell bruk: avklar rettigheter med Oslofjorden.com. Se PROJECT.md og `data/coastal/README.md`. Brukeren har lest vilkårene og godkjent ikke-kommersiell bruk 2026-10-11.
 
+## Topografisk bakgrunnskart
+- [ ] Brukertest Topografisk Norge på PC/mobil i develop 0.12.1, særlig lesbarhet med parkflater og kyststier.
+
 ## Neste UI-trinn
 - [ ] Brukertest oppstartsutsnitt rundt posisjon/Fredrikstad på https://apagg.github.io/pota-kart/test/develop/. Kontrollene er grønne.
 - [ ] Avtal markering av allerede valgte parker i overlappslisten som separat neste trinn.

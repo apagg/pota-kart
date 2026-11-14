@@ -233,3 +233,7 @@ GPS-watch, kompass eller følging. Kartbruk/parkvalg før svaret hindrer sen
 automatisk sentrering. GPS-knappen beholder avtalt av/på/følg-funksjon.
 Bare develop er endret; ingen ny versjon eller main-sammenslåing er bestilt.
 Brukeren godkjente visningsvalget Geometri/Bare punkter med «Bra» før dette.
+
+## Topografisk Norge og versjonering (2026-11-14)
+Brukeren bestilte Kartverkets Topo som ekstra bakgrunnskart i develop. WMTS: https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{matrix}/{y}/{x}.png. Matrix-ID 00–18, 256 px, EPSG:3857; overzoom til 19. Ingen API-nøkkel. Krediteres © Kartverket med lenke. Nettbasert visning følger https://kartverket.no/api-og-data/vilkar-for-bruk; ingen offline-nedlasting innføres. Dagens standard og øvrige kartvalg beholdes.
+Brukeren ber om å øke siste versjonstall ved publisering: denne develop-publiseringen er 0.12.1. Main forblir 0.12.0; sammenslåing krever fortsatt uttrykkelig godkjenning.

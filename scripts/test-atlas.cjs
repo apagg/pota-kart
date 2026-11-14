@@ -32,7 +32,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await page.locator('.info-more > summary').innerText(),'Hjelp og teknisk informasjon');
  assert.equal(await page.locator('.leaflet-top.leaflet-right #locateBtn').count(),1);assert.equal(await page.locator('.leaflet-top.leaflet-right .leaflet-control-zoom').count(),1);
  await page.click('#hidePanel');assert.equal(await page.locator('#locateBtn').isVisible(),true);await page.click('#showPanel');
- await page.locator('#desktopSettings > summary').click();await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
+ await page.locator('#desktopSettings > summary').click();await page.selectOption('#baseMapSelect','topo');assert.equal(await page.evaluate(()=>activeBase===baseLayers.topo),true);assert.equal(await page.evaluate(()=>localStorage.getItem('potaBaseMap')),'topo');await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.selectOption('#baseMapSelect','osm');await page.uncheck('#multiMode');await page.check('#multiMode');await page.locator('#desktopSettings > summary').click();
  await page.fill('#q','NO-NO-SUCH-PARK');await page.click('#search');await page.locator('#desktopNotice').waitFor({state:'visible'});assert.match(await page.locator('#desktopNotice').innerText(),/Fant ikke/);
  await page.evaluate(()=>{st.textContent='Kartet viser lagret geometri';});await page.waitForFunction(()=>document.getElementById('desktopNotice').hidden);await page.fill('#q','');
@@ -40,6 +40,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
 
  for(const width of [701,1024,1600]){await page.setViewportSize({width,height:900});await page.waitForFunction(w=>map.getSize().x===w-350,width);assert.equal((await layout()).panel,350);assert.equal((await layout()).size,width-350);}
  await page.setViewportSize({width:1280,height:900});
+ const topoConfig=await page.evaluate(()=>({low:baseLayers.topo.getTileUrl({x:1,y:2,z:3}),native:baseLayers.topo.options.maxNativeZoom,credit:baseLayers.topo.options.attribution}));assert.match(topoConfig.low,/webmercator\/\d{2}\/2\/1\.png$/);assert.equal(topoConfig.native,18);assert.match(topoConfig.credit,/Kartverket/);
  console.log('Atlas initialized');const counts=await page.evaluate(()=>({geometry:geometryAtlas.byRef.size,points:layers.pts.getLayers().length,parks:pota.length}));assert(counts.geometry>5000,JSON.stringify(counts));assert.equal(counts.geometry+counts.points,counts.parks);
  console.log('Restored Swedish national parks');
  const restored={'SE-0006':'2001223','SE-0011':'2000934','SE-0016':'2014914','SE-0021':'2001214','SE-0026':'2049265','SE-0028':'2001828','SE-0030':'2001830'};
@@ -155,7 +156,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const reserveLink=page.locator('#linkbox a');assert.equal(await reserveLink.getAttribute('href'),'https://pota.app/#/park/'+missing);
  await page.evaluate(ref=>{selectedParks.get(ref).marker.openTooltip()},missing);assert.equal(await page.locator('.pota-point-tooltip:visible').count()>0,true,'desktop keeps point labels');
  console.log('Mobile controls');await page.setViewportSize({width:390,height:844});await page.waitForTimeout(800);assert.equal(await page.locator('#desktopSettings').isVisible(),false);assert.equal(await page.locator('.desktop-map-controls').count(),0);assert.equal(await page.locator('#gpsControlHome #locateBtn').count(),1);assert.equal(await page.locator('.mobile-nav').count(),0);assert.match(await page.locator('.mobile-brand').innerText(),/POTA Kart 0\.12\.0$/);
- await page.getByRole('button',{name:'Innstillinger',exact:true}).click();assert.equal(await page.locator('#baseMapSelect').isVisible(),false);await page.click('#mobileSheetClose');await page.click('#mobileLayers');await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
+ await page.getByRole('button',{name:'Innstillinger',exact:true}).click();assert.equal(await page.locator('#baseMapSelect').isVisible(),false);await page.click('#mobileSheetClose');await page.click('#mobileLayers');await page.selectOption('#baseMapSelect','topo');assert.equal(await page.evaluate(()=>activeBase===baseLayers.topo),true);assert.equal(await page.evaluate(()=>localStorage.getItem('potaBaseMap')),'topo');await page.selectOption('#baseMapSelect','satellite');assert.equal(await page.evaluate(()=>activeBase===baseLayers.satellite),true);
  await page.click('#mobileSheetClose');await page.screenshot({path:'atlas-mobile.png'});
  console.log('Mobile geometry warnings stay inside the expanded sheet; point labels are restored');
  const mobileMissing=await page.evaluate(()=>pota.find(p=>/storelgen/i.test(p.name)&&!atlasHasGeometry(p.reference))?.reference)||missing;
