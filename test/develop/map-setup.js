@@ -20,7 +20,9 @@ hidePanel.onclick=()=>{const center=map.getCenter(),zoom=map.getZoom();infoPanel
 showPanel.onclick=()=>{const center=map.getCenter(),zoom=map.getZoom();infoPanel.classList.remove('hidden');showPanel.classList.remove('visible');document.body.classList.remove('panel-hidden');map.invalidateSize({pan:false});map.setView(center,zoom,{animate:false})};
 const multiMode=document.getElementById('multiMode'), selectedBox=document.getElementById('selectedBox'), selectedList=document.getElementById('selectedList'), countryFilter=document.getElementById('countryFilter');
 const baseMapSelect=document.getElementById('baseMapSelect'), locateBtn=document.getElementById('locateBtn'), gpsStatus=document.getElementById('gpsStatus');
+// WMTS matrix IDs are zero-padded (00–18); Leaflet supplies XYZ coordinates.
 const baseLayers={
+  topo:L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{matrix}/{y}/{x}.png',{matrix:data=>String(data.z).padStart(2,'0'),maxNativeZoom:18,maxZoom:19,attribution:'&copy; <a href="https://www.kartverket.no/">Kartverket</a>'}),
   osm:L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap-bidragsytere'}),
   esri:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Bakgrunn: Esri'}),
   satellite:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Satellittbilder: Esri, Vantor, Earthstar Geographics og GIS User Community'})

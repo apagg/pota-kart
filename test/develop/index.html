@@ -7,10 +7,10 @@
 <script>document.documentElement.classList.add('ui-loading');</script>
 <style>html.ui-loading .app-ui{visibility:hidden!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
-<title>POTA Kart 0.12.0 – Utvikling – Norge og Sverige</title>
+<title>POTA Kart 0.12.1 – Utvikling – Norge og Sverige</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="styles.css?v=b68380ce609941c8e7c16d2fdc40ea90d9db8c66">
-<link rel="stylesheet" href="mobile-ui.css?v=b68380ce609941c8e7c16d2fdc40ea90d9db8c66">
+<link rel="stylesheet" href="styles.css?v=3ca8beeeb07f10e425d8a5cc5eaf396c9e4d40f6">
+<link rel="stylesheet" href="mobile-ui.css?v=3ca8beeeb07f10e425d8a5cc5eaf396c9e4d40f6">
 </head>
 <body>
 <div id="map"></div>
@@ -19,7 +19,7 @@
 <div class="panel app-ui" id="infoPanel">
   <div class="desktop-panel-content">
     <button id="hidePanel" type="button" title="Skjul panel" aria-label="Skjul panel" style="position:absolute;top:8px;right:8px;width:30px;height:30px;padding:0;background:#eef1f5;color:#333;font-size:18px">‹</button>
-    <h1>POTA Kart <span class="version">0.12.0</span></h1>
+    <h1>POTA Kart <span class="version">0.12.1</span></h1>
     <div class="small" style="margin-top:-4px;margin-bottom:7px">Norge og Sverige – offisielle grenser</div>
     <div id="desktopSearchSlot"><div class="row"><input id="q" placeholder="Søk POTA-ID eller navn"><button id="search">Søk</button></div></div>
     <div id="desktopNotice" class="desktop-notice" role="status" hidden></div>
@@ -29,7 +29,7 @@
     <details id="desktopSettings" class="desktop-section">
       <summary>Kartinnstillinger</summary>
       <div id="desktopCountrySlot"><div class="row" style="align-items:center"><label class="small" for="countryFilter"><b>Land:</b></label><select id="countryFilter" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="ALL">Norge + Sverige</option><option value="NO">Norge</option><option value="SE">Sverige</option></select></div></div>
-      <div id="desktopBasemapSlot"><div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="osm">OpenStreetMap</option><option value="esri">Esri</option><option value="satellite">Satellitt</option></select></div></div>
+      <div id="desktopBasemapSlot"><div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="topo">Topografisk Norge</option><option value="osm">OpenStreetMap</option><option value="esri">Esri</option><option value="satellite">Satellitt</option></select></div></div>
       <div id="desktopDisplaySlot"><div class="row" style="align-items:center"><label class="small" for="parkDisplayMode"><b>Visning:</b></label><select id="parkDisplayMode" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="geometry">Geometri</option><option value="points">Bare punkter</option></select></div></div>
       <div id="desktopMultiSlot"><div class="selectbar"><label><input type="checkbox" id="multiMode" checked> Flervalg</label><span class="small">Legg flere parker til utvalget</span></div></div>
       <div id="desktopActivationSlot"><section id="activationSettings" class="activation-settings">
@@ -90,7 +90,7 @@
   </div>
 </div>
 <div class="mobile-chrome app-ui">
-    <div class="mobile-brand">POTA Kart <span>0.12.0</span></div>
+    <div class="mobile-brand">POTA Kart <span>0.12.1</span></div>
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg></button>
       <button id="mobileLayers" aria-label="Velg karttype" aria-controls="infoPanel" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></button>
@@ -108,5 +108,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=b68380ce609941c8e7c16d2fdc40ea90d9db8c66" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
+<script src="app.js?v=3ca8beeeb07f10e425d8a5cc5eaf396c9e4d40f6" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
 </body></html>
