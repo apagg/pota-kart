@@ -1,11 +1,11 @@
 {
-  "generatedDate": "2026-11-23",
+  "generatedDate": "2026-11-24",
   "entries": [
     {
       "id": "215058",
       "available": true,
       "refreshStatus": "updated",
-      "verifiedDate": "2026-11-23",
+      "verifiedDate": "2026-11-24",
       "parks": [
         {
           "reference": "NO-3378",
@@ -17,7 +17,7 @@
       "id": "226593",
       "available": true,
       "refreshStatus": "updated",
-      "verifiedDate": "2026-11-23",
+      "verifiedDate": "2026-11-24",
       "parks": [
         {
           "reference": "NO-3203",
@@ -29,7 +29,7 @@
       "id": "86063",
       "available": true,
       "refreshStatus": "updated",
-      "verifiedDate": "2026-11-23",
+      "verifiedDate": "2026-11-24",
       "parks": [
         {
           "reference": "NO-3375",
@@ -40,8 +40,9 @@
     {
       "id": "94415",
       "available": true,
-      "refreshStatus": "updated",
+      "refreshStatus": "kept_previous",
       "verifiedDate": "2026-11-23",
+      "refreshError": "wfs: HTTP Error 504: Gateway Timeout",
       "parks": [
         {
           "reference": "NO-3372",
@@ -52,8 +53,9 @@
     {
       "id": "94425",
       "available": true,
-      "refreshStatus": "updated",
+      "refreshStatus": "kept_previous",
       "verifiedDate": "2026-11-23",
+      "refreshError": "wfs: HTTP Error 504: Gateway Timeout",
       "parks": [
         {
           "reference": "NO-3379",
@@ -65,7 +67,7 @@
       "id": "94448",
       "available": true,
       "refreshStatus": "updated",
-      "verifiedDate": "2026-11-23",
+      "verifiedDate": "2026-11-24",
       "parks": [
         {
           "reference": "NO-3374",
@@ -76,8 +78,9 @@
     {
       "id": "94449",
       "available": true,
-      "refreshStatus": "updated",
+      "refreshStatus": "kept_previous",
       "verifiedDate": "2026-11-23",
+      "refreshError": "wfs: HTTP Error 504: Gateway Timeout",
       "parks": [
         {
           "reference": "NO-3373",
