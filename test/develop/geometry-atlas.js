@@ -4,20 +4,44 @@ const geometryAtlas={indexes:{},overviews:{},records:new Map(),shards:new Map(),
 // Display preference affects rendering only; geometry remains available to GPS.
 const parkDisplayMode=document.getElementById('parkDisplayMode');
 try{parkDisplayMode.value=localStorage.getItem('pota-park-display')==='points'?'points':'geometry'}catch(e){}
-function parkGeometryVisible(){return parkDisplayMode.value!=='points'}
+// Screen-size decisions use stable full bounds, not simplified or clipped outlines.
+const adaptiveParkPoints=new Set(),PARK_POINT_HIDE_PX=20,PARK_POINT_SHOW_PX=24;
+function parkGeometryVisible(ref=null){return parkDisplayMode.value!=='points'&&(!ref||!adaptiveParkPoints.has(ref))}
+function updateAdaptiveParkPoint(ref,selectedLayer=null){
+ const box=atlasMeta(ref)?.bbox;
+ const bounds=box?L.latLngBounds([box[1],box[0]],[box[3],box[2]]):selectedLayer?.getBounds?.();
+ if(!bounds?.isValid()){adaptiveParkPoints.delete(ref);return}
+ const zoom=map.getZoom(),a=map.project(bounds.getSouthWest(),zoom),b=map.project(bounds.getNorthEast(),zoom);
+ const size=Math.max(Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+ const point=adaptiveParkPoints.has(ref)?size<=PARK_POINT_SHOW_PX:size<PARK_POINT_HIDE_PX;
+ if(point)adaptiveParkPoints.add(ref);else adaptiveParkPoints.delete(ref);
+}
+function syncAdaptiveParkPoints(){
+ for(const ref of geometryAtlas.byRef.keys())updateAdaptiveParkPoint(ref);
+ for(const [ref,x] of selectedParks)updateAdaptiveParkPoint(ref,x.geo);
+ if(!multiMode.checked&&lastSelectedRef)updateAdaptiveParkPoint(lastSelectedRef,selectedGeo);
+}
+function syncAtlasOverlapVisibility(){
+ for(const x of atlasOverlapState.layers.values()){
+  if(x.refs.every(ref=>atlasInCountry(ref)&&parkGeometryVisible(ref)))overlapLayer.addLayer(x.layer);
+  else overlapLayer.removeLayer(x.layer);
+ }
+}
 function syncParkDisplayLegend(){
- document.getElementById('pointLegendLabel').textContent=parkGeometryVisible()?'Mangler geometri':'POTA-park';
- document.getElementById('trailLegendLabel').textContent=parkGeometryVisible()?'Sti uten geometri':'POTA-sti';
+ document.getElementById('pointLegendLabel').textContent=parkGeometryVisible()?'Liten park / mangler geometri':'POTA-park';
+ document.getElementById('trailLegendLabel').textContent=parkGeometryVisible()?'Liten sti / mangler geometri':'POTA-sti';
 }
 syncParkDisplayLegend();
 function syncParkDisplayLayers(){
  syncParkDisplayLegend();
+ syncAdaptiveParkPoints();
  const geometry=parkGeometryVisible();
- for(const [ref,layer] of geometryAtlas.layers){if(geometry&&atlasInCountry(ref))layer.addTo(map);else map.removeLayer(layer)}
- const sync=(ref,marker,geo)=>{for(const layer of [marker,geo])if(layer){if(geometry&&atlasInCountry(ref))layer.addTo(map);else map.removeLayer(layer)}};
+ for(const [ref,layer] of geometryAtlas.layers){if(parkGeometryVisible(ref)&&atlasInCountry(ref))layer.addTo(map);else map.removeLayer(layer)}
+ const sync=(ref,marker,geo)=>{for(const layer of [marker,geo])if(layer){if(parkGeometryVisible(ref)&&atlasInCountry(ref))layer.addTo(map);else map.removeLayer(layer)}};
  for(const [ref,x] of selectedParks)sync(ref,x.marker,x.geo);
  if(!multiMode.checked&&lastSelectedRef)sync(lastSelectedRef,selectedMarker,selectedGeo);
  if(geometry)overlapLayer.addTo(map);else map.removeLayer(overlapLayer);
+ syncAtlasOverlapVisibility();
  if(geometryAtlas.ready)atlasFilterPoints();
 }
 parkDisplayMode.addEventListener('change',()=>{
@@ -108,19 +132,19 @@ function atlasBuildLayer(ref,geometry){
 function atlasShow(ref,geometry){
  const old=geometryAtlas.layers.get(ref);if(old)map.removeLayer(old);
  const layer=atlasBuildLayer(ref,geometry);if(!layer)return;
- geometryAtlas.layers.set(ref,layer);geometryAtlas.byRef.set(ref,geometry);if(parkGeometryVisible())layer.addTo(map);
+ geometryAtlas.layers.set(ref,layer);geometryAtlas.byRef.set(ref,geometry);updateAdaptiveParkPoint(ref);if(parkGeometryVisible(ref)&&atlasInCountry(ref))layer.addTo(map);
 }
 function atlasInCountry(ref){return countryFilter.value==='ALL'||ref.startsWith(countryFilter.value+'-')}
 function atlasReport(){
  const el=document.getElementById('geometrySummary');if(!el)return;
- const markers=potaMarkers.filter(x=>atlasInCountry(x.reference)&&(!parkGeometryVisible()||!atlasHasGeometry(x.reference)));
+ const markers=potaMarkers.filter(x=>atlasInCountry(x.reference)&&(!parkGeometryVisible(x.reference)||!atlasHasGeometry(x.reference)));
  const total=pota.filter(p=>atlasInCountry(p.reference)).length;
  const n=[...geometryAtlas.byRef.keys()].filter(atlasInCountry).length;
  if(!parkGeometryVisible()){el.textContent=`${total.toLocaleString('nb-NO')} parker · bare punkter`;return}
  el.textContent=`${total.toLocaleString('nb-NO')} parker · ${n.toLocaleString('nb-NO')} med geometri · ${markers.length.toLocaleString('nb-NO')} som punkt`;
 }
 function atlasFilterPoints(){
- for(const x of potaMarkers){const show=atlasInCountry(x.reference)&&(!parkGeometryVisible()||!atlasHasGeometry(x.reference));if(show)layers.pts.addLayer(x.marker);else layers.pts.removeLayer(x.marker)}
+ for(const x of potaMarkers){const show=atlasInCountry(x.reference)&&(!parkGeometryVisible(x.reference)||!atlasHasGeometry(x.reference));if(show)layers.pts.addLayer(x.marker);else layers.pts.removeLayer(x.marker)}
  atlasReport();
 }
 async function atlasRefresh(){
@@ -133,7 +157,7 @@ async function atlasRefresh(){
   const meta=atlasMeta(ref);if(!meta)continue;
   const bb=meta.bbox,near=b.intersects(L.latLngBounds([bb[1],bb[0]],[bb[3],bb[2]]));
   if(!geometryAtlas.layers.has(ref))atlasShow(ref,geometry);
-  else if(parkGeometryVisible()&&!map.hasLayer(geometryAtlas.layers.get(ref)))geometryAtlas.layers.get(ref).addTo(map);
+  else if(parkGeometryVisible(ref)&&!map.hasLayer(geometryAtlas.layers.get(ref)))geometryAtlas.layers.get(ref).addTo(map);
   if(detail&&near)jobs.push(ref);
   else if(geometryAtlas.byRef.get(ref)!==geometry)atlasShow(ref,geometry);
  }
@@ -143,7 +167,7 @@ async function atlasRefresh(){
  await Promise.all(Array.from({length:Math.min(4,jobs.length)},async()=>{
   while(cursor<jobs.length){const ref=jobs[cursor++];try{const r=await atlasRecord(ref);if(epoch!==geometryAtlas.epoch)return;geometryAtlas.records.set(ref,r);if(geometryAtlas.byRef.get(ref)!==r.geometry)atlasShow(ref,r.geometry)}catch(e){potaDiagnostics.report('atlas/'+ref,e)}}
  }));
- if(epoch===geometryAtlas.epoch){atlasReport();scheduleAtlasOverlaps();updateGpsParkColors();document.dispatchEvent(new CustomEvent('pota:atlas'))}
+ if(epoch===geometryAtlas.epoch){syncParkDisplayLayers();atlasReport();scheduleAtlasOverlaps();updateGpsParkColors();document.dispatchEvent(new CustomEvent('pota:atlas'))}
 }
 function atlasHit(geometry,ll){
  const pt=turf.point([ll.lng,ll.lat]);
@@ -165,7 +189,7 @@ function atlasHit(geometry,ll){
 }
 function atlasRefsAt(latlng,candidates=geometryAtlas.byRef.keys()){
  const refs=[];
- for(const ref of candidates){const g=geometryAtlas.byRef.get(ref);if(g&&atlasInCountry(ref)&&atlasPointNearBounds(atlasMeta(ref)?.bbox,latlng)&&atlasHit(g,latlng))refs.push(ref)}
+ for(const ref of candidates){const g=geometryAtlas.byRef.get(ref);if(g&&parkGeometryVisible(ref)&&atlasInCountry(ref)&&atlasPointNearBounds(atlasMeta(ref)?.bbox,latlng)&&atlasHit(g,latlng))refs.push(ref)}
  return refs;
 }
 function atlasPick(latlng,clickedRef){
@@ -203,7 +227,7 @@ async function initializeGeometryAtlas(){
   geometryAtlas.indexes.NO.parks[ref]={...atlasMeta(ref),...Object.fromEntries(Object.entries(coastal).filter(([key])=>key!=='geometry')),bbox};
  }
  geometryAtlas.ready=true;await atlasRefresh();
- let timer;map.on('moveend',()=>{clearTimeout(timer);timer=setTimeout(atlasRefresh,100)});
+ let timer;map.on('moveend',()=>{syncParkDisplayLayers();clearTimeout(timer);timer=setTimeout(atlasRefresh,100)});
  document.addEventListener('pota:selection',syncParkDisplayLayers);
  document.addEventListener('pota:selection',()=>requestAnimationFrame(()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(f=>atlasStyle(ref,f?.geometry))}));
  map.on('click',e=>atlasPick(e.latlng,null));
@@ -295,10 +319,12 @@ async function applyAtlasOverlaps(data){
   const layer=L.geoJSON(result.geometry,{pane:'overlapPane',style:gpsOverlapStyle(result.refs)});
   bindAtlasOverlapHover(layer,result.refs);
   layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});
-  if(previous)overlapLayer.removeLayer(previous.layer);layer.addTo(overlapLayer);atlasOverlapState.layers.set(result.key,{...result,layer});
+  if(previous)overlapLayer.removeLayer(previous.layer);atlasOverlapState.layers.set(result.key,{...result,layer});
+  if(result.refs.every(ref=>atlasInCountry(ref)&&parkGeometryVisible(ref)))layer.addTo(overlapLayer);
   if(performance.now()-slice>6){await new Promise(r=>setTimeout(r,0));slice=performance.now()}
  }
  if(!current()){if(data.id===atlasOverlapState.epoch){atlasOverlapState.busy=false;atlasOverlapState.lastSignature=null}return}
+ syncAtlasOverlapVisibility();
  atlasOverlapState.pairs=data.results;atlasOverlapState.stats=data.stats;atlasOverlapState.elapsedMs=data.elapsedMs;atlasOverlapState.completed++;atlasOverlapState.busy=false;
  document.getElementById('overlapStatus')?.remove();document.dispatchEvent(new CustomEvent('pota:overlaps'));
 }
