@@ -21,9 +21,11 @@ function syncAdaptiveParkPoints(){
  for(const [ref,x] of selectedParks)updateAdaptiveParkPoint(ref,x.geo);
  if(!multiMode.checked&&lastSelectedRef)updateAdaptiveParkPoint(lastSelectedRef,selectedGeo);
 }
+function atlasOverlapVisibleRefs(refs){return refs.filter(ref=>atlasInCountry(ref)&&parkGeometryVisible(ref))}
 function syncAtlasOverlapVisibility(){
  for(const x of atlasOverlapState.layers.values()){
-  if(x.refs.every(ref=>atlasInCountry(ref)&&parkGeometryVisible(ref)))overlapLayer.addLayer(x.layer);
+  const refs=atlasOverlapVisibleRefs(x.refs);
+  if(refs.length>=2){paintAtlasOverlapLayer(x.layer,refs);overlapLayer.addLayer(x.layer)}
   else overlapLayer.removeLayer(x.layer);
  }
 }
@@ -94,7 +96,17 @@ function paintGpsSelected(){
  for(const [ref,x] of selectedParks)paint(x.geo,ref);
  if(!multiMode.checked&&lastSelectedRef)paint(selectedGeo,lastSelectedRef);
 }
-function gpsOverlapStyle(refs){const inside=refs.every(ref=>gpsInsideRefs.has(ref));return {color:parkColors.get(inside?'inside':'overlap',!inside),weight:1,fillColor:parkColors.get(inside?'inside':'overlap'),fillOpacity:inside?.25:.48}}
+function gpsOverlapStyle(refs){
+ const unique=[...new Set(refs)];
+ if(parkColors.overlapMode()==='blend')return {...parkColors.mixOverlap(unique.map(ref=>gpsParkColor(ref))),weight:1,fillOpacity:.35};
+ const inside=unique.length>0&&unique.every(ref=>gpsInsideRefs.has(ref));
+ return {color:parkColors.get(inside?'inside':'overlap',!inside),weight:1,fillColor:parkColors.get(inside?'inside':'overlap'),fillOpacity:inside?.25:.48};
+}
+const atlasOverlapPaintCache=new WeakMap();
+function paintAtlasOverlapLayer(layer,refs){
+ const style=gpsOverlapStyle(refs),signature=style.color+'|'+style.fillColor+'|'+style.fillOpacity;
+ if(atlasOverlapPaintCache.get(layer)!==signature){layer.setStyle(style);atlasOverlapPaintCache.set(layer,signature)}
+}
 async function updateGpsParkColors(){
  const epoch=++gpsColorEpoch,next=new Set(),position=lastGps;
  if(position&&gpsWatchId!==null){
@@ -118,7 +130,7 @@ async function updateGpsParkColors(){
  gpsInsideRefs.clear();for(const ref of next)gpsInsideRefs.add(ref);
  for(const ref of changed)geometryAtlas.layers.get(ref)?.setStyle(f=>atlasStyle(ref,f?.geometry));
  paintGpsSelected();
- for(const x of atlasOverlapState.layers.values())if(x.refs.some(ref=>changed.has(ref)))x.layer.setStyle(gpsOverlapStyle(x.refs));
+ for(const x of atlasOverlapState.layers.values())if(x.refs.some(ref=>changed.has(ref)))paintAtlasOverlapLayer(x.layer,atlasOverlapVisibleRefs(x.refs));
  document.dispatchEvent(new CustomEvent('pota:gps-colors'));
 }
 function atlasBuildLayer(ref,geometry){
@@ -254,7 +266,7 @@ function atlasOverlapFailure(message){
 }
 function atlasOverlapWorker(){
  if(atlasOverlapState.worker)return atlasOverlapState.worker;
- const worker=new Worker('overlap-worker.js?v=011-11');atlasOverlapState.worker=worker;
+ const worker=new Worker('overlap-worker.js?v=0125-overlap');atlasOverlapState.worker=worker;
  worker.onerror=e=>atlasOverlapFailure(e.message||'Bakgrunnsberegningen kunne ikke startes');
  worker.onmessage=e=>{const data=e.data;if(data.id!==atlasOverlapState.epoch)return;
   if(data.error){atlasOverlapFailure(data.error);return}
@@ -267,8 +279,8 @@ function scheduleAtlasOverlaps(){
  clearTimeout(atlasOverlapState.timer);
  if(atlasOverlapState.country!==countryFilter.value){atlasOverlapState.country=countryFilter.value;atlasOverlapState.lastSignature=null}
  // Country changes hide foreign overlays immediately, without intersecting again.
- for(const [key,x] of atlasOverlapState.layers)if(!x.refs.every(atlasInCountry)){overlapLayer.removeLayer(x.layer);atlasOverlapState.layers.delete(key)}
- atlasOverlapState.pairs=atlasOverlapState.pairs.filter(x=>x.refs.every(atlasInCountry));
+ for(const [key,x] of atlasOverlapState.layers)if(x.refs.filter(atlasInCountry).length<2){overlapLayer.removeLayer(x.layer);atlasOverlapState.layers.delete(key)}
+ atlasOverlapState.pairs=atlasOverlapState.pairs.filter(x=>x.refs.filter(atlasInCountry).length>=2);
  atlasOverlapState.timer=setTimeout(refreshAtlasOverlaps,180);
 }
 function refreshAtlasOverlaps(){
@@ -281,10 +293,11 @@ function refreshAtlasOverlaps(){
   const key=ref+'@'+(geometry===geometryAtlas.overviewByRef.get(ref)?'overview':'detail');keys.push(key);
   if(!atlasOverlapState.uploaded.has(key))entries.push({key,ref,geometry});
  }
- const signature=viewKey+'|'+keys.join(',');if(signature===atlasOverlapState.lastSignature)return;
+ const visibleRefs=keys.map(key=>key.split('@')[0]).filter(parkGeometryVisible);
+ const signature=viewKey+'|'+keys.join(',')+'|'+visibleRefs.join(',');if(signature===atlasOverlapState.lastSignature)return;
  try{
   const worker=atlasOverlapWorker(),id=++atlasOverlapState.epoch;
-  worker.postMessage({id,viewKey,bounds,keys,entries});
+  worker.postMessage({id,viewKey,bounds,keys,entries,visibleRefs});
   for(const entry of entries)atlasOverlapState.uploaded.add(entry.key);
   atlasOverlapState.lastSignature=signature;atlasOverlapState.requests++;atlasOverlapState.busy=true;
  }catch(e){atlasOverlapFailure(e.message)}
@@ -319,11 +332,11 @@ async function applyAtlasOverlaps(data){
   if(!current()){if(data.id===atlasOverlapState.epoch){atlasOverlapState.busy=false;atlasOverlapState.lastSignature=null}return}
   const previous=atlasOverlapState.layers.get(result.key);
   if(previous?.version===result.version)continue;
-  const layer=L.geoJSON(result.geometry,{pane:'overlapPane',style:gpsOverlapStyle(result.refs)});
+  const layer=L.geoJSON(result.geometry,{pane:'overlapPane',style:gpsOverlapStyle(atlasOverlapVisibleRefs(result.refs))});
   bindAtlasOverlapHover(layer,result.refs);
   layer.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,null)});
   if(previous)overlapLayer.removeLayer(previous.layer);atlasOverlapState.layers.set(result.key,{...result,layer});
-  if(result.refs.every(ref=>atlasInCountry(ref)&&parkGeometryVisible(ref)))layer.addTo(overlapLayer);
+  if(atlasOverlapVisibleRefs(result.refs).length>=2)layer.addTo(overlapLayer);
   if(performance.now()-slice>6){await new Promise(r=>setTimeout(r,0));slice=performance.now()}
  }
  if(!current()){if(data.id===atlasOverlapState.epoch){atlasOverlapState.busy=false;atlasOverlapState.lastSignature=null}return}

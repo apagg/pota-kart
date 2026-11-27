@@ -92,7 +92,7 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
 .neveractivatedkey{background:var(--park-never,#f97316);border-color:var(--park-never-selected,#c2410c)}
 .activatedkey{background:var(--park-activated,#ca8a04);border-color:var(--park-activated-selected,#a16207)}
 .insidekey{border-color:var(--park-inside,#15803d);background:var(--park-inside-fill,#15803d33)}
-.overlapkey{border-color:var(--park-overlap-selected,#7e22ce);background:var(--park-overlap-fill,#a855f766)}
+.overlapkey{border-color:var(--park-overlap-border,#7e22ce);background:var(--park-overlap-swatch,#a855f766)}
 .color-settings{margin-top:12px;padding-top:10px;border-top:1px solid #e3e7ec}
 .color-settings>summary{cursor:pointer;font-size:14px;font-weight:600;color:#344054;padding:5px 0}
 .color-settings-grid{display:grid;gap:7px;margin:10px 0 12px}
@@ -100,3 +100,7 @@ html,body,#map{height:100%;margin:0}body{font:14px system-ui,-apple-system,Blink
 .color-settings input[type=color]{flex:none;width:56px;height:44px;padding:4px;border:1px solid #cbd2dc;border-radius:6px;background:#fff;cursor:pointer}
 .color-settings button{min-height:44px}
 #colorSettingsStatus:empty{display:none}
+
+.overlap-mode-row{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:13px}
+.overlap-mode-row select{min-width:0;flex:1;min-height:44px;padding:7px;border:1px solid #cbd2dc;border-radius:6px;background:#fff}
+.color-settings-grid .color-disabled{opacity:.55}

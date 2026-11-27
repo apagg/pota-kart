@@ -33,6 +33,70 @@ class AtlasOverlapEngine{
   while(this.regions.size>512||this.regionPoints>250000){const oldest=this.regions.keys().next().value;this.regionPoints-=this.regions.get(oldest).points;this.regions.delete(oldest)}
   return region;
  }
+ // Partition pair intersections into disjoint zones labelled with every covering park.
+ // Cached geometry is independent of palette, activation status and GPS colors.
+ async partition(results,candidates,pause){
+  if(results.length<2)return results;
+  const signature=results.map(x=>x.key+'@'+x.version).join(';');
+  if(this.zoneCache?.signature===signature)return this.zoneCache.results;
+  const bounds=coordinates=>{const box=[Infinity,Infinity,-Infinity,-Infinity];for(const p of coordinates)for(const r of p)for(const c of r){box[0]=Math.min(box[0],c[0]);box[1]=Math.min(box[1],c[1]);box[2]=Math.max(box[2],c[0]);box[3]=Math.max(box[3],c[1])}return box};
+  // Only display zones are rounded on a failed boolean operation; source/GPS geometry is untouched.
+  const rounded=(coordinates,digits)=>coordinates.map(p=>p.map(r=>{
+   const out=[];for(const c of r){const q=c.map(n=>Number(n.toFixed(digits))),last=out[out.length-1];if(!last||last[0]!==q[0]||last[1]!==q[1])out.push(q)}
+   if(out.length&&(out[0][0]!==out[out.length-1][0]||out[0][1]!==out[out.length-1][1]))out.push(out[0]);return out;
+  })).filter(p=>p[0]?.length>=4).map(p=>p.filter(r=>r.length>=4));
+  const clip=(op,...coordinates)=>{
+   try{return polygonClipping[op](...coordinates)}catch(error){
+    for(const digits of [8,6])try{return polygonClipping[op](...coordinates.map(c=>rounded(c,digits)))}catch(e){}
+    throw error;
+   }
+  };
+  const zone=(refs,coordinates)=>({refs,coordinates,box:bounds(coordinates)}),groups=new Map();
+  for(const result of results){
+   let parts=[zone([...result.refs].sort(),result.geometry.coordinates)];
+   const box=parts[0].box;
+   // Split each pair only by nearby other parks, rather than comparing all zones.
+   for(const park of candidates){
+    if(park.box[0]>box[2])break;
+    if(result.refs.includes(park.ref)||park.box[2]<box[0]||park.box[1]>box[3]||park.box[3]<box[1])continue;
+    // Crop long/multipart park geometry to this pair before further splitting.
+    const margin=1e-7,[w,s,e,n]=box;
+    const crop=[[[[w-margin,s-margin],[e+margin,s-margin],[e+margin,n+margin],[w-margin,n+margin],[w-margin,s-margin]]]];
+    const polygons=park.box[0]>=w&&park.box[1]>=s&&park.box[2]<=e&&park.box[3]<=n?park.polygons:clip('intersection',park.polygons,crop);
+    if(!polygons.length)continue;
+    const next=[];
+    for(const part of parts){
+     const a=part.box,b=park.box;
+     if(a[0]>b[2]||a[2]<b[0]||a[1]>b[3]||a[3]<b[1])next.push(part);
+     else{
+      const common=clip('intersection',part.coordinates,polygons);
+      if(!common.length)next.push(part);
+      else{
+       const rest=clip('difference',part.coordinates,polygons);
+       if(rest.length)next.push(zone(part.refs,rest));
+       next.push(zone([...new Set([...part.refs,park.ref])].sort(),common));
+      }
+     }
+     if(!await pause())return null;
+    }
+    parts=next;
+   }
+   for(const part of parts){
+    const key='zone|'+part.refs.join('|');if(!groups.has(key))groups.set(key,{refs:part.refs,parts:[],seen:new Set()});
+    const group=groups.get(key),serialized=JSON.stringify(part.coordinates);
+    if(!group.seen.has(serialized)){group.seen.add(serialized);group.parts.push(part.coordinates)}
+   }
+   if(!await pause())return null;
+  }
+  const rendered=[],shapes=new Map();
+  for(const [key,g] of [...groups].sort(([a],[b])=>a.localeCompare(b))){
+   const coordinates=g.parts.length===1?g.parts[0]:clip('union',...g.parts);
+   const serialized=JSON.stringify(coordinates),old=this.zoneShapes?.get(key),version=old?.serialized===serialized?old.version:++this.version;
+   shapes.set(key,{serialized,version});rendered.push({key,version,refs:g.refs,geometry:{type:'MultiPolygon',coordinates}});
+   if(!await pause())return null;
+  }
+  this.zoneShapes=shapes;this.zoneCache={signature,results:rendered};return rendered;
+ }
  async compute(job,isCurrent=()=>true){
   const start=performance.now(),before={...this.stats};this.stats.runs++;let slice=start;
   const work=this.workspace(job.bounds),[w,s,e,n]=job.bounds,view=[[[w,s],[e,s],[e,n],[w,n],[w,s]]],candidates=[];
@@ -54,7 +118,13 @@ class AtlasOverlapEngine{
    }
   }
   if(!isCurrent())return null;this.shapes=shapes;
+  const visible=job.visibleRefs?new Set(job.visibleRefs):null;
+  const colorPairs=visible?results.filter(r=>r.refs.every(ref=>visible.has(ref))):results;
+  const hiddenPairs=visible?results.filter(r=>!r.refs.every(ref=>visible.has(ref))):[];
+  const zones=await this.partition(colorPairs,visible?candidates.filter(r=>visible.has(r.ref)):candidates,pause);
+  if(!zones||!isCurrent())return null;
+  const rendered=hiddenPairs.length?[...hiddenPairs,...zones]:zones;
   const stats={};for(const key of Object.keys(before))stats[key]=this.stats[key]-before[key];
-  return {id:job.id,viewKey:job.viewKey,results,stats,elapsedMs:performance.now()-start};
+  return {id:job.id,viewKey:job.viewKey,results:rendered,stats,elapsedMs:performance.now()-start};
  }
 }
