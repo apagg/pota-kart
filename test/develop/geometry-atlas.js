@@ -65,7 +65,7 @@ async function atlasRecord(ref){
  return r;
 }
 const gpsInsideRefs=new Set();let gpsColorEpoch=0;
-function gpsParkColor(ref,selected=false){return gpsInsideRefs.has(ref)?'#15803d':typeof parkActivations!=='undefined'&&parkActivations.has(ref)?(selected?'#a16207':'#ca8a04'):selected?'#1d4ed8':'#3388ff'}
+function gpsParkColor(ref,selected=false){return gpsInsideRefs.has(ref)?'#15803d':typeof parkActivations!=='undefined'&&parkActivations.has(ref)?(selected?'#a16207':'#ca8a04'):typeof knownPotaActivationCount==='function'&&knownPotaActivationCount(ref)===0?(selected?'#c2410c':'#f97316'):selected?'#1d4ed8':'#3388ff'}
 function atlasAreaGeometry(g){return !!g&&(g.type==='Polygon'||g.type==='MultiPolygon'||(g.type==='GeometryCollection'&&g.geometries.some(atlasAreaGeometry)))}
 function atlasStyle(ref,geometry=geometryAtlas.byRef.get(ref)){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref,color=gpsParkColor(ref,selected);

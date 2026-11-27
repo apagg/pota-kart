@@ -170,6 +170,7 @@ const parkActivations=(()=>{
   document.addEventListener('pota:park',()=>{render();schedule();});
   document.addEventListener('pota:selection',()=>{paint();schedule();});
   document.addEventListener('pota:display',paint);
+  document.addEventListener('pota:activation-count',paint);
   document.addEventListener('pota:atlas',()=>{paint();schedule();});
   document.addEventListener('pota:gps',paint);
   document.addEventListener('pota:gps-colors',paint);
