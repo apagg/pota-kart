@@ -484,3 +484,17 @@ Ordinær POTA-dataoppdatering på main erstattet første Pages-kjøring; siste
 Pages `45998317869` = completed/success. Live testkart viser 0.12.3 og ny
 tegnforklaring. Main-root beholder 0.12.0, uten main-sammenslåing av appkode.
 Brukertest av oransje i forhold til gul og lilla gjenstår.
+
+## 2026-11-27 – Valgbare kartfarger, develop 0.12.4
+Brukeren godkjente Kartfarger i Innstillinger for vanlig/ukjent, 0 aktiveringer,
+egne aktiveringer, GPS-innenfor og overlapp. Ny map-colors.js laster og validerer
+nettleserpreferanser før kartoppstart, kobler fem fargefelt og tilbakestilling,
+og oppdaterer tegnforklaringen. Én delt kontroll på PC/mobil. Kartlag males om
+uten nye geometri-/overlappsberegninger; prioritet og geometri-/GPS-/zoomregler
+beholdes. Valgte parker får mørkere nyanse; GPS-status bruker samme farge.
+Kode `fb486a56926ec4f85248d160ee2e0f253896bfb7`, Verify `46002824633` = completed/success.
+Ny målrettet test og alle tidligere PC-/mobil-/GPS-/geometri-/sti-/aktiverings-
+og zoomtester består. PC-/mobilbilder er visuelt kontrollert.
+Preview `d52a26765e00aa0a3f316d9ab07a985415e4169d` endrer bare test/develop.
+Pages `46003289517` = completed/success. Live testkart viser 0.12.4, Kartfarger
+og riktig revisjon. Main-root beholder 0.12.0. Brukertest av egne farger gjenstår.
