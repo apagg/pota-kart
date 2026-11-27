@@ -510,3 +510,10 @@ Kode `4159096d210a9db5b76029d6522220fa1d15fae0` med etterfølgende testrettinger
 ## Develop 0.12.6 – tydeligere overlapp (2026-11-27)
 
 Etter brukertest av 0.12.5 bestilte brukeren 40 prosent mørkere blandingsfarge og 50 prosent fyll (tidligere 15/35). Kun automatisk modus endres. Eksisterende blandings-/status-/GPS-/cachetester forventer de nye fargene og fyllnivået. Kode `5cf27599c5ee2d581cb14b452af3213e494489b1`, Verify `46013988491` completed/success; full PC-/mobil- og regresjonspakke består. Bilder kontrollert. Preview `1b8f0c3dc4041a4c2ecb2c9d6795d96ae2eec21c` endrer bare test/develop, Pages `46014602427` completed/success. Live versjon/revisjon og begge endrede runtime-filer kontrollert. Main-root 0.12.0 beholdes. Brukertest gjenstår.
+
+
+## Develop 0.12.7 – fyllkontroller og korrigert lagvis overlapp (2026-11-27)
+
+Brukeren godkjente tre fyllkontroller og rapporterte NO-2542 / NO-0862. Parkflater, valgte parker og overlapp har hver sin 0–100 %-kontroll, standard 25/40/50 %, med nettleserlagring og tilbakestilling. Kyststiens korridor følger park-/valgtfyll. Underliggende fyll klippes visuelt bort i overlapp; linjer/kantstreker beholdes. Valgt geometri tegner fyll én gang. Canvas-rendering brukes også for valgt geometri. Kildegeometri, klikk/GPS/hull, 61 m korridor og automatisk punktvisning er bevart.
+
+Kode `e16b77a44dc944e99ed5367ecc3282778482a4a7` med testrettinger, sist `78c79489e0482605e5778e7e5f2dd7f2d5e1ecde`. Første kontroll brukte maskekoordinater i transformert Canvas; testen måler nå i utransformerte lagkoordinater og innenfor kantene. Den eldre korridortesten forventet fast 28 % og er tilpasset avtalt valgtfyll. Tidligere feilede kjøringer erstattes av Verify `46030535690` completed/success. Hele regresjonspakken og nye fill-/piksel-/lagringstester består, inkludert faktisk aktivert NO-2542 mot ikke aktivert NO-0862 på PC/mobil. Bilder er kontrollert. Preview `fd6188a036329265d400bcf2431e7f65129624b7` endrer bare test/develop; Pages `46031069935` completed/success. Live versjon/revisjon, kontrollene og fire runtime-filer er verifisert. Main-root beholder 0.12.0. Brukertest gjenstår.
