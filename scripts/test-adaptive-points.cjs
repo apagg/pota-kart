@@ -8,6 +8,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>typeof geometryAtlas!=='undefined'&&geometryAtlas.ready,null,{timeout:120000});
  const refs=await page.evaluate(async()=>{
   clearSelectedParks();clearSelection();
+  geometryAtlas.parkByRef ||= new Map(pota.map(p=>[p.reference,p]));
   const center=L.latLng(30,10),origin=map.project(center,10);
   const ll=(x,y)=>map.unproject(origin.add([x,y]),10),coord=(x,y)=>{const p=ll(x,y);return [p.lng,p.lat]};
   const ring=(size,x=0)=>[coord(x-size/2,-size/2),coord(x+size/2,-size/2),coord(x+size/2,size/2),coord(x-size/2,size/2),coord(x-size/2,-size/2)];
