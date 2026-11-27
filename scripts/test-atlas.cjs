@@ -309,6 +309,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const visibleHover=page.locator('.leaflet-tooltip:visible').filter({hasText:'NO-HOVER-A'});
  await moveHover(10.003);await visibleHover.waitFor();assert.match(await visibleHover.innerText(),/NO-HOVER-B/);assert.doesNotMatch(await visibleHover.innerText(),/NO-HOVER-C|NO-HOVER-HOLE/);
  await moveHover(10.007);await page.waitForFunction(()=>[...document.querySelectorAll('.leaflet-tooltip')].some(el=>getComputedStyle(el).visibility!=='hidden'&&el.textContent.includes('NO-HOVER-A')&&el.textContent.includes('NO-HOVER-C')));
+ await page.waitForFunction(()=>[...document.querySelectorAll('.leaflet-tooltip')].filter(el=>getComputedStyle(el).visibility!=='hidden'&&el.textContent.includes('NO-HOVER-A')).length===1);
  assert.match(await visibleHover.innerText(),/NO-HOVER-B/);assert.doesNotMatch(await visibleHover.innerText(),/NO-HOVER-HOLE/);assert.match(await visibleHover.innerText(),/<b>literal<\/b>/);
  await page.screenshot({path:'atlas-triple-hover.png'});
  await moveHover(10.003);await page.waitForFunction(()=>[...document.querySelectorAll('.leaflet-tooltip')].some(el=>getComputedStyle(el).visibility!=='hidden'&&el.textContent.includes('NO-HOVER-A')&&!el.textContent.includes('NO-HOVER-C')));
