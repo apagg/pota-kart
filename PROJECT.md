@@ -14,7 +14,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
 - Hovedversjon: 0.12.0 på `main`, GitHub Pages fra main. Utviklingsgren: `develop`; separat testkart: https://apagg.github.io/pota-kart/test/develop/.
-- Stabil appversjon: **0.12.0**; develop: **0.12.3** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
+- Stabil appversjon: **0.12.0**; develop: **0.12.4** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
@@ -33,7 +33,7 @@ Statisk webapp med Leaflet, Turf og polygon-clipping; ingen egen appserver. `app
 
 | Område | Viktige filer |
 | --- | --- |
-| Grensesnitt og oppstart | `index.html`, `styles.css`, `app.js`, `pota-startup.js`, `desktop-ui.js`, `mobile-ui.js`, `mobile-ui.css` |
+| Grensesnitt og oppstart | `index.html`, `styles.css`, `app.js`, `pota-startup.js`, `desktop-ui.js`, `mobile-ui.js`, `mobile-ui.css`, `map-colors.js` |
 | Kart og GPS | `map-setup.js`, `map-layers.js`, `gps-controller.js` |
 | Parker og register | `norway-park-registry.js`, `sweden-park-registry.js`, `sweden-heritage-registry.js`, `pota-park-loader.js` |
 | Parkvalg og informasjon | `park-selection-state.js`, `park-selection-controller.js`, `park-info-ui.js`, `park-diagnostics.js`, `pota-activation.js` |
@@ -264,3 +264,15 @@ historikkskanning eller nye masseoppslag. Eksisterende 5 min statistikkcache og
 60 s feilcache beholdes. Fargene gjelder også adaptive punkter og stisymboler.
 Develop publiseres som 0.12.3; main forblir 0.12.0 til uttrykkelig godkjenning.
 Brukeren godkjente automatisk punktvisning i 0.12.2 med «Det ble meget bra».
+
+## Valgbare kartfarger (2026-11-27)
+Brukeren syntes oransje var for lik gul og godkjente «Kartfarger» i Innstillinger:
+vanlig/ukjent, 0 aktiveringer, egne aktiveringer, innenfor med GPS og overlapp.
+Én delt kontroll på PC/mobil, øyeblikkelig oppdatering av punkter/stier/geometri
+og tegnforklaring, nettleserlagring `pota-map-colors-v1` med validerte #RRGGBB og
+«Tilbakestill standardfarger». Dagens farger er standard; valgt park får mørkere
+nyanse, GPS-fargen beholdes lik ved valg. Overlappens kant får mørkere nyanse.
+Prioritet og opasitet, geometri, GPS-grenser, 61 m korridor, aktiveringstall og
+20/24 px punktvisning er uendret. Fargeendring maler om eksisterende lag uten
+nye geometri-/overlappsberegninger. Brukstekster beskriver status, ikke fast
+fargenavn. Develop publiseres som 0.12.4; main forblir stabil 0.12.0.

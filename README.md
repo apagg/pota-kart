@@ -1,6 +1,10 @@
-# POTA Kart 0.12.3
+# POTA Kart 0.12.4
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.4 – 2026-11-27 (develop)
+
+Kartfarger i Innstillinger lar deg velge farge for vanlig/ukjent, null aktiveringer, egne aktiveringer, GPS-innenfor og overlapp. Fargene gjelder punkter, stier, geometri og tegnforklaring. Lagres i nettleseren med knapp for standardfarger.
 
 ## Versjon 0.12.3 – 2026-11-27 (develop)
 

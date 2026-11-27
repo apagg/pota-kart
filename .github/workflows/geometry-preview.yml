@@ -18,6 +18,7 @@ on:
       - 'scripts/test-park-display.cjs'
       - 'scripts/test-adaptive-points.cjs'
       - 'scripts/test-never-activated.cjs'
+      - 'scripts/test-map-colors.cjs'
       - 'scripts/test-startup-position.cjs'
       - 'scripts/test-park-activations.cjs'
       - 'scripts/test-overlap-engine.cjs'
@@ -61,6 +62,7 @@ jobs:
           python3 scripts/test-oslofjorden-coast.py
           node --check diagnostics.js
           node --check geojson-utils.js
+          node --check map-colors.js
           node --check map-setup.js
           node --check map-layers.js
           node --check gps-controller.js
@@ -119,6 +121,7 @@ jobs:
           trap 'kill "$SERVER_PID"' EXIT
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
           node scripts/test-overlap-engine.cjs
+          timeout 180 node scripts/test-map-colors.cjs
           timeout 180 node scripts/test-never-activated.cjs
           timeout 180 node scripts/test-adaptive-points.cjs
           timeout 300 node scripts/test-atlas.cjs
@@ -150,7 +153,7 @@ jobs:
           if [ "${{ github.ref }}" = 'refs/heads/test/activated-parks' ]; then DEST=activated-parks; fi
           if [ "${{ github.ref }}" = 'refs/heads/test/oslofjorden-coast' ]; then DEST=oslofjorden-coast; fi
           mkdir -p "stable/test/$DEST"
-          for file in index.html app.js app-core.js diagnostics.js geojson-utils.js map-setup.js map-layers.js gps-controller.js polygon-layer-utils.js pota-activation.js park-activations.js park-info-ui.js app-text-utils.js norway-park-registry.js sweden-park-registry.js geometry-format-utils.js sweden-heritage-registry.js park-diagnostics.js park-selection-state.js pota-park-loader.js park-selection-controller.js pota-startup.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
+          for file in index.html app.js map-colors.js app-core.js diagnostics.js geojson-utils.js map-setup.js map-layers.js gps-controller.js polygon-layer-utils.js pota-activation.js park-activations.js park-info-ui.js app-text-utils.js norway-park-registry.js sweden-park-registry.js geometry-format-utils.js sweden-heritage-registry.js park-diagnostics.js park-selection-state.js pota-park-loader.js park-selection-controller.js pota-startup.js geometry-atlas.js geometry-topology.js overlap-worker.js overlap-engine.js pota-cache-bootstrap.js mobile-ui.js styles.css mobile-ui.css manifest.webmanifest; do
             cp "candidate/$file" "stable/test/$DEST/$file"
           done
           if [ -f candidate/desktop-ui.js ]; then cp candidate/desktop-ui.js "stable/test/$DEST/"; fi

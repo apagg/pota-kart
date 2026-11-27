@@ -14,8 +14,9 @@ Sist gjennomgått: 2026-11-27. **Kun aktive eller bevisst utsatte oppgaver** st�
 ## Automatisk punktvisning
 Brukertest av automatisk punktvisning godkjent 2026-11-27.
 
-## Oransje for null aktiveringer
-- [ ] Brukertest oransje mot gul aktiveringsfarge og lilla overlapp i develop 0.12.3 på PC/mobil.
+## Kartfarger
+- [ ] Brukertest egne farger, nettleserlagring og tilbakestilling i develop 0.12.4 på PC/mobil.
+- Brukeren opplevde oransje som for lik gul i 0.12.3 og bestilte fargevalg i stedet.
 
 ## Neste UI-trinn
 - [ ] Brukertest oppstartsutsnitt rundt posisjon/Fredrikstad på https://apagg.github.io/pota-kart/test/develop/. Kontrollene er grønne.

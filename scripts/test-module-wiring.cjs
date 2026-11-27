@@ -4,7 +4,7 @@ const path=require('node:path');
 const root=path.join(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const boot=read('app.js');
-const order=['geometry-atlas.js','map-setup.js','map-layers.js','gps-controller.js','app-core.js'];
+const order=['map-colors.js','geometry-atlas.js','map-setup.js','map-layers.js','gps-controller.js','app-core.js'];
 let last=-1;
 for(const name of order){
   const index=boot.indexOf("load('"+name);
