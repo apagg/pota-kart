@@ -21,6 +21,38 @@ function syncAdaptiveParkPoints(){
  for(const [ref,x] of selectedParks)updateAdaptiveParkPoint(ref,x.geo);
  if(!multiMode.checked&&lastSelectedRef)updateAdaptiveParkPoint(lastSelectedRef,selectedGeo);
 }
+// Exclude only underlying fills from visible overlap zones. Borders, trail centerlines,
+// hit testing and source/GPS geometries are untouched (Leaflet 1.9.4 Canvas API).
+const parkFillMask={signature:null,path:null,boxes:[]};
+function parkFillCanvas(options){
+ const base=L.Canvas.prototype._fillStroke;
+ return new (L.Canvas.extend({_fillStroke(ctx,layer){
+  const o=layer.options,mask=parkFillMask;
+  const selected=selectedParks.get(o.potaReference)?.geo||(!multiMode.checked&&lastSelectedRef===o.potaReference?selectedGeo:null);
+  if(o.potaAtlasFill&&o.fill&&selected&&map.hasLayer(selected)){const fill=o.fill;o.fill=false;try{return base.call(this,ctx,layer)}finally{o.fill=fill}}
+  if(!o.potaParkFill||!o.fill||!layer._parts||!mask.path||!mask.boxes.some(b=>b.intersects(layer._pxBounds)))return base.call(this,ctx,layer);
+  const shape=new Path2D();for(const ring of layer._parts){for(let i=0;i<ring.length;i++)i?shape.lineTo(ring[i].x,ring[i].y):shape.moveTo(ring[i].x,ring[i].y);shape.closePath()}
+  ctx.save();ctx.clip(mask.path,'evenodd');ctx.globalAlpha=o.fillOpacity;ctx.fillStyle=o.fillColor||o.color;ctx.fill(shape,o.fillRule||'evenodd');ctx.restore();
+  const fill=o.fill;o.fill=false;try{base.call(this,ctx,layer)}finally{o.fill=fill}
+ }}))(options);
+}
+function syncParkFillMask(){
+ const zones=[...atlasOverlapState.layers.values()].filter(x=>overlapLayer.hasLayer(x.layer)&&atlasOverlapVisibleRefs(x.refs).length>=2&&parkGeometryVisible());
+ const origin=map.getPixelOrigin(),signature=map.getZoom()+'|'+origin.x+','+origin.y+'|'+zones.map(x=>x.key+':'+x.version).join(';');
+ if(signature===parkFillMask.signature)return;
+ parkFillMask.signature=signature;parkFillMask.boxes=[];
+ const path=new Path2D();path.rect(-1e7,-1e7,2e7,2e7);
+ for(const x of zones){
+  const g=x.geometry,polys=g.type==='Polygon'?[g.coordinates]:g.coordinates;
+  for(const polygon of polys){
+   const bounds=new L.Bounds();for(const ring of polygon){for(let i=0;i<ring.length;i++){const p=map.latLngToLayerPoint([ring[i][1],ring[i][0]]);bounds.extend(p);i?path.lineTo(p.x,p.y):path.moveTo(p.x,p.y)}path.closePath()}
+   if(bounds.isValid())parkFillMask.boxes.push(bounds);
+  }
+ }
+ parkFillMask.path=zones.length?path:null;
+ for(const renderer of [geometryAtlas.renderer,geometryAtlas.selectedRenderer,geometryAtlas.corridorRenderer])if(renderer?._map){renderer._redrawBounds=renderer._bounds;if(!renderer._redrawRequest)renderer._redrawRequest=L.Util.requestAnimFrame(renderer._redraw,renderer)}
+}
+
 function atlasOverlapVisibleRefs(refs){return refs.filter(ref=>atlasInCountry(ref)&&parkGeometryVisible(ref))}
 function syncAtlasOverlapVisibility(){
  for(const x of atlasOverlapState.layers.values()){
@@ -28,6 +60,7 @@ function syncAtlasOverlapVisibility(){
   if(refs.length>=2){paintAtlasOverlapLayer(x.layer,refs);overlapLayer.addLayer(x.layer)}
   else overlapLayer.removeLayer(x.layer);
  }
+ syncParkFillMask();
 }
 function syncParkDisplayLegend(){
  document.getElementById('pointLegendLabel').textContent=parkGeometryVisible()?'Liten park / mangler geometri':'POTA-park';
@@ -74,8 +107,8 @@ function gpsParkColor(ref,selected=false){
 function atlasAreaGeometry(g){return !!g&&(g.type==='Polygon'||g.type==='MultiPolygon'||(g.type==='GeometryCollection'&&g.geometries.some(atlasAreaGeometry)))}
 function atlasStyle(ref,geometry=geometryAtlas.byRef.get(ref)){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref,color=gpsParkColor(ref,selected);
- const area=atlasAreaGeometry(geometry)&&!isTrailLink(linkTable[ref]);
- return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,fillOpacity:area?(selected?.40:.25):(selected?.22:.09)};
+ const polygon=atlasAreaGeometry(geometry),area=polygon&&!isTrailLink(linkTable[ref]),corridor=polygon&&!area;
+ return {color,weight:area?(selected?3.5:2):(selected?3:1.5),opacity:.9,fillColor:color,potaReference:ref,potaAtlasFill:true,potaParkFill:polygon,fillOpacity:(area||corridor)?parkColors.opacity(selected?'selected':'normal'):(selected?.22:.09)};
 }
 const GPS_POINT_RADIUS_M=100;
 function gpsPointHit(p,ll){
@@ -92,15 +125,15 @@ function gpsGeometryHit(g,ll){
  return false;
 }
 function paintGpsSelected(){
- const paint=(layer,ref)=>{if(!layer)return;if(layer.eachLayer)layer.eachLayer(x=>paint(x,ref));else if(layer.setStyle){const color=gpsParkColor(ref,true);layer.setStyle({color,fillColor:color})}};
+ const paint=(layer,ref)=>{if(!layer)return;if(layer.eachLayer)layer.eachLayer(x=>paint(x,ref));else if(layer.setStyle){const color=gpsParkColor(ref,true);layer.setStyle({color,fillColor:color,...(layer.options.potaParkFill?{fillOpacity:parkColors.opacity('selected')}:{})})}};
  for(const [ref,x] of selectedParks)paint(x.geo,ref);
  if(!multiMode.checked&&lastSelectedRef)paint(selectedGeo,lastSelectedRef);
 }
 function gpsOverlapStyle(refs){
  const unique=[...new Set(refs)];
- if(parkColors.overlapMode()==='blend')return {...parkColors.mixOverlap(unique.map(ref=>gpsParkColor(ref))),weight:1,fillOpacity:.5};
+ if(parkColors.overlapMode()==='blend')return {...parkColors.mixOverlap(unique.map(ref=>gpsParkColor(ref))),weight:1,fillOpacity:parkColors.opacity('overlap')};
  const inside=unique.length>0&&unique.every(ref=>gpsInsideRefs.has(ref));
- return {color:parkColors.get(inside?'inside':'overlap',!inside),weight:1,fillColor:parkColors.get(inside?'inside':'overlap'),fillOpacity:inside?.25:.48};
+ return {color:parkColors.get(inside?'inside':'overlap',!inside),weight:1,fillColor:parkColors.get(inside?'inside':'overlap'),fillOpacity:parkColors.opacity('overlap')};
 }
 const atlasOverlapPaintCache=new WeakMap();
 function paintAtlasOverlapLayer(layer,refs){
@@ -138,7 +171,7 @@ function atlasBuildLayer(ref,geometry){
  const lyr=L.geoJSON(geometry,{pane:'atlasPane',renderer:geometryAtlas.renderer,style:f=>atlasStyle(ref,f?.geometry||geometry),pointToLayer:(f,ll)=>L.circleMarker(ll,{pane:'atlasPane',renderer:geometryAtlas.renderer,radius:5,...atlasStyle(ref,{type:'Point'})})});
  if(isKyststienPark(p)){
   const polygons=trailCorridorPolygonsFromLayer(lyr);
-  if(polygons.length)lyr.addLayer(L.geoJSON({type:'MultiPolygon',coordinates:polygons},{pane:'atlasPane',renderer:geometryAtlas.renderer,style:{...atlasStyle(ref),weight:1,fillOpacity:.16}}));
+  if(polygons.length)lyr.addLayer(L.geoJSON({type:'MultiPolygon',coordinates:polygons},{pane:'atlasPane',renderer:geometryAtlas.renderer,style:{...atlasStyle(ref),weight:1,potaParkFill:true,fillOpacity:parkColors.opacity('normal')}}));
  }
  lyr.on('click',e=>{if(e.originalEvent)L.DomEvent.stopPropagation(e);atlasPick(e.latlng,ref)});
  bindParkGeometryHover(lyr,p);
@@ -222,7 +255,7 @@ function atlasPick(latlng,clickedRef){
 }
 async function initializeGeometryAtlas(){
  map.createPane('atlasPane');map.getPane('atlasPane').style.zIndex=395;
- geometryAtlas.renderer=L.canvas({pane:'atlasPane',padding:.3});geometryAtlas.overviewByRef=new Map();
+ geometryAtlas.renderer=parkFillCanvas({pane:'atlasPane',padding:.3});geometryAtlas.selectedRenderer=parkFillCanvas({pane:'overlayPane',padding:.3});geometryAtlas.corridorRenderer=parkFillCanvas({pane:'trailCorridorPane',padding:.3});geometryAtlas.overviewByRef=new Map();
  await Promise.all(['NO','SE'].map(async cc=>{
   try{
    const [index,overview]=await Promise.all([getJSON('data/geometries/'+cc+'-index.json'),getJSON('data/geometries/'+cc+'-overview.geojson')]);
@@ -244,6 +277,7 @@ async function initializeGeometryAtlas(){
  geometryAtlas.ready=true;await atlasRefresh();
  let timer;map.on('moveend',()=>{syncParkDisplayLayers();clearTimeout(timer);timer=setTimeout(atlasRefresh,100)});
  document.addEventListener('pota:selection',syncParkDisplayLayers);
+ document.addEventListener('pota:colors',()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(f=>atlasStyle(ref,f?.geometry));paintGpsSelected()});
  document.addEventListener('pota:selection',()=>requestAnimationFrame(()=>{for(const [ref,layer] of geometryAtlas.layers)layer.setStyle(f=>atlasStyle(ref,f?.geometry))}));
  map.on('click',e=>atlasPick(e.latlng,null));
 }

@@ -34,6 +34,25 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const assertMixed=async expected=>{const c=await colors();assert.equal(Object.keys(c).length,4);for(const [refs,fill] of Object.entries(expected)){assert.equal(c[refs].fill,fill,refs);assert.equal(c[refs].opacity,.5);assert(c[refs].shown,refs)}};
  const initial={'NO-9001,NO-9002':'#4d004d','NO-9001,NO-9003':'#004d4d','NO-9002,NO-9003':'#4d4d00','NO-9001,NO-9002,NO-9003':'#333333'};
  await assertMixed(initial);
+ // Fill controls affect existing geometry without re-running the worker.
+ assert.deepEqual(await page.evaluate(()=>['normal','selected','overlap'].map(k=>parkColors.opacity(k))),[.25,.4,.5]);
+ const fillJobs=await page.evaluate(()=>atlasOverlapState.requests);
+ for(const [key,val] of [['normal',0],['selected',70],['overlap',80]])await page.locator('[data-park-fill="'+key+'"]').evaluate((el,val)=>{el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}))},val);
+ await page.evaluate(()=>new Promise(requestAnimationFrame));
+ assert.equal(await page.locator('#parkFillOverlapValue').textContent(),'80 %');
+ assert(Object.values(await colors()).every(x=>x.opacity===.8));
+ assert.equal(await page.evaluate(()=>geometryAtlas.layers.get('NO-9001').getLayers()[0].options.fillOpacity),0);
+ assert.equal(await page.evaluate(()=>atlasOverlapState.requests),fillJobs);
+ for(const [key,val] of [['normal',25],['selected',40],['overlap',50]])await page.evaluate(([k,v])=>{parkColors.setFill(k,v)},[key,val]);
+ await page.evaluate(()=>new Promise(requestAnimationFrame));
+ const alpha=()=>page.evaluate(()=>{
+  const r=geometryAtlas.renderer,p=map.latLngToLayerPoint([30.01,10.03]),ratio=r._container.width/r._bounds.getSize().x;
+  return r._ctx.getImageData(Math.round((p.x-r._bounds.min.x)*ratio),Math.round((p.y-r._bounds.min.y)*ratio),1,1).data[3];
+ });
+ await page.waitForTimeout(100);assert.equal(await alpha(),0,'Canvas has no stacked park fills underneath the overlap');
+ await page.evaluate(()=>{geometryAtlas.layers.get('NO-9001').bringToFront()});await page.waitForTimeout(100);assert.equal(await alpha(),0,'Drawing order cannot tint the overlap');
+ assert.equal(await page.evaluate(()=>parkColors.setFill('normal',NaN)),false);assert.equal(await page.evaluate(()=>parkColors.setFill('overlap',101)),false);
+
  const before=await page.evaluate(()=>({requests:atlasOverlapState.requests,epoch:geometryAtlas.epoch,ids:[...atlasOverlapState.layers].map(([key,x])=>[key,L.stamp(x.layer)])}));
  await page.evaluate(async()=>{gpsWatchId=-9;lastGps={lat:30.03,lon:10.03};await updateGpsParkColors();await new Promise(requestAnimationFrame)});
  await assertMixed(Object.fromEntries(Object.keys(initial).map(k=>[k,'#999900'])));
@@ -52,7 +71,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  let c=await colors();assert.equal(c['NO-9001,NO-9002,NO-9003'].fill,'#4d4d4d');assert(c['NO-9001,NO-9002,NO-9003'].shown);assert.equal(c['NO-9001,NO-9003'].shown,false);
  await page.evaluate(()=>{atlasMeta('NO-9003').bbox=blendBox;syncParkDisplayLayers()});
  await page.selectOption('#parkOverlapMode','fixed');await page.evaluate(()=>new Promise(requestAnimationFrame));assert.equal(await page.locator('#parkColorOverlap').isDisabled(),false);
- c=await colors();assert(Object.values(c).every(x=>x.fill==='#ff00ff'&&x.opacity===.48),'Fixed color remains available');
+ c=await colors();assert(Object.values(c).every(x=>x.fill==='#ff00ff'&&x.opacity===.5),'Fixed color remains available');
  await page.selectOption('#parkOverlapMode','blend');await page.evaluate(()=>new Promise(requestAnimationFrame));
  const after=await page.evaluate(()=>({requests:atlasOverlapState.requests,epoch:geometryAtlas.epoch,ids:[...atlasOverlapState.layers].map(([key,x])=>[key,L.stamp(x.layer)])}));assert.deepEqual(after,before,'GPS, activation, palette and mode changes reuse geometry and worker results');
  assert.match(await page.locator('#overlapLegendLabel').textContent(),/blandede/);assert.match(await page.locator('.overlapkey').evaluate(el=>getComputedStyle(el).backgroundImage),/linear-gradient/);
@@ -63,10 +82,33 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.click('#mobileSettings');await page.locator('#colorSettings').scrollIntoViewIfNeeded();
  assert.equal(await page.locator('#mobileSettingsContent #parkOverlapMode').count(),1);assert.equal(await page.locator('#parkOverlapMode').inputValue(),'blend');
  await page.screenshot({path:'atlas-overlap-mixed-mobile-settings.png'});
- await page.selectOption('#parkOverlapMode','fixed');await ready();assert.equal(await page.locator('#parkOverlapMode').inputValue(),'fixed','Mode persists on reload');assert.equal(await page.locator('#parkColorNormal').inputValue(),'#00ffff');
+ await page.evaluate(()=>{parkColors.setFill('normal',31);parkColors.setFill('selected',64);parkColors.setFill('overlap',77)});await page.selectOption('#parkOverlapMode','fixed');await ready();assert.deepEqual(await page.evaluate(()=>['normal','selected','overlap'].map(k=>parkColors.opacity(k))),[.31,.64,.77]);assert.equal(await page.locator('#parkOverlapMode').inputValue(),'fixed','Mode persists on reload');assert.equal(await page.locator('#parkColorNormal').inputValue(),'#00ffff');
  await page.click('#mobileSettings');if(!await page.locator('#colorSettings').evaluate(el=>el.open))await page.locator('#colorSettings > summary').click();
  await page.locator('#resetParkColors').click();assert.equal(await page.locator('#parkOverlapMode').inputValue(),'blend');assert.equal(await page.locator('#parkColorOverlap').isDisabled(),true);
  await ready();assert.equal(await page.locator('#parkOverlapMode').inputValue(),'blend');assert.equal(await page.evaluate(()=>parkColors.setOverlapMode('invalid')),false);
+ assert.deepEqual(await page.evaluate(()=>['normal','selected','overlap'].map(k=>parkColors.opacity(k))),[.25,.4,.5]);
+ // User-reported pair: activated Kyststien and unactivated Hvaler prestegårdskog.
+ await page.setViewportSize({width:1280,height:900});await page.waitForFunction(()=>map.getSize().x===930);
+ await page.evaluate(async()=>{
+  const has=parkActivations.has;parkActivations.has=ref=>ref==='NO-2542'||(ref!=='NO-0862'&&has(ref));
+  const b=atlasMeta('NO-0862').bbox;map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{animate:false,maxZoom:15});await atlasRefresh();
+  for(const ref of ['NO-2542','NO-0862'])await showLink(pota.find(p=>p.reference===ref),false,false);
+ });
+ await page.waitForFunction(()=>!atlasOverlapState.busy&&[...atlasOverlapState.layers.values()].some(x=>x.refs.includes('NO-2542')&&x.refs.includes('NO-0862')&&overlapLayer.hasLayer(x.layer)),null,{timeout:90000});
+ await page.waitForTimeout(300);
+ const real=await page.evaluate(()=>{
+  const x=[...atlasOverlapState.layers.values()].find(x=>x.refs.length===2&&x.refs.includes('NO-2542')&&x.refs.includes('NO-0862')&&overlapLayer.hasLayer(x.layer));
+  if(!x)throw Error('Missing exact Kyststien/reserve overlap');
+  const f={type:'Feature',properties:{},geometry:x.geometry},c=turf.pointOnFeature(f).geometry.coordinates,pt=map.latLngToLayerPoint([c[1],c[0]]);
+  return {fill:x.layer.getLayers()[0].options.fillColor,opacity:x.layer.getLayers()[0].options.fillOpacity,masked:!geometryAtlas.renderer._ctx.isPointInPath(parkFillMask.path,pt.x,pt.y,'evenodd'),width:TRAIL_CORRIDOR_WIDTH_M,refs:x.refs};
+ });
+ assert.equal(real.fill,'#4c524e');assert.equal(real.opacity,.5);assert.equal(real.width,61);assert(real.masked,'Only fills are excluded in the real corridor/park intersection');
+ await page.screenshot({path:'atlas-fill-hvaler-desktop.png'});
+ await page.setViewportSize({width:390,height:844});await page.waitForFunction(()=>map.getSize().x===390);
+ await page.evaluate(()=>{const b=atlasMeta('NO-0862').bbox;map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{animate:false,maxZoom:15})});await page.waitForTimeout(500);
+ await page.screenshot({path:'atlas-fill-hvaler-mobile.png'});
+ console.log('PASS fill controls: 0/100 validation, immediate repaint, persistence/reset, no worker recalculation, canvas pixel/order invariance, NO-2542 activated × NO-0862 unactivated, unchanged 61 m and PC/mobile');
+
  assert.deepEqual(errors,[]);console.log('PASS overlap colors: exact pair/triple mixes, same-color darkening, live GPS/personal/global/palette updates, selected and adaptive parks, fixed option, persistent migration/reset, no geometry recalculation and PC/mobile controls');
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

@@ -1,6 +1,10 @@
-# POTA Kart 0.12.6
+# POTA Kart 0.12.7
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.7 – 2026-11-27 (develop)
+
+Justerbar fyllgrad for parkflater, valgte parker og overlapp under Kartfarger. Overlapp tegnes uten underliggende parkfyll, slik at blandingen er uavhengig av rekkefølge og valg, også langs Kyststien. Strekene og GPS-grensene beholdes.
 
 ## Versjon 0.12.6 – 2026-11-27 (develop)
 

@@ -37,8 +37,8 @@ function addKyststienCorridor(layer){
   const polygons=trailCorridorPolygonsFromLayer(layer);
   if(!polygons.length)throw Error('Kunne ikke beregne Kyststiens 61 meter brede belte');
   const corridor=L.geoJSON({type:'Feature',properties:{corridorWidthM:TRAIL_CORRIDOR_WIDTH_M},geometry:{type:'MultiPolygon',coordinates:polygons}},{
-    pane:'trailCorridorPane',interactive:false,
-    style:{color:'#1d4ed8',weight:1,opacity:.65,fillColor:'#1d4ed8',fillOpacity:.28}
+    pane:'trailCorridorPane',renderer:geometryAtlas.corridorRenderer,interactive:false,
+    style:{color:gpsParkColor(layer.options.potaReference,true),weight:1,opacity:.65,fillColor:gpsParkColor(layer.options.potaReference,true),potaParkFill:true,fillOpacity:parkColors.opacity('selected')}
   });
   // Beltet følger stiens livsløp ved flervalg, fjerning og bytte av park.
   layer.addLayer(corridor);
@@ -420,7 +420,7 @@ async function focusOfficialGeometry(link,p){
     if(!r)throw Error('Ingen verifisert geometri er lagret. Parken vises som punkt.');
 
     const raw=(r.source==='trail'||r.source==='world')?normalizeSpecialGeometry(r.geometry):r.source==='notrail'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:r.source==='historic'?{type:'Feature',properties:{name:r.name,id:r.id,url:r.url||''},geometry:r.geometry}:r.source==='norway'?{type:'Feature',properties:{name:r.name,id:r.id},geometry:r.geometry}:{type:'Feature',properties:{name:r.name,id:r.id},geometry:transformGeo(r.geometry)};
-    selectedGeo=L.geoJSON(raw,{style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:gpsParkColor(p.reference,true),weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}const area=(t==='Polygon'||t==='MultiPolygon')&&!isTrailLink(link);return {color:gpsParkColor(p.reference,true),weight:area?3.5:3,fillColor:gpsParkColor(p.reference,true),fillOpacity:area?.40:.22};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})});
+    selectedGeo=L.geoJSON(raw,{renderer:geometryAtlas.selectedRenderer,potaReference:p.reference,style:f=>{const t=f.geometry&&f.geometry.type;if(t==='LineString'||t==='MultiLineString'){const isTrail=(r.source==='trail'||r.source==='notrail');return isTrail?{color:gpsParkColor(p.reference,true),weight:isKyststienPark(p)?2:6,opacity:.95}:{weight:6,opacity:.95};}const area=(t==='Polygon'||t==='MultiPolygon')&&!isTrailLink(link);return {color:gpsParkColor(p.reference,true),weight:area?3.5:3,fillColor:gpsParkColor(p.reference,true),potaParkFill:area,fillOpacity:area?parkColors.opacity('selected'):.22};},pointToLayer:(f,latlng)=>L.circleMarker(latlng,{radius:11,weight:4,color:'#2563eb',fillColor:'#60a5fa',fillOpacity:.45})});
     updateAdaptiveParkPoint(p.reference,selectedGeo);
     if(parkGeometryVisible(p.reference))selectedGeo.addTo(map);
     if(isKyststienPark(p)&&isTrailLink(link))addKyststienCorridor(selectedGeo);

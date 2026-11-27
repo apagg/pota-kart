@@ -14,7 +14,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
 - Hovedversjon: 0.12.0 på `main`, GitHub Pages fra main. Utviklingsgren: `develop`; separat testkart: https://apagg.github.io/pota-kart/test/develop/.
-- Stabil appversjon: **0.12.0**; develop: **0.12.6** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
+- Stabil appversjon: **0.12.0**; develop: **0.12.7** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
@@ -295,3 +295,7 @@ bevarer fargene og får automatisk blanding. Tilbakestilling velger standardfarg
 og automatisk blanding. Fastfargens felt er deaktivert i automatisk modus;
 tegnforklaringen viser en fargeblanding. Develop 0.12.6, main fortsatt 0.12.0.
 Brukeren godkjente fargevalg i 0.12.4 med «det fungerte bra».
+
+
+## Fyllgrad og lagvis blanding (2026-11-27)
+Brukeren godkjente tre kontroller under Kartfarger: parkflater (25 %), valgte parker (40 %) og overlapp (50 %), 0–100 %, med prosentvisning, direkte ommaling og nettleserlagring/tilbakestilling. Det ene overlappsnivået gjelder begge fargemoduser. Kyststiens korridor følger park-/valgtfyll. Underliggende park-/korridorfyll klippes bort i synlige overlappssoner; kantstreker og senterlinjer beholdes. Valgt geometri tegner fyll én gang. Canvas-klipping er kun visuell; kildegeometri, hull, GPS, 61 m korridor og treffområder endres ikke. Kontrollområde NO-2542 / NO-0862. Main er fortsatt 0.12.0.
