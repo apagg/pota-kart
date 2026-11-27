@@ -58,7 +58,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.match(await page.locator('#overlapLegendLabel').textContent(),/blandede/);assert.match(await page.locator('.overlapkey').evaluate(el=>getComputedStyle(el).backgroundImage),/linear-gradient/);
  await page.screenshot({path:'atlas-overlap-mixed-desktop.png'});
  await page.setViewportSize({width:390,height:844});await page.waitForFunction(()=>document.body.classList.contains('mobile-layout'));
- await page.waitForFunction(()=>map.getSize().x===390);await page.evaluate(()=>map.setView([30.025,10.03],12,{animate:false}));await page.waitForTimeout(300);
+ await page.waitForFunction(()=>map.getSize().x===390);await page.evaluate(()=>{map.setView([30.025,10.03],12,{animate:false})});await page.waitForTimeout(300);
  await page.screenshot({path:'atlas-overlap-mixed-mobile-map.png'});
  await page.click('#mobileSettings');await page.locator('#colorSettings').scrollIntoViewIfNeeded();
  assert.equal(await page.locator('#mobileSettingsContent #parkOverlapMode').count(),1);assert.equal(await page.locator('#parkOverlapMode').inputValue(),'blend');
