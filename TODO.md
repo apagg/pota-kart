@@ -16,7 +16,7 @@ Brukertest av automatisk punktvisning godkjent 2026-11-27.
 
 ## Kartfarger
 - Fargevalg i 0.12.4 er brukertestet og godkjent 2026-11-27.
-- [ ] Brukertest automatisk/faste overlappsfarger i develop 0.12.5, inkludert blandede statuser og tre parker.
+- [ ] Brukertest automatisk/faste overlappsfarger i develop 0.12.6 med sterkere mørkning/fyll, inkludert blandede statuser og tre parker.
 - Brukeren opplevde oransje som for lik gul i 0.12.3 og bestilte fargevalg i stedet.
 
 ## Neste UI-trinn

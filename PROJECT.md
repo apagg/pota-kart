@@ -14,7 +14,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
 - Hovedversjon: 0.12.0 på `main`, GitHub Pages fra main. Utviklingsgren: `develop`; separat testkart: https://apagg.github.io/pota-kart/test/develop/.
-- Stabil appversjon: **0.12.0**; develop: **0.12.5** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
+- Stabil appversjon: **0.12.0**; develop: **0.12.6** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
@@ -280,7 +280,7 @@ fargenavn. Develop publiseres som 0.12.4; main forblir stabil 0.12.0.
 ## Fargeblanding i overlapp (2026-11-27)
 Brukeren godkjente Automatisk blanding (standard) / Fast farge under Kartfarger.
 Automatisk visning blander statusfargene med lik RGB-vekt per unik park, mørkner
-15 prosent og bruker mørkere kant / 35 prosent fyll. Samme farge gir mørkere
+40 prosent og bruker mørkere kant / 50 prosent fyll (økt etter brukertest av 0.12.5). Samme farge gir mørkere
 nyanse; ved GPS-innenfor alle brukes den valgte GPS-fargen som grunnlag.
 Vanlig parkvalg endrer ikke selve blandingsgrunnlaget. Ferske globale tall,
 egen aktivering, GPS og palettendringer maler om eksisterende overlappsflater.
@@ -293,5 +293,5 @@ hull, GPS-/61 m-regler og 20/24 px punktvisning bevares.
 Modus lagres i samme validerte nettleserpreferanse som fargene. Gamle innstillinger
 bevarer fargene og får automatisk blanding. Tilbakestilling velger standardfarger
 og automatisk blanding. Fastfargens felt er deaktivert i automatisk modus;
-tegnforklaringen viser en fargeblanding. Develop 0.12.5, main fortsatt 0.12.0.
+tegnforklaringen viser en fargeblanding. Develop 0.12.6, main fortsatt 0.12.0.
 Brukeren godkjente fargevalg i 0.12.4 med «det fungerte bra».

@@ -98,7 +98,7 @@ function paintGpsSelected(){
 }
 function gpsOverlapStyle(refs){
  const unique=[...new Set(refs)];
- if(parkColors.overlapMode()==='blend')return {...parkColors.mixOverlap(unique.map(ref=>gpsParkColor(ref))),weight:1,fillOpacity:.35};
+ if(parkColors.overlapMode()==='blend')return {...parkColors.mixOverlap(unique.map(ref=>gpsParkColor(ref))),weight:1,fillOpacity:.5};
  const inside=unique.length>0&&unique.every(ref=>gpsInsideRefs.has(ref));
  return {color:parkColors.get(inside?'inside':'overlap',!inside),weight:1,fillColor:parkColors.get(inside?'inside':'overlap'),fillOpacity:inside?.25:.48};
 }
