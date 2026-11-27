@@ -1,6 +1,6 @@
 # POTA-kart – åpne oppgaver
 
-Sist gjennomgått: 2026-10-13. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
+Sist gjennomgått: 2026-11-27. **Kun aktive eller bevisst utsatte oppgaver** står her. Historiske avkrysninger og gamle CI-kjøringer finnes i [HISTORY.md](HISTORY.md).
 
 ## Develop: Vestfold og Telemark
 - [ ] Ny versjon og main-sammenslåing først når brukeren er fornøyd og godkjenner det.
@@ -10,6 +10,9 @@ Sist gjennomgått: 2026-10-13. **Kun aktive eller bevisst utsatte oppgaver** st�
 
 ## Topografisk bakgrunnskart
 - [ ] Brukertest Topografisk Norge på PC/mobil i develop 0.12.1, særlig lesbarhet med parkflater og kyststier.
+
+## Automatisk punktvisning
+- [ ] Brukertest grensen 20/24 px i develop 0.12.2 på PC/mobil: små parker, store områder, lange stier og valg ved zoom.
 
 ## Neste UI-trinn
 - [ ] Brukertest oppstartsutsnitt rundt posisjon/Fredrikstad på https://apagg.github.io/pota-kart/test/develop/. Kontrollene er grønne.

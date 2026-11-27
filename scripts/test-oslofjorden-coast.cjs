@@ -75,10 +75,10 @@ const expected={type:'MultiLineString',coordinates:data.features.filter(f=>f.pro
    gpsInsideRefs.delete(ref);parkActivations.has=originalHas;
    return {record:(await atlasRecord(ref)).geometry,overview:geometryAtlas.overviewByRef.get(ref),bbox:m.bbox,
     expectedBbox:[Math.min(...coords.map(c=>c[0])),Math.min(...coords.map(c=>c[1])),Math.max(...coords.map(c=>c[0])),Math.max(...coords.map(c=>c[1]))],
-    hits:points.every(c=>atlasHit(g,ll(c))&&gpsGeometryHit(g,ll(c))),boundary,yellow,green,hasGeometry:atlasHasGeometry(ref),markerVisible:marker?map.hasLayer(marker.marker):false};
+    hits:points.every(c=>atlasHit(g,ll(c))&&gpsGeometryHit(g,ll(c))),boundary,yellow,green,hasGeometry:atlasHasGeometry(ref),geometryVisible:parkGeometryVisible(ref),markerVisible:marker?map.hasLayer(marker.marker):false};
   },{ref,points:routes.filter(f=>f.properties.category==='cycling-alternative').map(f=>f.geometry.coordinates[0])});
   assert.deepEqual(state.record,geo);assert.deepEqual(state.overview,geo);assert.deepEqual(state.bbox,state.expectedBbox);
-  assert(state.hits&&state.boundary&&state.hasGeometry);assert.equal(state.markerVisible,false);assert.equal(state.yellow,'#ca8a04');assert.equal(state.green,'#15803d');
+  assert(state.hits&&state.boundary&&state.hasGeometry);assert.equal(state.markerVisible,!state.geometryVisible);assert.equal(state.yellow,'#ca8a04');assert.equal(state.green,'#15803d');
   for(const width of [1280,390]){
    await page.setViewportSize({width,height:844});
    await page.evaluate(async({ref,c})=>{map.setView([c[1],c[0]],13,{animate:false});for(let i=0;i<2;i++)await showLink(pota.find(p=>p.reference===ref),false,false)},{ref,c});

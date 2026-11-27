@@ -1,6 +1,10 @@
-# POTA Kart 0.12.1
+# POTA Kart 0.12.2
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.2 – 2026-11-27 (develop)
+
+Små parkgeometrier erstattes automatisk med parkpunkt ved utzooming (under 20 px), og kommer tilbake over 24 px. GPS og overlapp bruker fortsatt faktiske grenser.
 
 ## Versjon 0.12.1 – 2026-11-14 (develop)
 

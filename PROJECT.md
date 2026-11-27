@@ -1,6 +1,6 @@
 # POTA-kart – prosjektkunnskap
 
-Sist gjennomgått: 2026-10-13. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
+Sist gjennomgått: 2026-11-27. **GitHub er fasiten.** Se [STATUS.md](STATUS.md) for siste verifiserte tilstand, [TODO.md](TODO.md) for åpne oppgaver og [HISTORY.md](HISTORY.md) for tidligere arbeidsnotater.
 
 ## Start en ny arbeidsøkt
 1. Les `PROJECT.md`, `STATUS.md` og `TODO.md` fra `develop` på GitHub. Kontroller også stabil main og relevante filer før endring. GitHub er fasiten for begge grenene.
@@ -14,7 +14,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
 - Hovedversjon: 0.12.0 på `main`, GitHub Pages fra main. Utviklingsgren: `develop`; separat testkart: https://apagg.github.io/pota-kart/test/develop/.
-- Sist dokumentert appversjon: **0.12.0** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
+- Stabil appversjon: **0.12.0**; develop: **0.12.2** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
@@ -237,3 +237,17 @@ Brukeren godkjente visningsvalget Geometri/Bare punkter med «Bra» før dette.
 ## Topografisk Norge og versjonering (2026-11-14)
 Brukeren bestilte Kartverkets Topo som ekstra bakgrunnskart i develop. WMTS: https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{matrix}/{y}/{x}.png. Matrix-ID 00–18, 256 px, EPSG:3857; overzoom til 19. Ingen API-nøkkel. Krediteres © Kartverket med lenke. Nettbasert visning følger https://kartverket.no/api-og-data/vilkar-for-bruk; ingen offline-nedlasting innføres. Dagens standard og øvrige kartvalg beholdes.
 Brukeren ber om å øke siste versjonstall ved publisering: denne develop-publiseringen er 0.12.1. Main forblir 0.12.0; sammenslåing krever fortsatt uttrykkelig godkjenning.
+
+## Automatisk punktvisning ved utzooming (2026-11-27)
+Brukeren godkjente at små geometrier vises som parkpunkt i develop 0.12.2.
+Største bredde/høyde av hele parkens offisielle bbox projisert til skjermpiksler
+brukes: under 20 px blir punkt, over 24 px blir geometri igjen. Mellomgrensen
+beholder forrige tilstand. Utstrekningen er stabil ved panorering og ved bytte
+mellom detalj-/oversiktsgeometri; hele kyststiruten teller, ikke linjetykkelsen.
+Valgte parker følger samme visning, og katalogpunktet gjenbrukes med eksisterende
+klikk, info og blå/gul/grønn status. Ingen automatisk zoom ved punktvalg.
+Bare punkter beholdes. Landfilter, GPS med faktiske grenser/61 m korridor og
+100 m bare ved manglende geometri beholdes. Overlapp beregnes fortsatt fra
+geometrien; flater som involverer parker vist som punkt skjules, men resultatene
+beholdes. Skjult geometri deltar ikke i kartklikk eller hovervalg.
+Siste versjonstall økes ved testpublisering. Main beholder 0.12.0.
