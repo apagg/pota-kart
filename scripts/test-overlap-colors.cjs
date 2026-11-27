@@ -99,8 +99,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const real=await page.evaluate(()=>{
   const x=[...atlasOverlapState.layers.values()].find(x=>x.refs.length===2&&x.refs.includes('NO-2542')&&x.refs.includes('NO-0862')&&overlapLayer.hasLayer(x.layer));
   if(!x)throw Error('Missing exact Kyststien/reserve overlap');
-  const f={type:'Feature',properties:{},geometry:x.geometry},c=turf.pointOnFeature(f).geometry.coordinates,pt=map.latLngToLayerPoint([c[1],c[0]]);
-  return {fill:x.layer.getLayers()[0].options.fillColor,opacity:x.layer.getLayers()[0].options.fillOpacity,masked:!geometryAtlas.renderer._ctx.isPointInPath(parkFillMask.path,pt.x,pt.y,'evenodd'),width:TRAIL_CORRIDOR_WIDTH_M,refs:x.refs};
+  const f={type:'Feature',properties:{},geometry:x.geometry},c=turf.pointOnFeature(turf.buffer(f,-.003,{units:'kilometers'})).geometry.coordinates,pt=map.latLngToLayerPoint([c[1],c[0]]);
+  return {fill:x.layer.getLayers()[0].options.fillColor,opacity:x.layer.getLayers()[0].options.fillOpacity,masked:!document.createElement('canvas').getContext('2d').isPointInPath(parkFillMask.path,pt.x,pt.y,'evenodd'),width:TRAIL_CORRIDOR_WIDTH_M,refs:x.refs};
  });
  assert.equal(real.fill,'#4c524e');assert.equal(real.opacity,.5);assert.equal(real.width,61);assert(real.masked,'Only fills are excluded in the real corridor/park intersection');
  await page.screenshot({path:'atlas-fill-hvaler-desktop.png'});
