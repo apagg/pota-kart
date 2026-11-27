@@ -16,6 +16,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
  const values=()=>page.locator('[data-park-color]').evaluateAll(els=>Object.fromEntries(els.map(el=>[el.dataset.parkColor,el.value])));
  assert.deepEqual(await values(),defaults);
  await page.locator('#desktopSettings').evaluate(el=>el.open=true);await page.locator('#colorSettings > summary').click();
+ await page.selectOption('#parkOverlapMode','fixed');
  const set=async(key,value)=>{await page.locator('[data-park-color="'+key+'"]').evaluate((el,value)=>{el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}))},value);await page.evaluate(()=>new Promise(requestAnimationFrame));};
  // Real computed overlaps provide existing layers to recolor without worker jobs.
  await page.evaluate(async()=>{

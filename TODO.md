@@ -15,7 +15,8 @@ Sist gjennomgått: 2026-11-27. **Kun aktive eller bevisst utsatte oppgaver** st�
 Brukertest av automatisk punktvisning godkjent 2026-11-27.
 
 ## Kartfarger
-- [ ] Brukertest egne farger, nettleserlagring og tilbakestilling i develop 0.12.4 på PC/mobil.
+- Fargevalg i 0.12.4 er brukertestet og godkjent 2026-11-27.
+- [ ] Brukertest automatisk/faste overlappsfarger i develop 0.12.5, inkludert blandede statuser og tre parker.
 - Brukeren opplevde oransje som for lik gul i 0.12.3 og bestilte fargevalg i stedet.
 
 ## Neste UI-trinn

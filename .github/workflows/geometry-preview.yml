@@ -19,6 +19,7 @@ on:
       - 'scripts/test-adaptive-points.cjs'
       - 'scripts/test-never-activated.cjs'
       - 'scripts/test-map-colors.cjs'
+      - 'scripts/test-overlap-colors.cjs'
       - 'scripts/test-startup-position.cjs'
       - 'scripts/test-park-activations.cjs'
       - 'scripts/test-overlap-engine.cjs'
@@ -121,6 +122,7 @@ jobs:
           trap 'kill "$SERVER_PID"' EXIT
           for attempt in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
           node scripts/test-overlap-engine.cjs
+          timeout 180 node scripts/test-overlap-colors.cjs
           timeout 180 node scripts/test-map-colors.cjs
           timeout 180 node scripts/test-never-activated.cjs
           timeout 180 node scripts/test-adaptive-points.cjs

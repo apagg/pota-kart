@@ -45,6 +45,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=r
   assert.equal(await color(unknown),'#3388ff');
  }
  // Existing personal activation and GPS priorities remain above zero-count color.
+ await page.evaluate(()=>parkColors.setOverlapMode('fixed'));
  const priority=await page.evaluate(async()=>{
   const ref='NO-3198',old=parkActivations.has;parkActivations.has=r=>r===ref;
   document.dispatchEvent(new CustomEvent('pota:display'));await new Promise(requestAnimationFrame);const yellow=gpsParkColor(ref),selectedYellow=gpsParkColor(ref,true);

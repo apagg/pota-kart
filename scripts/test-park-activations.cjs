@@ -69,6 +69,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.waitForFunction(()=>document.querySelector('#activationStatus').textContent.includes('1/1'));
  await page.evaluate(()=>{gpsInsideRefs.add('NO-3198');document.dispatchEvent(new CustomEvent('pota:gps'));});
  await page.waitForFunction(()=>{let x=selectedParks.get('NO-3198').geo;while(x.eachLayer)x=x.getLayers()[0];return x.options.color==='#15803d';});
+ await page.evaluate(()=>parkColors.setOverlapMode('fixed'));
  assert.equal(await page.evaluate(()=>gpsOverlapStyle(['NO-3198','SE-0016']).fillColor),'#a855f7','Overlap keeps its purple style');
  await page.evaluate(()=>{gpsInsideRefs.clear();document.dispatchEvent(new CustomEvent('pota:gps'));});
  await page.evaluate(async()=>{await showLink(pota.find(x=>x.reference==='SE-0016'),false,false);});

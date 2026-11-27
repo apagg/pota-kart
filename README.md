@@ -1,6 +1,10 @@
-# POTA Kart 0.12.4
+# POTA Kart 0.12.5
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.5 – 2026-11-27 (develop)
+
+Automatisk fargeblanding i overlapp er standard. Parkenes statusfarger blandes og mørknes; områder med tre eller flere parker får med alle. Fast overlappsfarge kan fortsatt velges under Kartfarger.
 
 ## Versjon 0.12.4 – 2026-11-27 (develop)
 
