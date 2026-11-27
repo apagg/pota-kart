@@ -468,3 +468,19 @@ PC-/mobilbilder fra målrettet zoomtest er kontrollert. Previewcommit
 `cd109176e3e2735d28c3e26ecaa3a91155d3d6af`, Pages `45995600261` = completed/success.
 Live testkart viser 0.12.2 og ny kode. Publiseringen endrer bare test/develop;
 main-root beholdt 0.12.0. Brukertest av grense og lesbarhet gjenstår.
+
+## 2026-11-27 – Oransje nullaktiverte parker, develop 0.12.3
+Brukeren godkjente oransje fordi lilla allerede brukes for overlapp. Oransje
+#f97316 (valgt #c2410c) gjelder validerte 0 aktiveringer i POTA-katalog/statistikk.
+Fersk statistikk overstyrer katalogen og maler om punkter, stier og geometri.
+GPS-grønn og gul egen aktivering har prioritet; lilla overlapp beholdes.
+Ukjente/ugyldige tall og feil er ikke null. Siste bekreftede tall beholdes ved
+feil; ingen masseoppslag innføres. Brukeren godkjente også 0.12.2 punktvisning.
+Kode `a5f3d3affef803446d92fc460530abdac31f664f`, Verify `45997673525` = completed/success.
+Ny målrettet test og alle eksisterende PC-/mobil-/GPS-/geometri-/overlapps-/sti-
+og aktiveringstester består. PC-/mobilbildene er visuelt kontrollert.
+Preview `bff885b0f35e3a000a5f2984988bee13c022a2b4` endrer bare test/develop.
+Ordinær POTA-dataoppdatering på main erstattet første Pages-kjøring; siste
+Pages `45998317869` = completed/success. Live testkart viser 0.12.3 og ny
+tegnforklaring. Main-root beholder 0.12.0, uten main-sammenslåing av appkode.
+Brukertest av oransje i forhold til gul og lilla gjenstår.
