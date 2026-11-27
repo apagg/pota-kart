@@ -18,13 +18,13 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
-- Norge og Sverige støttes. Geometri er standard: alle tilgjengelige verifiserte parkgeometrier vises, og parker uten geometri beholdes som punkt. Kartinnstillinger kan bytte til Bare punkter for alle parker; GPS følger fortsatt tilgjengelig geometri.
+- Norge og Sverige støttes. Geometri er standard: verifiserte parkgeometrier vises når de er store nok på skjermen; små geometrier og parker uten geometri vises som punkt. Kartinnstillinger kan bytte til Bare punkter for alle parker; GPS følger fortsatt tilgjengelig geometri.
 - Flervalg er på ved oppstart. Parkvalg skal ikke gi automatisk zoom; nytt klikk på valgt park åpner informasjon igjen.
 - Musepekerinformasjon på geometri og punkt; overlapp skal vise alle berørte parker (også flere enn to), med mobilvalg ved overlappende trykk.
 - Stier: **61 m total korridorbredde** (30,5 m på hver side). Blå som grunnfarge; stier og parker blir grønne når GPS-posisjonen er innenfor. Valg gjør ikke symbolene større; valgt parkpunkt kan markeres mørkere.
 - GPS: av → på og følg; dra kartet → GPS fortsatt på, men følging pauses; trykk igjen → følg; trykk mens følging er aktiv → av.
 - Mobil: kompakt parkboks, aktiveringstall og `pota.app`-lenke. Håndtaket åpner/lukker parkdetaljer og valgtlisten; egne «Legg til/Fjern» og «Vis detaljer/Vis mindre»-knapper er fjernet etter avtale 2026-10-11. Ingen separat GPS-informasjonsboks eller egen varselboks om manglende geometri.
-- Bakgrunnskart: OpenStreetMap, Esri og satellitt.
+- Bakgrunnskart: OpenStreetMap, Esri og satellitt; develop har også Topografisk Norge fra Kartverket.
 - Lokal serverport i bruk skal gi tydelig feilmelding, ikke automatisk bytte port.
 - **Kyststien Østfold, godkjent 2026-10-11:** Hovedkartet erstatter NO-2542 med Østfold/Hvaler fra Oslofjorden.com. 109 gangruter + 13 sykkelruter = 122 ruter, hvorav 31 Hvaler. Brukeren godkjente gangrutetesten og bestilte sykkelrutene 2026-10-11; ferger utelates. Gamle GIS-/Hvaler-segmenter blandes ikke inn. Andre stier og 61 m korridor bevares. Brukeren godkjente den utvidede testen og bestilte sammenslåing 2026-10-11. Bredere redesign er fortsatt utsatt.
 

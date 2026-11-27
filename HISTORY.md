@@ -452,3 +452,19 @@ Les `PROJECT.md`, `TODO.md` og denne filen på GitHub. Kontroller gjeldende gren
 
 ## 2026-11-14 – Topografisk Norge, develop 0.12.1
 Kartverkets Topo WMTS lagt til som ekstra kartvalg med kreditering. Brukeren bestilte økning av siste versjonstall ved publisering. Første CI stoppet på Ubuntu 26.04/Playwright-kompatibilitet; workflow låst til Ubuntu 24.04. Nye URL-tester ble tilpasset aktivt Leaflet-lag, versjonsforventning oppdatert og eksisterende GPS-fargefixture gjort uavhengig av første asynkrone restyle. Endelig Verify 43581891141 og Pages 43582107032 fullførte med success. Verifisert kode 3ca8beeeb07f10e425d8a5cc5eaf396c9e4d40f6, preview 7d95131e686ac9f1a83bc6bdb7966c734205c4b0. Live testkart har 0.12.1 og nytt kartvalg; main-root beholdt 0.12.0. Ingen main-sammenslåing. Brukertest av lesbarhet gjenstår.
+
+## 2026-11-27 – Automatisk punktvisning, develop 0.12.2
+Brukeren godkjente erstatning av små geometrier med parkpunkter ved utzooming.
+Implementert terskel 20 px og retur over 24 px fra full bbox i skjermkoordinater,
+inkludert valgte parker og hele utstrekningen til lange stier. Eksisterende
+katalogmarkører, GPS/faktiske grenser/61 m korridor, aktiveringsfarger og
+geometribaserte overlappsresultater bevares. Overlappsflater skjules for parker
+som vises som punkt; skjult geometri er ikke et kart-/hovermål.
+Første kontroll ble erstattet etter flytting av en testmarkør som dekket et
+klikkmål. Den nye testens hjelpeoppslag ble deretter initialisert eksplisitt;
+ingen feil i kart-/GPS-reglene ble avdekket. Endelig kode
+`c72c75108d470cd289be9ba75f96c9f6abd37178`, Verify `45995161658` = completed/success.
+PC-/mobilbilder fra målrettet zoomtest er kontrollert. Previewcommit
+`cd109176e3e2735d28c3e26ecaa3a91155d3d6af`, Pages `45995600261` = completed/success.
+Live testkart viser 0.12.2 og ny kode. Publiseringen endrer bare test/develop;
+main-root beholdt 0.12.0. Brukertest av grense og lesbarhet gjenstår.
