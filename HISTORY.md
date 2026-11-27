@@ -498,3 +498,10 @@ og zoomtester består. PC-/mobilbilder er visuelt kontrollert.
 Preview `d52a26765e00aa0a3f316d9ab07a985415e4169d` endrer bare test/develop.
 Pages `46003289517` = completed/success. Live testkart viser 0.12.4, Kartfarger
 og riktig revisjon. Main-root beholder 0.12.0. Brukertest av egne farger gjenstår.
+
+
+## Develop 0.12.5 – automatiske overlappsfarger (2026-11-27)
+
+Brukeren bestilte blanding av parkfargene med Fast farge som alternativ. Like farger mørknes 15 %, ulike farger blandes likt per unik synlig park. Motoren deler synlige snitt i områder med eksakt referansesett, også ved tre/fler parker. Skjulte parvise snitt bevares. Farge-/statusendringer gjenbruker geometri; GPS-kildegrenser er uendret. Numeriske problemer i visuell oppdeling prøves på nytt med avrundede kopier.
+
+Kode `4159096d210a9db5b76029d6522220fa1d15fae0` med etterfølgende testrettinger, sist `0356c5b98ea5fedf81e5ab875dddde75165d716f`. Første kontroll stoppet fordi den eksisterende hover-testen traff to tooltips under Leaflets uttoning; testen venter nå på ferdig overgang. Mobilbildet sentreres eksplisitt etter størrelsesbytte; callback returnerer ingen Leaflet-instans. Tidligere feilede/kansellerte kjøringer erstattes av Verify `46011976721` completed/success. Alle PC-/mobil- og regresjonstester består; bilder kontrollert. Preview `56c6b127ced9b89a042f7b1d4fb3f25c292579a3`, Pages `46012527198` completed/success; live revisjon og seks runtime-filer kontrollert. Bare test/develop publisert; stabil main-root 0.12.0 er bevart. Brukertest av 0.12.5 gjenstår.
