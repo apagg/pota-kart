@@ -14,7 +14,7 @@ Mobilvennlig interaktivt POTA-kart for Norge og Sverige med verifiserte parkgren
 - Repository: https://github.com/apagg/pota-kart
 - Hovedkart: https://apagg.github.io/pota-kart/
 - Hovedversjon: 0.12.0 på `main`, GitHub Pages fra main. Utviklingsgren: `develop`; separat testkart: https://apagg.github.io/pota-kart/test/develop/.
-- Stabil appversjon: **0.12.0**; develop: **0.12.2** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
+- Stabil appversjon: **0.12.0**; develop: **0.12.3** (kontroller `README.md`, `index.html` og `app.js` ved ny versjon).
 - `archive/v0.10.0` bevarer eldre kart. Separate forhåndsvisninger finnes under `test/` og er ikke hovedkartet.
 
 ## Varige brukerkrav
@@ -251,3 +251,16 @@ Bare punkter beholdes. Landfilter, GPS med faktiske grenser/61 m korridor og
 geometrien; flater som involverer parker vist som punkt skjules, men resultatene
 beholdes. Skjult geometri deltar ikke i kartklikk eller hovervalg.
 Siste versjonstall økes ved testpublisering. Main beholder 0.12.0.
+
+## Oransje for null aktiveringer (2026-11-27)
+Brukeren godkjente oransje for parker med 0 registrerte POTA-aktiveringer.
+Fargeprioritet: grønn GPS → gul egne kallesignaler → oransje bekreftet 0 → blå
+øvrige/ukjente. Normal oransje #f97316, valgt #c2410c. Lilla beholdes for overlapp.
+POTA-listenes validerte aktiveringstall gir startvisning; fersk parkstatistikk
+ved åpning overstyrer katalogtallet og maler om punkter/atlas/valgt geometri.
+Null, manglende, tomme, boolske, negative og ugyldige tall er ikke 0. Feilede oppslag
+beholder siste bekreftede tall; feil skaper aldri et nullresultat. Ingen full
+historikkskanning eller nye masseoppslag. Eksisterende 5 min statistikkcache og
+60 s feilcache beholdes. Fargene gjelder også adaptive punkter og stisymboler.
+Develop publiseres som 0.12.3; main forblir 0.12.0 til uttrykkelig godkjenning.
+Brukeren godkjente automatisk punktvisning i 0.12.2 med «Det ble meget bra».

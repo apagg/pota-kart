@@ -12,7 +12,10 @@ Sist gjennomgått: 2026-11-27. **Kun aktive eller bevisst utsatte oppgaver** st�
 - [ ] Brukertest Topografisk Norge på PC/mobil i develop 0.12.1, særlig lesbarhet med parkflater og kyststier.
 
 ## Automatisk punktvisning
-- [ ] Brukertest grensen 20/24 px i develop 0.12.2 på PC/mobil: små parker, store områder, lange stier og valg ved zoom.
+Brukertest av automatisk punktvisning godkjent 2026-11-27.
+
+## Oransje for null aktiveringer
+- [ ] Brukertest oransje mot gul aktiveringsfarge og lilla overlapp i develop 0.12.3 på PC/mobil.
 
 ## Neste UI-trinn
 - [ ] Brukertest oppstartsutsnitt rundt posisjon/Fredrikstad på https://apagg.github.io/pota-kart/test/develop/. Kontrollene er grønne.

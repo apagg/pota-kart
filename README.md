@@ -1,6 +1,10 @@
-# POTA Kart 0.12.2
+# POTA Kart 0.12.3
 
 Mobilvennlig webkart for POTA-parker i Norge og Sverige.
+
+## Versjon 0.12.3 – 2026-11-27 (develop)
+
+Oransje markerer parker med 0 registrerte aktiveringer i POTA, på punkter og geometri. GPS-grønn og egne aktiveringer i gult har prioritet. Lilla beholdes for overlapp. Ukjente/ugyldige tall er ikke null.
 
 ## Versjon 0.12.2 – 2026-11-27 (develop)
 

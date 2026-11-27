@@ -20,7 +20,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await page.evaluate(()=>{map.setZoom(5,{animate:false})});
  assert.equal(profileCalls.length,0);assert.equal(historyCalls.length,0,'No API calls before configuring a callsign');
  // Use a real catalog point without geometry so the visible marker path is exercised.
- const pointRef=await page.evaluate(()=>potaMarkers.find(x=>!atlasHasGeometry(x.reference)&&x.marker.setStyle).reference);
+ const pointRef=await page.evaluate(()=>potaMarkers.find(x=>!atlasHasGeometry(x.reference)&&x.marker.setStyle&&knownPotaActivationCount(x.reference)>0).reference);
  // Check actual 100 m membership and restore GPS state before API queue checks.
  const radiusChecks=await page.evaluate(async ref=>{
   const p=pota.find(x=>x.reference===ref),origin=L.latLng(Number(p.latitude),Number(p.longitude));
@@ -36,7 +36,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  },pointRef);
  assert.deepEqual(radiusChecks,{inside:true,outside:false,noApproximation:false,insideColor:'#15803d',outsideColor:'#3388ff'},'100 m GPS radius applies only to parks without geometry');
  const pointStyle=()=>page.evaluate(ref=>{const m=potaMarkers.find(x=>x.reference===ref).marker;return {color:m.options.color,fill:m.options.fillColor,radius:m.getRadius()};},pointRef);
- assert.deepEqual(await pointStyle(),{color:'#3388ff',fill:'#3388ff',radius:6},'Unactivated points use the same blue as park geometry');
+ assert.deepEqual(await pointStyle(),{color:'#3388ff',fill:'#3388ff',radius:6},'Parks activated by others use blue without a personal match');
  await page.evaluate(async ref=>{await showLink(pota.find(x=>x.reference===ref),false,false);},pointRef);
  await page.waitForFunction(ref=>selectedParks.get(ref)?.marker?.options.color==='#1d4ed8',pointRef);
  assert.equal(await page.evaluate(ref=>selectedParks.get(ref).marker.getRadius(),pointRef),6,'Selection never enlarges point markers');
