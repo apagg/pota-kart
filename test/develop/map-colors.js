@@ -17,7 +17,7 @@ const parkColors=(()=>{
  function mixOverlap(values){
   const rgb=values.filter(valid).map(value=>value.slice(1).match(/../g).map(x=>parseInt(x,16)));
   if(!rgb.length)rgb.push([51,136,255]);
-  const fillColor='#'+[0,1,2].map(i=>Math.round(rgb.reduce((n,c)=>n+c[i],0)/rgb.length*.85).toString(16).padStart(2,'0')).join('');
+  const fillColor='#'+[0,1,2].map(i=>Math.round(rgb.reduce((n,c)=>n+c[i],0)/rgb.length*.6).toString(16).padStart(2,'0')).join('');
   return {fillColor,color:darker(fillColor)};
  }
  function apply(){

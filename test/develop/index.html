@@ -7,10 +7,10 @@
 <script>document.documentElement.classList.add('ui-loading');</script>
 <style>html.ui-loading .app-ui{visibility:hidden!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
-<title>POTA Kart 0.12.5 – Utvikling – Norge og Sverige</title>
+<title>POTA Kart 0.12.6 – Utvikling – Norge og Sverige</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="styles.css?v=0356c5b98ea5fedf81e5ab875dddde75165d716f">
-<link rel="stylesheet" href="mobile-ui.css?v=0356c5b98ea5fedf81e5ab875dddde75165d716f">
+<link rel="stylesheet" href="styles.css?v=5cf27599c5ee2d581cb14b452af3213e494489b1">
+<link rel="stylesheet" href="mobile-ui.css?v=5cf27599c5ee2d581cb14b452af3213e494489b1">
 </head>
 <body>
 <div id="map"></div>
@@ -19,7 +19,7 @@
 <div class="panel app-ui" id="infoPanel">
   <div class="desktop-panel-content">
     <button id="hidePanel" type="button" title="Skjul panel" aria-label="Skjul panel" style="position:absolute;top:8px;right:8px;width:30px;height:30px;padding:0;background:#eef1f5;color:#333;font-size:18px">‹</button>
-    <h1>POTA Kart <span class="version">0.12.5</span></h1>
+    <h1>POTA Kart <span class="version">0.12.6</span></h1>
     <div class="small" style="margin-top:-4px;margin-bottom:7px">Norge og Sverige – offisielle grenser</div>
     <div id="desktopSearchSlot"><div class="row"><input id="q" placeholder="Søk POTA-ID eller navn"><button id="search">Søk</button></div></div>
     <div id="desktopNotice" class="desktop-notice" role="status" hidden></div>
@@ -104,7 +104,7 @@
   </div>
 </div>
 <div class="mobile-chrome app-ui">
-    <div class="mobile-brand">POTA Kart <span>0.12.5</span></div>
+    <div class="mobile-brand">POTA Kart <span>0.12.6</span></div>
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg></button>
       <button id="mobileLayers" aria-label="Velg karttype" aria-controls="infoPanel" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></button>
@@ -122,5 +122,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=0356c5b98ea5fedf81e5ab875dddde75165d716f" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
+<script src="app.js?v=5cf27599c5ee2d581cb14b452af3213e494489b1" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
 </body></html>
