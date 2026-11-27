@@ -171,6 +171,7 @@ const parkActivations=(()=>{
   document.addEventListener('pota:selection',()=>{paint();schedule();});
   document.addEventListener('pota:display',paint);
   document.addEventListener('pota:activation-count',paint);
+  document.addEventListener('pota:colors',()=>{paint();for(const x of atlasOverlapState.layers.values())x.layer.setStyle(gpsOverlapStyle(x.refs));});
   document.addEventListener('pota:atlas',()=>{paint();schedule();});
   document.addEventListener('pota:gps',paint);
   document.addEventListener('pota:gps-colors',paint);

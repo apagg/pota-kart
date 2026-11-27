@@ -65,7 +65,10 @@ async function atlasRecord(ref){
  return r;
 }
 const gpsInsideRefs=new Set();let gpsColorEpoch=0;
-function gpsParkColor(ref,selected=false){return gpsInsideRefs.has(ref)?'#15803d':typeof parkActivations!=='undefined'&&parkActivations.has(ref)?(selected?'#a16207':'#ca8a04'):typeof knownPotaActivationCount==='function'&&knownPotaActivationCount(ref)===0?(selected?'#c2410c':'#f97316'):selected?'#1d4ed8':'#3388ff'}
+function gpsParkColor(ref,selected=false){
+ const key=gpsInsideRefs.has(ref)?'inside':typeof parkActivations!=='undefined'&&parkActivations.has(ref)?'activated':typeof knownPotaActivationCount==='function'&&knownPotaActivationCount(ref)===0?'never':'normal';
+ return parkColors.get(key,selected);
+}
 function atlasAreaGeometry(g){return !!g&&(g.type==='Polygon'||g.type==='MultiPolygon'||(g.type==='GeometryCollection'&&g.geometries.some(atlasAreaGeometry)))}
 function atlasStyle(ref,geometry=geometryAtlas.byRef.get(ref)){
  const selected=selectedParks.has(ref)||lastSelectedRef===ref,color=gpsParkColor(ref,selected);
@@ -91,7 +94,7 @@ function paintGpsSelected(){
  for(const [ref,x] of selectedParks)paint(x.geo,ref);
  if(!multiMode.checked&&lastSelectedRef)paint(selectedGeo,lastSelectedRef);
 }
-function gpsOverlapStyle(refs){const inside=refs.every(ref=>gpsInsideRefs.has(ref));return {color:inside?'#15803d':'#7e22ce',weight:1,fillColor:inside?'#15803d':'#a855f7',fillOpacity:inside?.25:.48}}
+function gpsOverlapStyle(refs){const inside=refs.every(ref=>gpsInsideRefs.has(ref));return {color:parkColors.get(inside?'inside':'overlap',!inside),weight:1,fillColor:parkColors.get(inside?'inside':'overlap'),fillOpacity:inside?.25:.48}}
 async function updateGpsParkColors(){
  const epoch=++gpsColorEpoch,next=new Set(),position=lastGps;
  if(position&&gpsWatchId!==null){

@@ -13,6 +13,7 @@
     {node:$('parkDisplayMode').closest('.row'),desktop:$('desktopDisplaySlot'),mobile:$('mobileSettingsContent')},
     {node:$('baseMapSelect').closest('.row'),desktop:$('desktopBasemapSlot'),mobile:$('mobileLayersContent')},
     {node:$('multiMode').closest('.selectbar'),desktop:$('desktopMultiSlot'),mobile:$('mobileSettingsContent')},
+    {node:$('colorSettings'),desktop:$('desktopColorsSlot'),mobile:$('mobileSettingsContent')},
     {node:$('activationSettings'),desktop:$('desktopActivationSlot'),mobile:$('mobileSettingsContent')},
     {node:document.querySelector('.mapkey'),desktop:$('desktopLegendSlot'),mobile:$('mobileSettingsContent')},
     {node:$('geometrySummary'),desktop:$('desktopGeometrySlot'),mobile:$('mobileSettingsContent')},

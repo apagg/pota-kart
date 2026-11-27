@@ -7,10 +7,10 @@
 <script>document.documentElement.classList.add('ui-loading');</script>
 <style>html.ui-loading .app-ui{visibility:hidden!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
-<title>POTA Kart 0.12.3 – Utvikling – Norge og Sverige</title>
+<title>POTA Kart 0.12.4 – Utvikling – Norge og Sverige</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="styles.css?v=a5f3d3affef803446d92fc460530abdac31f664f">
-<link rel="stylesheet" href="mobile-ui.css?v=a5f3d3affef803446d92fc460530abdac31f664f">
+<link rel="stylesheet" href="styles.css?v=fb486a56926ec4f85248d160ee2e0f253896bfb7">
+<link rel="stylesheet" href="mobile-ui.css?v=fb486a56926ec4f85248d160ee2e0f253896bfb7">
 </head>
 <body>
 <div id="map"></div>
@@ -19,7 +19,7 @@
 <div class="panel app-ui" id="infoPanel">
   <div class="desktop-panel-content">
     <button id="hidePanel" type="button" title="Skjul panel" aria-label="Skjul panel" style="position:absolute;top:8px;right:8px;width:30px;height:30px;padding:0;background:#eef1f5;color:#333;font-size:18px">‹</button>
-    <h1>POTA Kart <span class="version">0.12.3</span></h1>
+    <h1>POTA Kart <span class="version">0.12.4</span></h1>
     <div class="small" style="margin-top:-4px;margin-bottom:7px">Norge og Sverige – offisielle grenser</div>
     <div id="desktopSearchSlot"><div class="row"><input id="q" placeholder="Søk POTA-ID eller navn"><button id="search">Søk</button></div></div>
     <div id="desktopNotice" class="desktop-notice" role="status" hidden></div>
@@ -32,9 +32,22 @@
       <div id="desktopBasemapSlot"><div class="row mobile-tools" style="align-items:center"><label class="small" for="baseMapSelect"><b>Kart:</b></label><select id="baseMapSelect" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="topo">Topografisk Norge</option><option value="osm">OpenStreetMap</option><option value="esri">Esri</option><option value="satellite">Satellitt</option></select></div></div>
       <div id="desktopDisplaySlot"><div class="row" style="align-items:center"><label class="small" for="parkDisplayMode"><b>Visning:</b></label><select id="parkDisplayMode" style="flex:1;padding:7px;border:1px solid #bbb;border-radius:6px"><option value="geometry">Geometri</option><option value="points">Bare punkter</option></select></div></div>
       <div id="desktopMultiSlot"><div class="selectbar"><label><input type="checkbox" id="multiMode" checked> Flervalg</label><span class="small">Legg flere parker til utvalget</span></div></div>
+      <div id="desktopColorsSlot"><details id="colorSettings" class="color-settings">
+        <summary>Kartfarger</summary>
+        <p class="small">Gjelder punkter, stier og parkflater. Endringer vises med en gang og huskes i denne nettleseren.</p>
+        <div class="color-settings-grid">
+          <label for="parkColorNormal"><span>Vanlig park / ukjent status</span><input type="color" id="parkColorNormal" data-park-color="normal" value="#3388ff"></label>
+          <label for="parkColorNever"><span>0 registrerte aktiveringer</span><input type="color" id="parkColorNever" data-park-color="never" value="#f97316"></label>
+          <label for="parkColorActivated"><span>Aktivert av dine kallesignaler</span><input type="color" id="parkColorActivated" data-park-color="activated" value="#ca8a04"></label>
+          <label for="parkColorInside"><span>Innenfor parken med GPS</span><input type="color" id="parkColorInside" data-park-color="inside" value="#15803d"></label>
+          <label for="parkColorOverlap"><span>Overlapp mellom parker</span><input type="color" id="parkColorOverlap" data-park-color="overlap" value="#a855f7"></label>
+        </div>
+        <button type="button" id="resetParkColors">Tilbakestill standardfarger</button>
+        <p class="small" id="colorSettingsStatus" role="status" aria-live="polite"></p>
+      </details></div>
       <div id="desktopActivationSlot"><section id="activationSettings" class="activation-settings">
         <h3>Mine kallesignaler</h3>
-        <p class="small">Aktiverte parker vises gule. Grønn GPS-markering har prioritet.</p>
+        <p class="small">Parker aktivert av dine kallesignaler får egen farge. GPS-markering har prioritet.</p>
         <form id="activationForm"><label for="activationCallInput" class="small">Hovedkallesignal</label><div class="row"><input id="activationCallInput" placeholder="F.eks. LB6BK" maxlength="160" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="submit">Legg til</button></div></form>
         <div id="activationInputError" class="activation-error small" role="alert"></div>
         <div id="activationCalls" class="activation-calls"></div>
@@ -49,7 +62,7 @@
     </details>
     <details id="desktopHelp" class="info-more">
       <summary>Hjelp og teknisk informasjon</summary>
-      <p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Velg <b>Geometri</b> eller <b>Bare punkter</b> under Kartinnstillinger.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk i lilla, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
+      <p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Velg <b>Geometri</b> eller <b>Bare punkter</b> under Kartinnstillinger.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk med egen farge, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
     <p><b>Datakilder</b><br>POTA-referanser: Parks on the Air.<br>Områdegrenser: Naturvårdsverket / svenske myndighetsdata og Miljødirektoratet / Naturbase og Riksantikvarens kulturminneregister.</p>
     <p class="small"><b>Merk:</b> POTA-punktet er en referanseposisjon. Registergeometrien viser kildens avgrensning. Kulturminnegeometri dekker ikke nødvendigvis hele POTA-området.</p>
       <div class="small">Trykk på en parkgrense eller sti, eller søk etter POTA-ID eller navn. Parker uten tilgjengelig geometri vises som punkt.</div>
@@ -76,7 +89,7 @@
     <p id="mobileGeometryNote" class="mobile-geometry-note" data-mobile-section="details" hidden>Geometri mangler – parken vises som punkt</p>
     <div id="mobileOverlapChoices" class="mobile-overlap-list" data-mobile-section="overlap" hidden></div>
     <section id="mobileSettingsContent" data-mobile-section="settings" hidden>
-      <details id="mobileHelp" class="mobile-help"><summary>Hjelp og datakilder</summary><p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Velg <b>Geometri</b> eller <b>Bare punkter</b> under Kartinnstillinger.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk i lilla, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
+      <details id="mobileHelp" class="mobile-help"><summary>Hjelp og datakilder</summary><p><b>Slik bruker du kartet</b><br>1. Klikk på en parkgrense, sti eller et punkt, eller søk etter POTA-ID/navn.<br>2. Valgt POTA-park vises uten at kartet automatisk zoomer.<br>3. Velg <b>Geometri</b> eller <b>Bare punkter</b> under Kartinnstillinger.<br>4. Slå på <b>Flervalg</b> for å beholde flere parker samtidig. Overlapp mellom parker vises automatisk med egen farge, også uten valg. Bruk listen «Valgte POTA-parker» for å fjerne enkeltparker eller tømme utvalget.</p>
     <p><b>Datakilder</b><br>POTA-referanser: Parks on the Air.<br>Områdegrenser: Naturvårdsverket / svenske myndighetsdata og Miljødirektoratet / Naturbase og Riksantikvarens kulturminneregister.</p>
     <p class="small"><b>Merk:</b> POTA-punktet er en referanseposisjon. Registergeometrien viser kildens avgrensning. Kulturminnegeometri dekker ikke nødvendigvis hele POTA-området.</p></details>
     </section>
@@ -90,7 +103,7 @@
   </div>
 </div>
 <div class="mobile-chrome app-ui">
-    <div class="mobile-brand">POTA Kart <span>0.12.3</span></div>
+    <div class="mobile-brand">POTA Kart <span>0.12.4</span></div>
     <div class="mobile-toolbar" aria-label="Kartverktøy">
       <button id="mobileSearch" aria-label="Søk etter park" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg></button>
       <button id="mobileLayers" aria-label="Velg karttype" aria-controls="infoPanel" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></button>
@@ -108,5 +121,5 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
-<script src="app.js?v=a5f3d3affef803446d92fc460530abdac31f664f" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
+<script src="app.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7" onerror="document.documentElement.classList.remove('ui-loading');document.getElementById('startupError').textContent='Oppstartsfeil: Kunne ikke laste app.js';document.getElementById('startupError').hidden=false;"></script>
 </body></html>

@@ -1,4 +1,4 @@
-// POTA Kart 0.12.3 bootstrap loader
+// POTA Kart 0.12.4 bootstrap loader
 (async()=>{
   const load=src=>new Promise((resolve,reject)=>{
     const s=document.createElement('script');
@@ -9,30 +9,31 @@
   });
   try{
     await load('pota-cache-bootstrap.js');
-    await load('diagnostics.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('geojson-utils.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('geometry-topology.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('geometry-atlas.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('map-setup.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('map-layers.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('gps-controller.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('polygon-layer-utils.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('pota-activation.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('park-info-ui.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('app-text-utils.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('norway-park-registry.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('sweden-park-registry.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('geometry-format-utils.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('sweden-heritage-registry.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('app-core.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('park-diagnostics.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('park-selection-state.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('pota-park-loader.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('park-selection-controller.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('pota-startup.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('mobile-ui.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('desktop-ui.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
-    await load('park-activations.js?v=a5f3d3affef803446d92fc460530abdac31f664f');
+    await load('diagnostics.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('geojson-utils.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('geometry-topology.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('map-colors.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('geometry-atlas.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('map-setup.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('map-layers.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('gps-controller.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('polygon-layer-utils.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('pota-activation.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('park-info-ui.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('app-text-utils.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('norway-park-registry.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('sweden-park-registry.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('geometry-format-utils.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('sweden-heritage-registry.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('app-core.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('park-diagnostics.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('park-selection-state.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('pota-park-loader.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('park-selection-controller.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('pota-startup.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('mobile-ui.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('desktop-ui.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
+    await load('park-activations.js?v=fb486a56926ec4f85248d160ee2e0f253896bfb7');
     initializeStartupPosition();
   }catch(e){
     const el=document.getElementById('status');
