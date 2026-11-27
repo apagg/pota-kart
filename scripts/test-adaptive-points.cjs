@@ -10,11 +10,11 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   clearSelectedParks();clearSelection();
   const center=L.latLng(30,10),origin=map.project(center,10);
   const ll=(x,y)=>map.unproject(origin.add([x,y]),10),coord=(x,y)=>{const p=ll(x,y);return [p.lng,p.lat]};
-  const ring=(size)=>[coord(-size/2,-size/2),coord(size/2,-size/2),coord(size/2,size/2),coord(-size/2,size/2),coord(-size/2,-size/2)];
-  const shapes=[{type:'Polygon',coordinates:[ring(16),ring(6)]},{type:'Polygon',coordinates:[ring(16)]},{type:'Polygon',coordinates:[ring(120)]},{type:'LineString',coordinates:[coord(150,0),coord(270,.5)]},{type:'Polygon',coordinates:[ring(16)]}];
+  const ring=(size,x=0)=>[coord(x-size/2,-size/2),coord(x+size/2,-size/2),coord(x+size/2,size/2),coord(x-size/2,size/2),coord(x-size/2,-size/2)];
+  const shapes=[{type:'Polygon',coordinates:[ring(16),ring(6)]},{type:'Polygon',coordinates:[ring(16)]},{type:'Polygon',coordinates:[ring(120)]},{type:'LineString',coordinates:[coord(150,0),coord(270,.5)]},{type:'Polygon',coordinates:[ring(16,-80)]}];
   const refs=['NO-ZOOM-A','NO-ZOOM-B','NO-ZOOM-LARGE','NO-ZOOM-TRAIL','SE-ZOOM-SMALL'],records={};
   for(let i=0;i<refs.length;i++){
-   const ref=refs[i],geometry=shapes[i],pt=i===1?ll(50,0):i===3?ll(210,0):center;
+   const ref=refs[i],geometry=shapes[i],pt=i===1?ll(50,0):i===3?ll(210,0):i===4?ll(-80,0):center;
    const p={reference:ref,name:'Zoom fixture '+ref,latitude:pt.lat,longitude:pt.lng};pota.push(p);geometryAtlas.parkByRef.set(ref,p);
    const record=records[ref]={name:p.name,id:ref,source:'norway',geometry};
    const bbox=turf.bbox({type:'Feature',properties:{},geometry});
